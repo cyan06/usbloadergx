@@ -26,6 +26,9 @@ extern const u32	button_click_pcm_size;
 extern const u8     background_png[];
 extern const u32    background_png_size;
 
+extern const u8     nocover_png[];
+extern const u32    nocover_png_size;
+
 extern const u8		button_png[];
 extern const u32	button_png_size;
 

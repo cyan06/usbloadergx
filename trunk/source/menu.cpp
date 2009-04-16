@@ -50,7 +50,7 @@ static char prozent[10] = "0%";
 static char timet[100] = " ";
 static GuiText prTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static GuiText timeTxt(prozent, 26, (GXColor){0, 0, 0, 255});
-static GuiSound * bgMusic = NULL;
+//static GuiSound * bgMusic = NULL;
 static wbfs_t *hdd = NULL;
 static u32 gameCnt = 0;
 static s32 gameSelected = 0, gameStart = 0;
@@ -69,24 +69,18 @@ static int showProgress = 1;
 int loadimg(char * filename)
 {
 	PNGUPROP imgProp;
-	IMGCTX ctx = NULL;
+	IMGCTX ctx;
 
 	s32 res;
 
 	char filetemp[60];
 	snprintf(filetemp,sizeof(filetemp),"/images/%s.png",filename);
-	ctx = PNGU_SelectImageFromDevice(filetemp);
-
-	if (!ctx)
-	{
-       	ctx = PNGU_SelectImageFromBuffer("../sources/images/nocover.png");
-	}
-	res = PNGU_GetImageProperties(ctx, &imgProp);
-
-	 if (res != PNGU_OK)
+    ctx = PNGU_SelectImageFromDevice(filetemp);
+    res = PNGU_GetImageProperties(ctx, &imgProp);
+	if (res != PNGU_OK)
     {
-       //printf("\n[+] ERROR: Cannot get image properties of %s! (ret = %d)\n", filetemp,res);
-        return 0;
+       	ctx = PNGU_SelectImageFromBuffer(nocover_png);
+        res = PNGU_GetImageProperties(ctx, &imgProp);
 	}
 
 	free(data);
@@ -114,6 +108,8 @@ int loadimg(char * filename)
 							data = NULL;
 					}
 			}
+	} else {
+    return 0
 	}
 	/* Free image context */
 	PNGU_ReleaseImageContext(ctx);
@@ -591,7 +587,7 @@ ShowProgress (s32 done, s32 total)
     static time_t start;
 	static u32 expected;
 
-    f32 percent, size;
+    f32 percent; //, size;
 	u32 d, h, m, s;
 
 	//first time
@@ -1846,10 +1842,10 @@ int MainMenu(int menu)
 
 	ResumeGui();
 
-    bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
-	bgMusic->SetVolume(80);
-	bgMusic->SetLoop(1); //loop music
-	bgMusic->Play(); // startup music
+    //bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
+	//bgMusic->SetVolume(80);
+	//bgMusic->SetLoop(1); //loop music
+	//bgMusic->Play(); // startup music
 
 	while(currentMenu != MENU_EXIT)
 	{
@@ -1876,8 +1872,8 @@ int MainMenu(int menu)
 		}
 	}
 
-    bgMusic->Stop();
-	delete bgMusic;
+    //bgMusic->Stop();
+	//delete bgMusic;
 	delete bgImg;
 	delete mainWindow;
 	delete pointer[0];
