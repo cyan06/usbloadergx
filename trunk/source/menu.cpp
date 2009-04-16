@@ -50,7 +50,7 @@ static char prozent[10] = "0%";
 static char timet[100] = " ";
 static GuiText prTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static GuiText timeTxt(prozent, 26, (GXColor){0, 0, 0, 255});
-//static GuiSound * bgMusic = NULL;
+static GuiSound * bgMusic = NULL;
 static wbfs_t *hdd = NULL;
 static u32 gameCnt = 0;
 static s32 gameSelected = 0, gameStart = 0;
@@ -1064,6 +1064,17 @@ static int MenuDiscList()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_png);
 	GuiImageData btnOutlineOver(button_over_png);
+	
+	GuiImageData btnInstall(button_install_png);
+	GuiImageData btnInstallOver(button_install_over_png);
+	
+	GuiImageData btnMenu(menu_button_png);
+	GuiImageData btnMenuOver(menu_button_over_png);
+	
+	GuiImageData btnSettings(settings_button_png);
+	GuiImageData btnSettingsOver(settings_button_over_png);
+	
+	GuiImageData btnM(button_png);
 	GuiImageData btnLargeOutline(button_large_png);
 	GuiImageData btnLargeOutlineOver(button_large_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
@@ -1076,53 +1087,54 @@ static int MenuDiscList()
     GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
-    GuiText titleTxt("Select the Game", 18, (GXColor){0, 0, 255, 255});
-	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(-15,40);
-
-    GuiText titleTxt2("you want to boot:", 18, (GXColor){0, 0, 255, 255});
-	titleTxt2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt2.SetPosition(-5,60);
-
     char spaceinfo[100];
-	sprintf(spaceinfo,"Used: %.2f Free: %.2f",used,free);
-	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){0, 0, 0, 255});
+	sprintf(spaceinfo,"%.2f of %.2f free",free,used);
+	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){63, 154, 192, 255});
 	usedSpaceTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	usedSpaceTxt.SetPosition(0,320);
-	usedSpaceTxt.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 30);
+	usedSpaceTxt.SetPosition(0,330);
+	
+	char GamesCnt[100];
+	sprintf(GamesCnt,"Games: %i",gameCnt);
+	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
+	gamecntTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	gamecntTxt.SetPosition(0,350);
 
-    /*sprintf(text123, "Total: %.1fGB",(used+free));
-	GuiText titleTxt6(text123, 18, (GXColor){0, 0, 255, 230});
-	titleTxt6.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	titleTxt6.SetPosition(220,431);*/
-
-    GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
-	installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
-	GuiImage installBtnImg(&btnOutline);
-	GuiImage installBtnImgOver(&btnOutlineOver);
-	GuiButton installBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	GuiImage installBtnImg(&btnInstall);
+	GuiImage installBtnImgOver(&btnInstallOver);
+	GuiButton installBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
 	installBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	installBtn.SetPosition(180, 363);
-	installBtn.SetLabel(&installBtnTxt);
+	installBtn.SetPosition(-290, 358);
 	installBtn.SetImage(&installBtnImg);
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
 	installBtn.SetTrigger(&trigA);
 	installBtn.SetEffectGrow();
 
-    GuiText settingsBtnTxt("Settings", 22, (GXColor){0, 0, 0, 255});
-	installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
-	GuiImage settingsBtnImg(&btnOutline);
-	GuiImage settingsBtnImgOver(&btnOutlineOver);
-	GuiButton settingsBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-	settingsBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	settingsBtn.SetPosition(20, 383);
-	settingsBtn.SetLabel(&settingsBtnTxt);
+	//installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
+    //GuiText settingsBtnTxt("Settings", 22, (GXColor){0, 0, 0, 255});
+	GuiImage settingsBtnImg(&btnSettings);
+	GuiImage settingsBtnImgOver(&btnSettingsOver);
+	GuiButton settingsBtn(btnSettings.GetWidth(), btnSettings.GetHeight());
+	settingsBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	settingsBtn.SetPosition(-240, 380);
+	//settingsBtn.SetLabel(&settingsBtnTxt);
 	settingsBtn.SetImage(&settingsBtnImg);
 	settingsBtn.SetImageOver(&settingsBtnImgOver);
 	settingsBtn.SetSoundOver(&btnSoundOver);
 	settingsBtn.SetTrigger(&trigA);
 	settingsBtn.SetEffectGrow();
+
+	GuiImage menuBtnImg(&btnMenu);
+	GuiImage menuBtnImgOver(&btnMenuOver);
+	GuiButton menuBtn(btnMenu.GetWidth(), btnMenu.GetHeight());
+	menuBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	menuBtn.SetPosition(252, 380);
+	menuBtn.SetImage(&menuBtnImg);
+	menuBtn.SetImageOver(&menuBtnImgOver);
+	menuBtn.SetSoundOver(&btnSoundOver);
+	menuBtn.SetTrigger(&trigA);
+	menuBtn.SetTrigger(&trigHome);
+	menuBtn.SetEffectGrow();
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
@@ -1135,31 +1147,20 @@ static int MenuDiscList()
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
 	
-	GuiImage exitBtnImg(&btnhome);
-	GuiImage exitBtnImgOver(&btnhomeOver);
-	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
-	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(62, 405);
-	exitBtn.SetImage(&exitBtnImg);
-	exitBtn.SetImageOver(&exitBtnImgOver);
-	exitBtn.SetSoundOver(&btnSoundOver);
-	exitBtn.SetTrigger(&trigA);
-	exitBtn.SetTrigger(&trigHome);
-	exitBtn.SetEffectGrow();
-
 	GuiOptionBrowser optionBrowser(380, 248, &options);
-	optionBrowser.SetPosition(110, 40);
+	optionBrowser.SetPosition(100, 40);
 	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
-    w.Append(&titleTxt);
+
     w.Append(&usedSpaceTxt);
+	w.Append(&gamecntTxt);
     w.Append(&poweroffBtn);
     w.Append(&installBtn);
+	w.Append(&menuBtn);
     w.Append(&settingsBtn);
-	w.Append(&exitBtn);
 	w.Append(CoverImg);
 
     mainWindow->Append(&w);
@@ -1180,19 +1181,20 @@ static int MenuDiscList()
                 WPAD_Disconnect(0);
                 WPAD_Shutdown();
 				Sys_Shutdown();
+				//exit(0);
 			} else {
 			    menu = MENU_DISCLIST;
 			    break;
 			}
 
-		} else if(exitBtn.GetState() == STATE_CLICKED)
+		} else if(menuBtn.GetState() == STATE_CLICKED)
 		{
 
 		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
 			if(choice == 1)
 			{
-                //SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
-                exit(0); //zum debuggen schneller
+                SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
+                //exit(0); //zum debuggen schneller
 			} else {
 			    menu = MENU_DISCLIST;
 			    break;
@@ -1236,16 +1238,9 @@ static int MenuDiscList()
 						loadimg(ID);
 						CoverImg = new GuiImage(data,160,224);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						CoverImg->SetPosition(32,40);
+						CoverImg->SetPosition(34,55);
 						CoverImg->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 35);
 						w.Append(CoverImg);
-						/*GuiImageData testcover("no");
-						u8 * ggg = testcover.GetImage();
-						GuiImage CoverImg(ggg,160,224);
-						CoverImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						CoverImg.SetPosition(50, 200);
-						CoverImg.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 30);
-						w.Append(&CoverImg);*/
 					}
 				}
 
@@ -1386,7 +1381,7 @@ static int MenuFormat()
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(-278, 405);
+	poweroffBtn.SetPosition(290, 358);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -1511,9 +1506,9 @@ static int MenuSettings()
     GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
-    GuiText titleTxt("Settings", 28, (GXColor){0, 0, 255, 255});
+    GuiText titleTxt("Settings", 28, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(-15,60);
+	titleTxt.SetPosition(0,400);
 
     GuiText backBtnTxt("Go Back", 22, (GXColor){0, 0, 0, 255});
 	backBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
@@ -1533,7 +1528,7 @@ static int MenuSettings()
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(-278, 405);
+	poweroffBtn.SetPosition(290, 358);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -1544,7 +1539,7 @@ static int MenuSettings()
 	GuiImage exitBtnImgOver(&btnhomeOver);
 	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(62, 405);
+	exitBtn.SetPosition(100, 405);
 	exitBtn.SetImage(&exitBtnImg);
 	exitBtn.SetImageOver(&exitBtnImgOver);
 	exitBtn.SetSoundOver(&btnSoundOver);
@@ -1553,7 +1548,7 @@ static int MenuSettings()
 	exitBtn.SetEffectGrow();
 
 	GuiOptionBrowser optionBrowser2(380, 248, &options2);
-	optionBrowser2.SetPosition(90, 108);
+	optionBrowser2.SetPosition(80, 80);
 	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
 	optionBrowser2.SetCol2Position(150);
 
@@ -1830,10 +1825,10 @@ int MainMenu(int menu)
 
 	ResumeGui();
 
-    //bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
-	//bgMusic->SetVolume(80);
-	//bgMusic->SetLoop(1); //loop music
-	//bgMusic->Play(); // startup music
+    bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
+	bgMusic->SetVolume(80);
+	bgMusic->SetLoop(1); //loop music
+	bgMusic->Play(); // startup music
 
 	while(currentMenu != MENU_EXIT)
 	{
@@ -1860,8 +1855,8 @@ int MainMenu(int menu)
 		}
 	}
 
-    //bgMusic->Stop();
-	//delete bgMusic;
+    bgMusic->Stop();
+	delete bgMusic;
 	delete bgImg;
 	delete mainWindow;
 	delete pointer[0];
