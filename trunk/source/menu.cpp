@@ -50,6 +50,8 @@ static char prozent[10] = "0%";
 static char timet[100] = " ";
 static GuiText prTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static GuiText timeTxt(prozent, 26, (GXColor){0, 0, 0, 255});
+
+static GuiText *GameIDTxt = NULL;
 static GuiSound * bgMusic = NULL;
 static wbfs_t *hdd = NULL;
 static u32 gameCnt = 0;
@@ -1088,7 +1090,7 @@ static int MenuDiscList()
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
     char spaceinfo[100];
-	sprintf(spaceinfo,"%.2f of %.2f free",free,used);
+	sprintf(spaceinfo,"%.2f of %.2f free",(free-used),free);
 	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){63, 154, 192, 255});
 	usedSpaceTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	usedSpaceTxt.SetPosition(0,330);
@@ -1162,6 +1164,7 @@ static int MenuDiscList()
 	w.Append(&menuBtn);
     w.Append(&settingsBtn);
 	w.Append(CoverImg);
+	w.Append(GameIDTxt);
 
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser);
@@ -1231,15 +1234,22 @@ static int MenuDiscList()
                 if ((s32) (cnt) == selectimg) {
 					if (selectimg != selectedold){
 						w.Remove(CoverImg);
+						w.Remove(GameIDTxt);
 						selectedold = selectimg;
 						struct discHdr *header = &gameList[selectimg];
 						sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
 						//load game cover
 						loadimg(ID);
+						
+						GameIDTxt = new GuiText(ID, 22, (GXColor){63, 154, 192, 255});
+						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+						GameIDTxt->SetPosition(70,290);
+						GameIDTxt->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 35);
 						CoverImg = new GuiImage(data,160,224);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						CoverImg->SetPosition(34,55);
 						CoverImg->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 35);
+						w.Append(GameIDTxt);
 						w.Append(CoverImg);
 					}
 				}
@@ -1248,9 +1258,10 @@ static int MenuDiscList()
                         struct discHdr *header = &gameList[gameSelected];
                         WBFS_GameSize(header->id, &size);
                         sprintf(text, "%s %.2fGB", header->title, size);
+						sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
                         choice = GameWindowPrompt(
-                        "Game:",
                         text,
+                        ID,
                         "Boot",
                         "Cancel",
                         "Delete");
