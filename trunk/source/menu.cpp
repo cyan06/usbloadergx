@@ -1066,16 +1066,16 @@ static int MenuDiscList()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_png);
 	GuiImageData btnOutlineOver(button_over_png);
-	
+
 	GuiImageData btnInstall(button_install_png);
 	GuiImageData btnInstallOver(button_install_over_png);
-	
+
 	GuiImageData btnMenu(menu_button_png);
 	GuiImageData btnMenuOver(menu_button_over_png);
-	
+
 	GuiImageData btnSettings(settings_button_png);
 	GuiImageData btnSettingsOver(settings_button_over_png);
-	
+
 	GuiImageData btnM(button_png);
 	GuiImageData btnLargeOutline(button_large_png);
 	GuiImageData btnLargeOutlineOver(button_large_over_png);
@@ -1090,11 +1090,11 @@ static int MenuDiscList()
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
     char spaceinfo[100];
-	sprintf(spaceinfo,"%.2f of %.2f free",(free-used),free);
+	sprintf(spaceinfo,"%.2f of %.2f free",free,(free+used));
 	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){63, 154, 192, 255});
 	usedSpaceTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	usedSpaceTxt.SetPosition(0,330);
-	
+
 	char GamesCnt[100];
 	sprintf(GamesCnt,"Games: %i",gameCnt);
 	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
@@ -1148,7 +1148,7 @@ static int MenuDiscList()
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
-	
+
 	GuiOptionBrowser optionBrowser(380, 248, &options);
 	optionBrowser.SetPosition(100, 40);
 	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
@@ -1240,7 +1240,7 @@ static int MenuDiscList()
 						sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
 						//load game cover
 						loadimg(ID);
-						
+
 						GameIDTxt = new GuiText(ID, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						GameIDTxt->SetPosition(70,290);
