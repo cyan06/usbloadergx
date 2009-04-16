@@ -1084,25 +1084,17 @@ static int MenuDiscList()
 	titleTxt2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt2.SetPosition(-5,60);
 
-    GuiText titleTxt3("Disk Space:", 20, (GXColor){0, 0, 255, 255});
-	titleTxt3.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	titleTxt3.SetPosition(220,360);
+    char spaceinfo[100];
+	sprintf(spaceinfo,"Used: %.2f Free: %.2f",used,free);
+	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){0, 0, 0, 255});
+	usedSpaceTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	usedSpaceTxt.SetPosition(0,320);
+	usedSpaceTxt.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 30);
 
-    char text123[50];
-    sprintf(text123, "Free: %.1fGB",free);
-    GuiText titleTxt4(text123, 18, (GXColor){0, 0, 255, 230});
-    titleTxt4.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	titleTxt4.SetPosition(220,408);
-
-    sprintf(text123, "Used: %.1fGB",used);
-	GuiText titleTxt5(text123, 18, (GXColor){0, 0, 255, 230});
-	titleTxt5.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	titleTxt5.SetPosition(220,385);
-
-    sprintf(text123, "Total: %.1fGB",(used+free));
+    /*sprintf(text123, "Total: %.1fGB",(used+free));
 	GuiText titleTxt6(text123, 18, (GXColor){0, 0, 255, 230});
 	titleTxt6.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	titleTxt6.SetPosition(220,431);
+	titleTxt6.SetPosition(220,431);*/
 
     GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
 	installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
@@ -1136,13 +1128,13 @@ static int MenuDiscList()
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(-278, 405);
+	poweroffBtn.SetPosition(290, 358);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
-
+	
 	GuiImage exitBtnImg(&btnhome);
 	GuiImage exitBtnImgOver(&btnhomeOver);
 	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
@@ -1156,18 +1148,14 @@ static int MenuDiscList()
 	exitBtn.SetEffectGrow();
 
 	GuiOptionBrowser optionBrowser(380, 248, &options);
-	optionBrowser.SetPosition(90, 108);
+	optionBrowser.SetPosition(110, 40);
 	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
     w.Append(&titleTxt);
-    w.Append(&titleTxt2);
-    w.Append(&titleTxt3);
-    w.Append(&titleTxt4);
-    w.Append(&titleTxt5);
-    w.Append(&titleTxt6);
+    w.Append(&usedSpaceTxt);
     w.Append(&poweroffBtn);
     w.Append(&installBtn);
     w.Append(&settingsBtn);
@@ -1248,7 +1236,7 @@ static int MenuDiscList()
 						loadimg(ID);
 						CoverImg = new GuiImage(data,160,224);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						CoverImg->SetPosition(36,120);
+						CoverImg->SetPosition(32,40);
 						CoverImg->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 35);
 						w.Append(CoverImg);
 						/*GuiImageData testcover("no");
