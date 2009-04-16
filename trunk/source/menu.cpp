@@ -32,7 +32,8 @@
 #include "wpad.h"
 
 
-#define MAX_CHARACTERS		40
+#define MAX_CHARACTERS		27
+
 
 //for sd image data
 u8 * data = NULL;
@@ -44,13 +45,12 @@ static GuiImage * CoverImg = NULL;
 static struct discHdr *gameList = NULL;
 static GuiImageData * pointer[4];
 static GuiImage * bgImg = NULL;
-static GuiButton * btnLogo = NULL;
-static GuiImage * bgTopImg = NULL;
-static GuiImage * bgBottomImg = NULL;
-//static GuiImageData * background = NULL;
-//static GuiSound * bgMusic = NULL;
-static GuiSound * enterSound = NULL;
-static GuiSound * exitSound = NULL;
+static GuiImageData * background = NULL;
+static char prozent[10] = "0%";
+static char timet[100] = " ";
+static GuiText prTxt(prozent, 26, (GXColor){0, 0, 0, 255});
+static GuiText timeTxt(prozent, 26, (GXColor){0, 0, 0, 255});
+static GuiSound * bgMusic = NULL;
 static wbfs_t *hdd = NULL;
 static u32 gameCnt = 0;
 static s32 gameSelected = 0, gameStart = 0;
@@ -59,13 +59,11 @@ static lwp_t guithread = LWP_THREAD_NULL;
 static bool guiHalt = true;
 static GuiImageData progressbar(progressbar_png);
 static GuiImage progressbarImg(&progressbar);
-static char prozent[10] = "0%";
-static char timet[100] = " ";
-static GuiText prTxt(prozent, 26, (GXColor){0, 0, 0, 255});
-static GuiText timeTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static double progressDone = 0;
 static double progressTotal = 1;
 static int showProgress = 1;
+
+
 
 //loads image file from sd card
 int loadimg(char * filename)
@@ -123,6 +121,7 @@ int loadimg(char * filename)
 
 return 1;
 }
+
 /****************************************************************************
  * ResumeGui
  *
@@ -156,113 +155,6 @@ HaltGui()
 }
 
 /****************************************************************************
- * WindowCredits
- * Display credits
- ***************************************************************************/
-static void WindowCredits(void * ptr)
-{
-	if(btnLogo->GetState() != STATE_CLICKED)
-		return;
-
-	btnLogo->ResetState();
-
-	bool exit = false;
-	int i = 0;
-	int y = 20;
-
-	GuiWindow creditsWindow(screenwidth,screenheight);
-	GuiWindow creditsWindowBox(580,448);
-	creditsWindowBox.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-
-	GuiImageData creditsBox(credits_box_png);
-	GuiImage creditsBoxImg(&creditsBox);
-	creditsBoxImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	creditsWindowBox.Append(&creditsBoxImg);
-
-	int numEntries = 12;
-	GuiText * txt[numEntries];
-
-	txt[i] = new GuiText("Credits", 30, (GXColor){0, 0, 0, 255});
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=32;
-
-	txt[i] = new GuiText("Official Site: ", 20, (GXColor){0, 0, 0, 255});
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=40;
-
-	txt[i]->SetPresets(22, (GXColor){0, 0, 0, 255}, 0,
-			FTGX_JUSTIFY_LEFT | FTGX_ALIGN_TOP, ALIGN_LEFT, ALIGN_TOP);
-
-	txt[i] = new GuiText("Coding:");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("Waninkoko");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("Kwiirk");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("dimok");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("nIxx");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=40;
-
-	txt[i] = new GuiText("Design:");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("nIxx");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=40;
-
-	txt[i] = new GuiText("Thanks to Waninkoko & Kwiirk for the USB Loader Code");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	//txt[i]->SetPosition(50,y); i++; y+=24;
-	txt[i] = new GuiText("and special thanks to");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	//txt[i]->SetPosition(50,y); i++; y+=24;
-	txt[i] = new GuiText("dimok for his initial release of libwiigui USB ISO Loader");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-
-	for(i=0; i < numEntries; i++)
-		creditsWindowBox.Append(txt[i]);
-
-	creditsWindow.Append(&creditsWindowBox);
-
-	while(!exit)
-	{
-		//if(gameScreenImg)
-			//gameScreenImg->Draw();
-		//else
-			//bgImg->Draw();
-
-		bgBottomImg->Draw();
-		bgTopImg->Draw();
-		creditsWindow.Draw();
-
-		for(i=3; i >= 0; i--)
-		{
-			#ifdef HW_RVL
-			if(userInput[i].wpad.ir.valid)
-				Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
-					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
-			DoRumble(i);
-			#endif
-		}
-
-		Menu_Render();
-
-		for(i=0; i < 4; i++)
-		{
-			if(userInput[i].wpad.btns_d || userInput[i].pad.btns_d)
-				exit = true;
-		}
-	}
-
-	// clear buttons pressed
-	for(i=0; i < 4; i++)
-	{
-		userInput[i].wpad.btns_d = 0;
-		userInput[i].pad.btns_d = 0;
-	}
-
-	for(i=0; i < numEntries; i++)
-		delete txt[i];
-}
-
-/****************************************************************************
  * WindowPrompt
  *
  * Displays a prompt window to user, with information, an error message, or
@@ -277,7 +169,6 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiSound btnSoundClick(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_png);
 	GuiImageData btnOutlineOver(button_over_png);
 	GuiTrigger trigA;
@@ -286,12 +177,12 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
-	GuiText titleTxt(title, 24, (GXColor){0, 0, 0, 255});
+	GuiText titleTxt(title, 26, (GXColor){0, 0, 255, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,14);
+	titleTxt.SetPosition(0,40);
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	msgTxt.SetPosition(0,-10);
+	msgTxt.SetPosition(0,-20);
 	msgTxt.SetMaxWidth(430);
 
 	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
@@ -316,7 +207,6 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	btn1.SetSoundOver(&btnSoundOver);
 	btn1.SetTrigger(&trigA);
 	btn1.SetState(STATE_SELECTED);
-	btn1.SetSoundClick(&btnSoundClick);
 	btn1.SetEffectGrow();
 
 	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
@@ -329,7 +219,6 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	btn2.SetImage(&btn2Img);
 	btn2.SetImageOver(&btn2ImgOver);
 	btn2.SetSoundOver(&btnSoundOver);
-	btn2.SetSoundClick(&btnSoundClick);
 	btn2.SetTrigger(&trigA);
 	btn2.SetEffectGrow();
 
@@ -352,122 +241,12 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	{
 		VIDEO_WaitVSync();
 
-		if(btn1.GetState() == STATE_CLICKED)
+		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
-		else if(btn2.GetState() == STATE_CLICKED)
+		}
+		else if(btn2.GetState() == STATE_CLICKED) {
 			choice = 0;
-	}
-
-	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
-	while(promptWindow.GetEffect() > 0) usleep(50);
-	HaltGui();
-	mainWindow->Remove(&promptWindow);
-	mainWindow->SetState(STATE_DEFAULT);
-	ResumeGui();
-	return choice;
-}
-
-/****************************************************************************
- * GameWindowPrompt
- *
- * Displays a prompt window to user, with information, an error message, or
- * presenting a user with a choice
- ***************************************************************************/
-int
-GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label)
-{
-	int choice = -1;
-
-	GuiWindow promptWindow(448,288);
-	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	promptWindow.SetPosition(0, -10);
-	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiSound btnSoundClick(button_click_pcm, button_click_pcm_size, SOUND_PCM);
-
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
-	GuiTrigger trigA;
-	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-
-	GuiImageData dialogBox(dialogue_box_png);
-	GuiImage dialogBoxImg(&dialogBox);
-
-	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
-	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,14);
-	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
-	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	msgTxt.SetPosition(0,-20);
-	msgTxt.SetMaxWidth(430);
-
-	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
-	GuiImage btn1Img(&btnOutline);
-	GuiImage btn1ImgOver(&btnOutlineOver);
-	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
-
-    btn1.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-    btn1.SetPosition(20, -75);
-	btn1.SetLabel(&btn1Txt);
-	btn1.SetImage(&btn1Img);
-	btn1.SetImageOver(&btn1ImgOver);
-	btn1.SetSoundOver(&btnSoundOver);
-	btn1.SetSoundClick(&btnSoundClick);
-	btn1.SetTrigger(&trigA);
-	btn1.SetState(STATE_SELECTED);
-	btn1.SetEffectGrow();
-
-	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
-	GuiImage btn2Img(&btnOutline);
-	GuiImage btn2ImgOver(&btnOutlineOver);
-	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
-	btn2.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
-	btn2.SetPosition(-20, -75);
-	btn2.SetLabel(&btn2Txt);
-	btn2.SetImage(&btn2Img);
-	btn2.SetImageOver(&btn2ImgOver);
-	btn2.SetSoundOver(&btnSoundOver);
-	btn2.SetSoundClick(&btnSoundClick);
-	btn2.SetTrigger(&trigA);
-	btn2.SetEffectGrow();
-
-	GuiText btn3Txt(btn3Label, 22, (GXColor){0, 0, 0, 255});
-	GuiImage btn3Img(&btnOutline);
-	GuiImage btn3ImgOver(&btnOutlineOver);
-	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
-	btn3.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-	btn3.SetPosition(0, -20);
-	btn3.SetLabel(&btn3Txt);
-	btn3.SetImage(&btn3Img);
-	btn3.SetImageOver(&btn3ImgOver);
-	btn3.SetSoundOver(&btnSoundOver);
-	btn2.SetSoundClick(&btnSoundClick);
-	btn3.SetTrigger(&trigA);
-	btn3.SetEffectGrow();
-
-	promptWindow.Append(&dialogBoxImg);
-	promptWindow.Append(&titleTxt);
-	promptWindow.Append(&msgTxt);
-	promptWindow.Append(&btn1);
-    promptWindow.Append(&btn2);
-    promptWindow.Append(&btn3);
-
-	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
-	HaltGui();
-	mainWindow->SetState(STATE_DISABLED);
-	mainWindow->Append(&promptWindow);
-	mainWindow->ChangeFocus(&promptWindow);
-	ResumeGui();
-
-	while(choice == -1)
-	{
-		VIDEO_WaitVSync();
-
-		if(btn1.GetState() == STATE_CLICKED)
-			choice = 1;
-		else if(btn2.GetState() == STATE_CLICKED)
-			choice = 0;
-        else if(btn3.GetState() == STATE_CLICKED)
-            choice = 2;
+		}
 	}
 
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
@@ -538,6 +317,116 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 	mainWindow->SetState(STATE_DEFAULT);
 	ResumeGui();
 	return ret2;
+}
+
+/****************************************************************************
+ * GameWindowPrompt
+ *
+ * Displays a prompt window to user, with information, an error message, or
+ * presenting a user with a choice
+ ***************************************************************************/
+int
+GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label)
+{
+	int choice = -1;
+
+	GuiWindow promptWindow(448,288);
+	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	promptWindow.SetPosition(0, -10);
+	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	GuiImageData btnOutline(button_png);
+	GuiImageData btnOutlineOver(button_over_png);
+	GuiTrigger trigA;
+	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+
+	GuiImageData dialogBox(dialogue_box_png);
+	GuiImage dialogBoxImg(&dialogBox);
+
+	GuiText titleTxt(title, 26, (GXColor){0, 0, 255, 255});
+	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	titleTxt.SetPosition(0,40);
+	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
+	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	msgTxt.SetPosition(0,-20);
+	msgTxt.SetMaxWidth(430);
+
+	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn1Img(&btnOutline);
+	GuiImage btn1ImgOver(&btnOutlineOver);
+	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
+
+    btn1.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+    btn1.SetPosition(20, -75);
+	btn1.SetLabel(&btn1Txt);
+	btn1.SetImage(&btn1Img);
+	btn1.SetImageOver(&btn1ImgOver);
+	btn1.SetSoundOver(&btnSoundOver);
+	btn1.SetTrigger(&trigA);
+	btn1.SetState(STATE_SELECTED);
+	btn1.SetEffectGrow();
+
+	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn2Img(&btnOutline);
+	GuiImage btn2ImgOver(&btnOutlineOver);
+	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
+	btn2.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+	btn2.SetPosition(-20, -75);
+	btn2.SetLabel(&btn2Txt);
+	btn2.SetImage(&btn2Img);
+	btn2.SetImageOver(&btn2ImgOver);
+	btn2.SetSoundOver(&btnSoundOver);
+	btn2.SetTrigger(&trigA);
+	btn2.SetEffectGrow();
+
+	GuiText btn3Txt(btn3Label, 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn3Img(&btnOutline);
+	GuiImage btn3ImgOver(&btnOutlineOver);
+	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
+	btn3.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+	btn3.SetPosition(0, -20);
+	btn3.SetLabel(&btn3Txt);
+	btn3.SetImage(&btn3Img);
+	btn3.SetImageOver(&btn3ImgOver);
+	btn3.SetSoundOver(&btnSoundOver);
+	btn3.SetTrigger(&trigA);
+	btn3.SetEffectGrow();
+
+	promptWindow.Append(&dialogBoxImg);
+	promptWindow.Append(&titleTxt);
+	promptWindow.Append(&msgTxt);
+	promptWindow.Append(&btn1);
+    promptWindow.Append(&btn2);
+    promptWindow.Append(&btn3);
+
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	HaltGui();
+	mainWindow->SetState(STATE_DISABLED);
+	mainWindow->Append(&promptWindow);
+	mainWindow->ChangeFocus(&promptWindow);
+	ResumeGui();
+
+	while(choice == -1)
+	{
+		VIDEO_WaitVSync();
+
+		if(btn1.GetState() == STATE_CLICKED) {
+			choice = 1;
+		}
+		else if(btn2.GetState() == STATE_CLICKED) {
+			choice = 0;
+		}
+        else if(btn3.GetState() == STATE_CLICKED) {
+            choice = 2;
+        }
+	}
+
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+	while(promptWindow.GetEffect() > 0) usleep(50);
+	HaltGui();
+	mainWindow->Remove(&promptWindow);
+	mainWindow->SetState(STATE_DEFAULT);
+	ResumeGui();
+	return choice;
 }
 
 /****************************************************************************
@@ -1149,7 +1038,7 @@ static int MenuDiscList()
 	f32 free, used, size = 0.0;
 	u32 cnt = 0, nolist;
 	char text[ISFS_MAXPATH];
-	int choice = 0;
+	int choice = 0, selectedold = 200;;
 	s32 ret;
 
 	WBFS_DiskSpace(&used, &free);
@@ -1187,42 +1076,50 @@ static int MenuDiscList()
 	GuiImageData btnhome(wiimote_home_png);
 	GuiImageData btnhomeOver(wiimote_home_over_png);
 
-	GuiSound btnSoundClick(button_click_pcm, button_click_pcm_size, SOUND_PCM);
-
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
-    GuiText titleTxt("USB ISO Loader 1.1", 24, (GXColor){255,255,255, 255});
-	titleTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	titleTxt.SetPosition(50,50);
-	titleTxt.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 35);
+    GuiText titleTxt("Select the Game", 18, (GXColor){0, 0, 255, 255});
+	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	titleTxt.SetPosition(-15,40);
 
-	GuiText gamecntTxt("30", 20, (GXColor){0, 0, 0, 255});
-	gamecntTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	gamecntTxt.SetPosition(350,50);
+    GuiText titleTxt2("you want to boot:", 18, (GXColor){0, 0, 255, 255});
+	titleTxt2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	titleTxt2.SetPosition(-5,60);
 
-	char spaceinfo[100];
-	sprintf(spaceinfo,"Used: %.2f Free: %.2f",used,free);
-	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){0, 0, 0, 255});
-	usedSpaceTxt.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	usedSpaceTxt.SetPosition(350,92);
-	usedSpaceTxt.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 30);
+    GuiText titleTxt3("Disk Space:", 20, (GXColor){0, 0, 255, 255});
+	titleTxt3.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	titleTxt3.SetPosition(220,360);
 
-GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
+    char text123[50];
+    sprintf(text123, "Free: %.1fGB",free);
+    GuiText titleTxt4(text123, 18, (GXColor){0, 0, 255, 230});
+    titleTxt4.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	titleTxt4.SetPosition(220,408);
+
+    sprintf(text123, "Used: %.1fGB",used);
+	GuiText titleTxt5(text123, 18, (GXColor){0, 0, 255, 230});
+	titleTxt5.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	titleTxt5.SetPosition(220,385);
+
+    sprintf(text123, "Total: %.1fGB",(used+free));
+	GuiText titleTxt6(text123, 18, (GXColor){0, 0, 255, 230});
+	titleTxt6.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	titleTxt6.SetPosition(220,431);
+
+    GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
 	installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage installBtnImg(&btnOutline);
 	GuiImage installBtnImgOver(&btnOutlineOver);
 	GuiButton installBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
 	installBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	installBtn.SetPosition(0, 383);
-	installBtn.SetRumble(true);
+	installBtn.SetPosition(180, 363);
 	installBtn.SetLabel(&installBtnTxt);
 	installBtn.SetImage(&installBtnImg);
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
-	installBtn.SetSoundClick(&btnSoundClick);
 	installBtn.SetTrigger(&trigA);
 	installBtn.SetEffectGrow();
 
@@ -1231,14 +1128,12 @@ GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
 	GuiImage settingsBtnImg(&btnOutline);
 	GuiImage settingsBtnImgOver(&btnOutlineOver);
 	GuiButton settingsBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-	settingsBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	settingsBtn.SetPosition(-210, 383);
+	settingsBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	settingsBtn.SetPosition(20, 383);
 	settingsBtn.SetLabel(&settingsBtnTxt);
 	settingsBtn.SetImage(&settingsBtnImg);
 	settingsBtn.SetImageOver(&settingsBtnImgOver);
 	settingsBtn.SetSoundOver(&btnSoundOver);
-	settingsBtn.SetSoundClick(&btnSoundClick);
-	settingsBtn.SetRumble(true);
 	settingsBtn.SetTrigger(&trigA);
 	settingsBtn.SetEffectGrow();
 
@@ -1246,11 +1141,10 @@ GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(240, 10);
+	poweroffBtn.SetPosition(-278, 405);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
-	poweroffBtn.SetRumble(true);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
 
@@ -1258,38 +1152,37 @@ GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
 	GuiImage exitBtnImgOver(&btnhomeOver);
 	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(150, 10);
+	exitBtn.SetPosition(62, 405);
 	exitBtn.SetImage(&exitBtnImg);
 	exitBtn.SetImageOver(&exitBtnImgOver);
 	exitBtn.SetSoundOver(&btnSoundOver);
-	exitBtn.SetSoundClick(&btnSoundClick);
-	exitBtn.SetRumble(true);
 	exitBtn.SetTrigger(&trigA);
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
 
-	GuiOptionBrowser optionBrowser(400, 256, &options);
-	optionBrowser.SetPosition(110, 115);
+	GuiOptionBrowser optionBrowser(380, 248, &options);
+	optionBrowser.SetPosition(90, 108);
 	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
-	optionBrowser.SetCol2Position(40);
+	optionBrowser.SetCol2Position(80);
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
     w.Append(&titleTxt);
-    w.Append(&usedSpaceTxt);
-	w.Append(CoverImg);
+    w.Append(&titleTxt2);
+    w.Append(&titleTxt3);
+    w.Append(&titleTxt4);
+    w.Append(&titleTxt5);
+    w.Append(&titleTxt6);
     w.Append(&poweroffBtn);
     w.Append(&installBtn);
     w.Append(&settingsBtn);
 	w.Append(&exitBtn);
-
+	w.Append(CoverImg);
 
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser);
 
 	ResumeGui();
-
-	int selectedold = 200;
 
 	while(menu == MENU_NONE)
 	{
@@ -1315,8 +1208,8 @@ GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
 		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
 			if(choice == 1)
 			{
-                SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
-                //exit(0); //zum debuggen schneller
+                //SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
+                exit(0); //zum debuggen schneller
 			} else {
 			    menu = MENU_DISCLIST;
 			    break;
@@ -1348,12 +1241,9 @@ GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
 
 	    gameSelected = optionBrowser.GetClickedOption();
 
-
-
-
             for (cnt = 0; cnt < gameCnt; cnt++) {
 
-				if ((s32) (cnt) == selectimg) {
+                if ((s32) (cnt) == selectimg) {
 					if (selectimg != selectedold){
 						w.Remove(CoverImg);
 						selectedold = selectimg;
@@ -1375,8 +1265,6 @@ GuiText installBtnTxt("Install Game", 22, (GXColor){0, 0, 0, 255});
 						w.Append(&CoverImg);*/
 					}
 				}
-
-
 
                 if ((s32) (cnt) == gameSelected) {
                         struct discHdr *header = &gameList[gameSelected];
@@ -1627,9 +1515,7 @@ static int MenuSettings()
 	sprintf(options2.name[2], "Ocarina");
 	options2.length = 3;
 
-	enterSound->Play();
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiSound btnSoundClick(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_png);
 	GuiImageData btnOutlineOver(button_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
@@ -1642,16 +1528,16 @@ static int MenuSettings()
     GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
-	GuiText titleTxt("Settings", 28, (GXColor){255, 255, 255, 255});
+    GuiText titleTxt("Settings", 28, (GXColor){0, 0, 255, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,40);
+	titleTxt.SetPosition(-15,60);
 
     GuiText backBtnTxt("Go Back", 22, (GXColor){0, 0, 0, 255});
 	backBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage backBtnImg(&btnOutline);
 	GuiImage backBtnImgOver(&btnOutlineOver);
 	GuiButton backBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-	backBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	backBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	backBtn.SetPosition(300, 363);
 	backBtn.SetLabel(&backBtnTxt);
 	backBtn.SetImage(&backBtnImg);
@@ -1749,7 +1635,6 @@ static int MenuSettings()
 
 		if(backBtn.GetState() == STATE_CLICKED)
 		{
-			exitSound->Play();
 			menu = MENU_DISCLIST;
 			break;
 
@@ -1855,6 +1740,7 @@ static int MenuCheck()
             Wpad_Init();
             WPAD_SetDataFormat(WPAD_CHAN_ALL,WPAD_FMT_BTNS_ACC_IR);
             WPAD_SetVRes(WPAD_CHAN_ALL, screenwidth, screenheight);
+            fatInitDefault();
         }
         if (ret2 < 0) {
             WindowPrompt ("ERROR:","USB-Device not found!", "ok", 0);
@@ -1864,6 +1750,7 @@ static int MenuCheck()
             Wpad_Init();
             WPAD_SetDataFormat(WPAD_CHAN_ALL,WPAD_FMT_BTNS_ACC_IR);
             WPAD_SetVRes(WPAD_CHAN_ALL, screenwidth, screenheight);
+            fatInitDefault();
         }
 
         ret2 = Disc_Init();
@@ -1951,64 +1838,19 @@ int MainMenu(int menu)
 	#endif
 
 	mainWindow = new GuiWindow(screenwidth, screenheight);
-    //background = new GuiImageData(background_png);
-    //bgImg = new GuiImage(background);
+    background = new GuiImageData(background_png);
+    bgImg = new GuiImage(background);
+	mainWindow->Append(bgImg);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
-
-	bgImg = new GuiImage(screenwidth, screenheight, (GXColor){212, 213, 216, 255});
-	bgImg->ColorStripe(10);
-	mainWindow->Append(bgImg);
-
-	enterSound = new GuiSound(enter_ogg, enter_ogg_size, SOUND_OGG);
-	enterSound->SetVolume(70);
-	exitSound = new GuiSound(exit_ogg, exit_ogg_size, SOUND_OGG);
-	exitSound->SetVolume(70);
-
-	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiSound btnSoundClick(button_click_pcm, button_click_pcm_size, SOUND_PCM);
-
-	GuiImageData bgTop(bg_top_png);
-	bgTopImg = new GuiImage(&bgTop);
-	bgTopImg->SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 35);
-	GuiImageData bgBottom(bg_bottom_png);
-	bgBottomImg = new GuiImage(&bgBottom);
-	bgBottomImg->SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-	bgBottomImg->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_IN, 35);
-
-    mainWindow->Append(bgTopImg);
-    mainWindow->Append(bgBottomImg);
-
-	GuiImageData logo(logo_png);
-	GuiImage logoImg(&logo);
-	GuiImageData logoOver(logo_over_png);
-	GuiImage logoImgOver(&logoOver);
-	//GuiText logoTxt(APPVERSION, 18, (GXColor){255, 255, 255, 255});
-	//logoTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
-	//logoTxt.SetPosition(0, 4);
-	btnLogo = new GuiButton(logoImg.GetWidth(), logoImg.GetHeight());
-	btnLogo->SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-	btnLogo->SetPosition(220, -45);
-	btnLogo->SetImage(&logoImg);
-	btnLogo->SetImageOver(&logoImgOver);
-	btnLogo->SetEffect(EFFECT_SLIDE_BOTTOM | EFFECT_SLIDE_IN, 35);
-	btnLogo->SetEffectGrow();
-	//btnLogo->SetLabel(&logoTxt);
-	btnLogo->SetSoundOver(&btnSoundOver);
-	btnLogo->SetSoundClick(&btnSoundClick);
-	btnLogo->SetTrigger(&trigA);
-	btnLogo->SetUpdateCallback(WindowCredits);
-
-	mainWindow->Append(btnLogo);
-
 	ResumeGui();
 
-    /*bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
+    bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG);
 	bgMusic->SetVolume(80);
 	bgMusic->SetLoop(1); //loop music
-	bgMusic->Play(); // startup music*/
+	bgMusic->Play(); // startup music
 
 	while(currentMenu != MENU_EXIT)
 	{
@@ -2035,20 +1877,16 @@ int MainMenu(int menu)
 		}
 	}
 
-    //bgMusic->Stop();
-	//delete bgMusic;
+    bgMusic->Stop();
+	delete bgMusic;
 	delete bgImg;
-	delete enterSound;
-	delete exitSound;
-	delete bgTopImg;
-    delete bgBottomImg;
-	delete btnLogo;
 	delete mainWindow;
 	delete pointer[0];
 	delete pointer[1];
 	delete pointer[2];
 	delete pointer[3];
 	mainWindow = NULL;
+	fatUnmount("sd");
     ExitApp();
     //boot game
     s32 ret;
