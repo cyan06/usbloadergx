@@ -109,7 +109,7 @@ int loadimg(char * filename)
 					}
 			}
 	} else {
-    return 0
+    return 0;
 	}
 	/* Free image context */
 	PNGU_ReleaseImageContext(ctx);
