@@ -69,7 +69,7 @@ static int showProgress = 1;
 int loadimg(char * filename)
 {
 	PNGUPROP imgProp;
-	IMGCTX ctx;
+	IMGCTX ctx = NULL;
 
 	s32 res;
 
@@ -79,8 +79,7 @@ int loadimg(char * filename)
 
 	if (!ctx)
 	{
-	   //printf("\n[+] ERROR: Cannot load \"%s\"!\n",filetemp);
-       return 0;
+       	ctx = PNGU_SelectImageFromBuffer("../sources/images/nocover.png");
 	}
 	res = PNGU_GetImageProperties(ctx, &imgProp);
 
