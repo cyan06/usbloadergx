@@ -346,7 +346,7 @@ if(arrowDownBtn->GetState() == STATE_HELD && arrowDownBtn->GetStateChan() == t->
 			selectedItem = i;
 		}
 	}
-
+/*
 //Controll with accelometer
 vec3w_t accel = WPAD_Accelometer(0);
 
@@ -391,7 +391,7 @@ else if (accel.x <=0)
 		arrowUpBtn->ResetState();
 }
 
-
+*/
 
 	// pad/joystick navigation
 	if(!focus)
