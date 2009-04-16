@@ -23,22 +23,24 @@ enum {
 	tchin,
 	kor
 };
+
 enum {
     discdefault,
 	pal50,
 	pal60,
 	ntsc
 };
+
 enum {
-	off = 0,
-	on,
+    on,
+	off,
 };
+
 struct SSettings {
     int		video;
     int		language;
-	int		ocarina;
+    int     ocarina;
 };
-
 extern struct SSettings Settings;
 
 void ExitApp();

@@ -58,6 +58,7 @@ DefaultSettings()
 {
 	Settings.video = discdefault;
 	Settings.language = ConsoleLangDefault;
+	Settings.ocarina = off;
 }
 
 int
@@ -70,12 +71,15 @@ main(int argc, char *argv[])
 		printf("ERROR: cIOS could not be loaded!");
 		SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
 	}
-	fatInitDefault();
+
 	//Sys_Init();
 	//Video_SetMode();
 	//Con_Init(CONSOLE_XCOORD, CONSOLE_YCOORD, CONSOLE_WIDTH, CONSOLE_HEIGHT);
-	Wpad_Init();
-
+	
+	fatInitDefault();	
+    Wpad_Init();
+	PAD_Init();
+	
 	InitVideo(); // Initialise video
 	InitAudio(); // Initialize audio
 

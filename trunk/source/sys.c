@@ -26,7 +26,7 @@ void __Sys_PowerCallback(void)
 void Sys_Init(void)
 {
 	/* Initialize video subsytem */
-	VIDEO_Init();
+	//VIDEO_Init();
 
 	/* Set RESET/POWER button callback */
 	SYS_SetResetCallback(__Sys_ResetCallback);

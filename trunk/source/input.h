@@ -19,5 +19,6 @@ extern int rumbleRequest[4];
 
 void ShutoffRumble();
 void DoRumble(int i);
+vec3w_t WPAD_Accelometer(u8 chan);
 
 #endif

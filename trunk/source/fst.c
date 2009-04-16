@@ -27,6 +27,7 @@
 #include <malloc.h>
 #include <sys/unistd.h>
 #include <fat.h>
+#include <sdcard/wiisd_io.h>
 #include "ogc/ipc.h"
 #include "fst.h"
 #include "dvd_broadway.h"
@@ -36,7 +37,7 @@
 #define FSTDIRTYPE 1
 #define FSTFILETYPE 0
 #define ENTRYSIZE 0xC
-#define FILEDIR	"fat0:/codes"
+#define FILEDIR	"SD:/codes"
 
 #define MAX_FILENAME_LEN	128
 
@@ -44,7 +45,7 @@
 static vu32 dvddone = 0;
 
 
-// Real basic 
+// Real basic
 u32 do_sd_code(char *filename)
 {
 	FILE *fp;
@@ -52,36 +53,35 @@ u32 do_sd_code(char *filename)
 	u32 filesize;
 	u32 ret;
 	char filepath[128];
-	
-	ret = fatInitDefault();
+
+	__io_wiisd.startup();
+	ret = fatMountSimple("SD", &__io_wiisd);
+
 	if (!ret) {
-		printf("[+] SD Error\n");
-		sleep (2);
 		return 0;
 	}
 
 	fflush(stdout);
-	
-	sprintf(filepath, FILEDIR "/%s", filename);
-	filepath[18] = 0x2E;
-	filepath[19] = 0x67;
-	filepath[20] = 0x63;
-	filepath[21] = 0x74;
-	filepath[22] = 0;
 
+	sprintf(filepath, FILEDIR "/%s", filename);
+	filepath[16] = 0x2E;
+	filepath[17] = 0x67;
+	filepath[18] = 0x63;
+	filepath[19] = 0x74;
+	filepath[20] = 0;
 	//printf("filename %s\n",filepath);
-	
+
 	fp = fopen(filepath, "rb");
 	if (!fp) {
-		printf("[+] No SD codes found\n");
-		sleep(2);
+		fatUnmount("SD");
+	__io_wiisd.shutdown();
 		return 0;
 	}
 
 	fseek(fp, 0, SEEK_END);
 	filesize = ftell(fp);
 	fseek(fp, 0, SEEK_SET);
-	
+
 	filebuff = (u8*) malloc (filesize);
 	if(filebuff == 0){
 		fclose(fp);
@@ -90,36 +90,25 @@ u32 do_sd_code(char *filename)
 	}
 
 	ret = fread(filebuff, 1, filesize, fp);
-	if(ret != filesize){	
-		printf("[+] SD Code Error\n");
+	if(ret != filesize){
 		free(filebuff);
 		fclose(fp);
-		sleep(2);
+		fatUnmount("SD");
+	__io_wiisd.shutdown();
 		return 0;
 	}
-        printf("[+] SD Codes found.\n");
-        printf("    Press A button to apply codes.\n");
-	printf("    Press B button to skip codes.\n\n\n");
-	/* Wait for user answer */
-	for (;;) {
-		u32 buttons = Wpad_WaitButtons();
 
-		/* A button */
-		if (buttons & WPAD_BUTTON_A)
-                    memcpy((void*)0x800027E8,filebuff,filesize);
-                    *(vu8*)0x80001807 = 0x01;
-                    break;
+        memcpy((void*)0x800027E8,filebuff,filesize);
+        *(vu8*)0x80001807 = 0x01;
 
-		/* B button */
-		if (buttons & WPAD_BUTTON_B)
-                    break;
-	}
-	
-	
+
 
 	free(filebuff);
 	fclose(fp);
-	sleep(2);
+
+	fatUnmount("SD");
+	__io_wiisd.shutdown();
+
 	return 1;
 }
 

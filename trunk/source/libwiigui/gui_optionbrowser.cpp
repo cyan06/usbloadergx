@@ -9,6 +9,12 @@
  ***************************************************************************/
 
 #include "gui.h"
+#include "../wpad.h"
+#include "../input.h"
+
+#define BROWSER_LIST		8
+
+vec3b_t accel;
 
 /**
  * Constructor for the GuiOptionBrowser class.
@@ -21,13 +27,10 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	selectable = true;
 	listOffset = this->FindMenuItem(-1, 1);
 	selectedItem = 0;
-	focus = 0; // allow focus
+	focus = 1; // allow focus
 
 	trigA = new GuiTrigger;
 	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-
-	trigHeldA = new GuiTrigger;
-    trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
 	btnSoundOver = new GuiSound(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
@@ -62,11 +65,11 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	arrowUpBtn->SetParent(this);
 	arrowUpBtn->SetImage(arrowUpImg);
 	arrowUpBtn->SetImageOver(arrowUpOverImg);
+	arrowUpBtn->SetImageHold(arrowUpOverImg);
 	arrowUpBtn->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
     arrowUpBtn->SetSelectable(false);
-    arrowUpBtn->SetClickable(false);
     arrowUpBtn->SetHoldable(true);
-	arrowUpBtn->SetTrigger(trigHeldA);
+	arrowUpBtn->SetTrigger(trigA);
 	arrowUpBtn->SetSoundOver(btnSoundOver);
 	arrowUpBtn->SetSoundClick(btnSoundClick);
 
@@ -74,11 +77,11 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	arrowDownBtn->SetParent(this);
 	arrowDownBtn->SetImage(arrowDownImg);
 	arrowDownBtn->SetImageOver(arrowDownOverImg);
+	arrowDownBtn->SetImageHold(arrowDownOverImg);
 	arrowDownBtn->SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
-	arrowUpBtn->SetSelectable(false);
-	arrowUpBtn->SetClickable(false);
-	arrowUpBtn->SetHoldable(true);
-	arrowDownBtn->SetTrigger(trigHeldA);
+	arrowDownBtn->SetSelectable(false);
+	arrowDownBtn->SetHoldable(true);
+	arrowDownBtn->SetTrigger(trigA);
 	arrowDownBtn->SetSoundOver(btnSoundOver);
 	arrowDownBtn->SetSoundClick(btnSoundClick);
 
@@ -86,16 +89,17 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	scrollbarBoxBtn->SetParent(this);
 	scrollbarBoxBtn->SetImage(scrollbarBoxImg);
 	scrollbarBoxBtn->SetImageOver(scrollbarBoxOverImg);
+	scrollbarBoxBtn->SetImageHold(scrollbarBoxOverImg);
 	scrollbarBoxBtn->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
-	scrollbarBoxBtn->SetMinY(0);
-    scrollbarBoxBtn->SetMaxY(304);
-	scrollbarBoxBtn->SetClickable(false);
+//	scrollbarBoxBtn->SetMinY(0);
+//  scrollbarBoxBtn->SetMaxY(304);
 	scrollbarBoxBtn->SetSelectable(false);
 	scrollbarBoxBtn->SetHoldable(true);
+	scrollbarBoxBtn->SetTrigger(trigA);
+
 
 	for(int i=0; i<PAGESIZE; i++)
 	{
-		//optionTxt[i] = new GuiText(options->name[i], 18, (GXColor){0, 156, 255, 0xff});
 		optionTxt[i] = new GuiText(options->name[i], 18, (GXColor){0, 0, 0, 0xff});
 		optionTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		optionTxt[i]->SetPosition(8,0);
@@ -107,7 +111,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 
 		optionBg[i] = new GuiImage(bgOptionsEntry);
 
-		optionBtn[i] = new GuiButton(512,30);
+		optionBtn[i] = new GuiButton(370,30);
 		optionBtn[i]->SetParent(this);
 		optionBtn[i]->SetLabel(optionTxt[i], 0);
 		optionBtn[i]->SetLabel(optionVal[i], 1);
@@ -275,7 +279,8 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 	if(state == STATE_DISABLED || !t)
 		return;
 
-	int next, prev;
+	//int next, prev;
+	int next, prev, lang = options->length;
 
 	// update the location of the scroll box based on the position in the option list
 	int position = 136*(listOffset+selectedItem)/options->length;
@@ -303,8 +308,8 @@ if(arrowDownBtn->GetState() == STATE_HELD && arrowDownBtn->GetStateChan() == t->
                 if(!this->IsFocused())
                         ((GuiWindow *)this->GetParent())->ChangeFocus(this);
         }
-		
-		
+
+
 	for(int i=0; i<PAGESIZE; i++)
 	{
 		if(next >= 0)
@@ -342,9 +347,58 @@ if(arrowDownBtn->GetState() == STATE_HELD && arrowDownBtn->GetStateChan() == t->
 		}
 	}
 
+//Controll with accelometer
+vec3w_t accel = WPAD_Accelometer(0);
+
+if (accel.x >=100)
+{
+		next = this->FindMenuItem(optionIndex[selectedItem], 1);
+
+		if(next >= 0)
+		{
+			if(selectedItem == PAGESIZE-1)
+			{
+				// move list down by 1
+				listOffset = this->FindMenuItem(listOffset, 1);
+			}
+			else if(optionBtn[selectedItem+1]->IsVisible())
+			{
+				optionBtn[selectedItem]->ResetState();
+				optionBtn[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
+				selectedItem++;
+			}
+		}
+		arrowDownBtn->ResetState();
+}
+else if (accel.x <=0)
+{
+		prev = this->FindMenuItem(optionIndex[selectedItem], -1);
+
+		if(prev >= 0)
+		{
+			if(selectedItem == 0)
+			{
+				// move list up by 1
+				listOffset = prev;
+			}
+			else
+			{
+				optionBtn[selectedItem]->ResetState();
+				optionBtn[selectedItem-1]->SetState(STATE_SELECTED, t->chan);
+				selectedItem--;
+			}
+		}
+		arrowUpBtn->ResetState();
+}
+
+
+
 	// pad/joystick navigation
 	if(!focus)
 		return; // skip navigation
+
+
+
 
 	if(t->Down() || arrowDownBtn->GetState() == STATE_CLICKED)
 	{
@@ -386,6 +440,38 @@ if(arrowDownBtn->GetState() == STATE_HELD && arrowDownBtn->GetStateChan() == t->
 		}
 		arrowUpBtn->ResetState();
 	}
+
+	    if (scrollbarBoxBtn->GetState() == STATE_CLICKED && lang > BROWSER_LIST)
+    {
+        int positiony = t->wpad.ir.y;
+
+        if (positiony > 0) {
+
+        int nselectedItem = (positiony-110) * lang / (lang*30+3);
+        if (nselectedItem < 0) {
+            nselectedItem = 0;
+        } else if (nselectedItem > lang-BROWSER_LIST) {
+            nselectedItem = lang-BROWSER_LIST;
+        }
+        optionBtn[selectedItem]->ResetState();
+        selectedItem = nselectedItem;
+        optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);
+        listOffset = selectedItem;
+
+        }
+
+        WPAD_ScanPads();
+        u8 cnt, buttons = NULL;
+        /* Get pressed buttons */
+        for (cnt = 0; cnt < 4; cnt++)
+            buttons |= WPAD_ButtonsHeld(cnt);
+        if (buttons == WPAD_BUTTON_A) {
+
+        } else {
+            scrollbarBoxBtn->ResetState();
+        }
+
+    }
 
 	if(updateCB)
 		updateCB(this);

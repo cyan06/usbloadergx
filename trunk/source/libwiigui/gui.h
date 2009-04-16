@@ -51,7 +51,7 @@ extern FreeTypeGX *fontSystem;
 #define SCROLL_INITIAL_DELAY 	20
 #define SCROLL_LOOP_DELAY 		3
 #define PAGESIZE	 			8
-#define MAX_OPTIONS 			150
+#define MAX_OPTIONS 			30
 
 typedef void (*UpdateCallback)(void * e);
 
@@ -220,11 +220,11 @@ class GuiElement
 		//!\param e Pointer to parent element
 		void SetParent(GuiElement * e);
 		//!Gets the element's parent
-        //!\return Pointer to parent element
+		//!\return Pointer to parent element
 		GuiElement * GetParent();
-        //!Gets the current leftmost coordinate of the element
-        //!Considers horizontal alignment, x offset, width, and parent element's GetLeft() / GetWidth() values
-        //!\return left coordinate
+		//!Gets the current leftmost coordinate of the element
+		//!Considers horizontal alignment, x offset, width, and parent element's GetLeft() / GetWidth() values
+		//!\return left coordinate
 		int GetLeft();
 		//!Gets the current topmost coordinate of the element
 		//!Considers vertical alignment, y offset, height, and parent element's GetTop() / GetHeight() values
@@ -489,6 +489,7 @@ class GuiImageData
 		//!Converts the image data to RGBA8 - expects PNG format
 		//!\param i Image data
 		GuiImageData(const u8 * i);
+		GuiImageData(char *file);
 		//!Destructor
 		~GuiImageData();
 		//!Gets a pointer to the image data
@@ -816,6 +817,5 @@ class GuiOptionBrowser : public GuiElement
 		GuiSound * btnSoundOver;
 		GuiSound * btnSoundClick;
 		GuiTrigger * trigA;
-		GuiTrigger * trigHeldA;
 };
 #endif

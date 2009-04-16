@@ -113,3 +113,10 @@ s8 WPAD_Stick(u8 chan, u8 right, int axis)
 
 	return (s8)(val * 128.0f);
 }
+
+vec3w_t WPAD_Accelometer(u8 chan)
+{
+vec3w_t accel;
+WPAD_Accel(chan, &accel);
+return accel;
+}

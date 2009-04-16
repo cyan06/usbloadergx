@@ -57,6 +57,55 @@ GuiImageData::GuiImageData(const u8 * img)
 }
 
 /**
+ * Constructor for the GuiImageData class.
+ */
+GuiImageData::GuiImageData(char file[])
+{
+	data = NULL;
+	width = 0;
+	height = 0;
+
+	if(file)
+	{
+		PNGUPROP imgProp;
+
+		char filepath[60];// = NULL;
+		snprintf(filepath,sizeof(filepath),"%s.png",file);
+		IMGCTX ctx = PNGU_SelectImageFromDevice(filepath);
+	
+		if(!ctx){
+					return;}
+
+		int res = PNGU_GetImageProperties(ctx, &imgProp);
+
+		if(res == PNGU_OK)
+		{
+			int len = imgProp.imgWidth * imgProp.imgHeight * 4;
+			if(len%32) len += (32-len%32);
+			data = (u8 *)memalign (32, len);
+//exit(0);
+			if(data)
+			{
+				res = PNGU_DecodeTo4x4RGBA8 (ctx, imgProp.imgWidth, imgProp.imgHeight, data, 255);
+
+				if(res == PNGU_OK)
+				{
+					width = imgProp.imgWidth;
+					height = imgProp.imgHeight;
+					DCFlushRange(data, len);
+				}
+				else
+				{
+					free(data);
+					data = NULL;
+				}
+			}
+		}
+		PNGU_ReleaseImageContext (ctx);
+	}
+}
+
+/**
  * Destructor for the GuiImageData class.
  */
 GuiImageData::~GuiImageData()

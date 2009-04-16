@@ -1,15 +1,21 @@
 #include <stdio.h>
 #include <ogcsys.h>
+#include <string.h>
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #include "apploader.h"
 #include "wdvd.h"
-#include "patchcode.h" /*OCARINA*/
-#include "kenobiwii.h" /*OCARINA*/
+#include "wpad.h"
+#include "patchcode.h"
+#include "kenobiwii.h" /*FISHEARS*/
 
-/*KENOBI! OCARINA*/
+/*KENOBI! - FISHEARS*/
 extern const unsigned char kenobiwii[];
 extern const int kenobiwii_size;
-/*KENOBI! OCARINA*/
+/*KENOBI! - FISHEARS*/
 
 /* Apploader function pointers */
 typedef int   (*app_main)(void **dst, int *size, int *offset);
@@ -33,7 +39,7 @@ static void __noprint(const char *fmt, ...)
 }
 
 
-s32 Apploader_Run(entry_point *entry, u8 ocarina)
+s32 Apploader_Run(entry_point *entry, u32 cheat)
 {
 	app_entry appldr_entry;
 	app_init  appldr_init;
@@ -65,21 +71,20 @@ s32 Apploader_Run(entry_point *entry, u8 ocarina)
 	/* Initialize apploader */
 	appldr_init(__noprint);
 
-
-	if (ocarina)
+    if (cheat)
     {
-		/*HOOKS STUFF - Ocarina*/
+		/*HOOKS STUFF - FISHEARS*/
 		memset((void*)0x80001800,0,kenobiwii_size);
 		memcpy((void*)0x80001800,kenobiwii,kenobiwii_size);
 		DCFlushRange((void*)0x80001800,kenobiwii_size);
 		hooktype = 1;
 		memcpy((void*)0x80001800, (char*)0x80000000, 6);	// For WiiRD
-		/*HOOKS STUFF - Ocarina*/
+		/*HOOKS STUFF - FISHEARS*/
 	}
 
 	for (;;) {
 		void *dst = NULL;
-		s32   len = 0, offset = 0;
+		int len = 0, offset = 0;
 
 		/* Run apploader main function */
 		ret = appldr_main(&dst, &len, &offset);
@@ -88,18 +93,22 @@ s32 Apploader_Run(entry_point *entry, u8 ocarina)
 
 		/* Read data from DVD */
 		WDVD_Read(dst, len, (u64)(offset << 2));
-		
-		if (ocarina)
+
+        if (cheat)
 		{
+		    /*GAME HOOK - FISHEARS*/
 			dogamehooks(dst,len);
 			vidolpatcher(dst,len);
 		}
-        //DCFlushRange(dst, len);
+
+		/*LANGUAGE PATCH - FISHEARS*/
 		langpatcher(dst,len);
 	}
-
 	/* Set entry point from apploader */
 	*entry = appldr_final();
 
 	return 0;
 }
+#ifdef __cplusplus
+}
+#endif

@@ -47,8 +47,8 @@ s32  Disc_Wait(void);
 s32  Disc_SetUSB(u8 *);
 s32  Disc_ReadHeader(void *);
 s32  Disc_IsWii(void);
-s32  Disc_BootPartition(u64, u32, u8);
-s32  Disc_WiiBoot(u32, u8);
+s32  Disc_BootPartition(u64, u32, u32);
+s32  Disc_WiiBoot(u32, u32);
 
 #ifdef __cplusplus
 }

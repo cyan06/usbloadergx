@@ -9,8 +9,8 @@
 #include "apploader.h"
 #include "disc.h"
 #include "video.h"
-#include "fst.h"
 #include "wdvd.h"
+#include "fst.h"
 
 /* Constants */
 #define PTABLE_OFFSET	0x40000
@@ -20,6 +20,7 @@
 static u32 *buffer = (u32 *)0x93000000;
 static u8  *diskid = (u8  *)0x80000000;
 static char gameid[8];
+
 
 void __Disc_SetLowMem(void)
 {
@@ -66,11 +67,10 @@ void __Disc_SetVMode(u32 videoselected)
 		vmode_reg = 0;
 		break;
 	}
-	}
 
-/*	// Select video mode 
+	/* Select video mode */
 	switch(diskid[3]) {
-	// PAL 
+	/* PAL */
 	case 'D':
 	case 'F':
 	case 'P':
@@ -83,7 +83,7 @@ void __Disc_SetVMode(u32 videoselected)
 
 		break;
 
-	// NTSC or unknown 
+	/* NTSC or unknown */
 	case 'E':
 	case 'J':
 		if (tvmode != CONF_VIDEO_NTSC) {
@@ -110,8 +110,7 @@ void __Disc_SetVMode(u32 videoselected)
         progressive = (CONF_GetProgressiveScan() > 0) && VIDEO_HaveComponentCable();
         vmode     = (progressive) ? &TVNtsc480Prog : &TVNtsc480IntDf;
         break;
-    }*/
-	
+    }
 	/* Set video mode register */
 	*(vu32 *)0x800000CC = vmode_reg;
 
@@ -245,7 +244,7 @@ s32 Disc_IsWii(void)
 	return 0;
 }
 
-s32 Disc_BootPartition(u64 offset, u32 videoselected, u8 ocarina)
+s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat)
 {
 	entry_point p_entry;
 
@@ -257,7 +256,7 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u8 ocarina)
 		return ret;
 
 	/* Run apploader */
-	ret = Apploader_Run(&p_entry, ocarina);
+	ret = Apploader_Run(&p_entry, cheat);
 	if (ret < 0)
 		return ret;
 
@@ -270,14 +269,14 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u8 ocarina)
 	/* Set time */
 	__Disc_SetTime();
 
-	/* ocarina */
-//	if (ocarina)
-//	{
-		memset(gameid, 0, 8);
-		memcpy(gameid, (char*)0x80000000, 6);
-		do_sd_code(gameid);
-//	}
-	/* ocarina */
+	if (cheat == 1) {
+    /* OCARINA STUFF - FISHEARS*/
+    memset(gameid, 0, 8);
+	memcpy(gameid, (char*)0x80000000, 6);
+	do_sd_code(gameid);
+    /* OCARINA STUFF - FISHEARS*/
+	}
+
 	/* Disconnect Wiimote */
     WPAD_Flush(0);
     WPAD_Disconnect(0);
@@ -292,7 +291,7 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u8 ocarina)
 	return 0;
 }
 
-s32 Disc_WiiBoot(u32 videoselected, u8 ocarina)
+s32 Disc_WiiBoot(u32 videoselected, u32 cheat)
 {
 	u64 offset;
 	s32 ret;
@@ -303,6 +302,5 @@ s32 Disc_WiiBoot(u32 videoselected, u8 ocarina)
 		return ret;
 
 	/* Boot partition */
-	return Disc_BootPartition(offset, videoselected, ocarina);
+	return Disc_BootPartition(offset, videoselected, cheat);
 }
-
