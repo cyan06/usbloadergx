@@ -41,6 +41,7 @@ struct SSettings {
     int		video;
     int		language;
     int     ocarina;
+    int     vpatch;
 };
 extern struct SSettings Settings;
 

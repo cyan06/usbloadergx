@@ -40,15 +40,14 @@ void __Disc_SetLowMem(void)
 	DCFlushRange((void *)0x80000000, 0x3F00);
 }
 
-void __Disc_SetVMode(u32 videoselected)
+void __Disc_SetVMode(u32 videoselected, u8 videopatch)
 {
 	GXRModeObj *vmode = NULL;
 
 	u32 progressive, tvmode, vmode_reg = 0;
 
 
-    switch (videoselected) {
-    case 0:
+
 	/* Get video mode configuration */
 	progressive = (CONF_GetProgressiveScan() > 0) && VIDEO_HaveComponentCable();
 	tvmode      =  CONF_GetVideo();
@@ -67,6 +66,10 @@ void __Disc_SetVMode(u32 videoselected)
 		vmode_reg = 0;
 		break;
 	}
+
+	if (videopatch == 0) {
+    switch (videoselected) {
+    case 0:
 
 	/* Select video mode */
 	switch(diskid[3]) {
@@ -129,6 +132,7 @@ void __Disc_SetVMode(u32 videoselected)
             vmode     = VIDEO_GetPreferredMode(NULL);
             break;
             }
+	}
 	/* Set video mode register */
 	*(vu32 *)0x800000CC = vmode_reg;
 
@@ -262,7 +266,7 @@ s32 Disc_IsWii(void)
 	return 0;
 }
 
-s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat)
+s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat, u8 videopatch)
 {
 	entry_point p_entry;
 
@@ -274,7 +278,7 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat)
 		return ret;
 
 	/* Run apploader */
-	ret = Apploader_Run(&p_entry, cheat);
+	ret = Apploader_Run(&p_entry, cheat, videopatch);
 	if (ret < 0)
 		return ret;
 
@@ -282,7 +286,7 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat)
 	__Disc_SetLowMem();
 
 	/* Set an appropiate video mode */
-	__Disc_SetVMode(videoselected);
+	__Disc_SetVMode(videoselected, videopatch);
 
 	/* Set time */
 	__Disc_SetTime();
@@ -309,7 +313,7 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat)
 	return 0;
 }
 
-s32 Disc_WiiBoot(u32 videoselected, u32 cheat)
+s32 Disc_WiiBoot(u32 videoselected, u32 cheat, u8 videopatch)
 {
 	u64 offset;
 	s32 ret;
@@ -320,5 +324,5 @@ s32 Disc_WiiBoot(u32 videoselected, u32 cheat)
 		return ret;
 
 	/* Boot partition */
-	return Disc_BootPartition(offset, videoselected, cheat);
+	return Disc_BootPartition(offset, videoselected, cheat, videopatch);
 }

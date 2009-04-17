@@ -56,6 +56,7 @@ void
 DefaultSettings()
 {
 	Settings.video = discdefault;
+	Settings.vpatch = off;
 	Settings.language = ConsoleLangDefault;
 	Settings.ocarina = off;
 }

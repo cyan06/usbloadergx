@@ -5,6 +5,6 @@
 typedef void (*entry_point)(void);
 
 /* Prototypes */
-s32 Apploader_Run(entry_point *, u32);
+s32 Apploader_Run(entry_point *, u32, u8);
 
 #endif

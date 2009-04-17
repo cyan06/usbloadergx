@@ -1495,9 +1495,10 @@ static int MenuSettings()
 
 	OptionList options2;
 	sprintf(options2.name[0], "Video Mode");
-	sprintf(options2.name[1], "Language");
-	sprintf(options2.name[2], "Ocarina");
-	options2.length = 3;
+	sprintf(options2.name[1], "Video Patch");
+	sprintf(options2.name[2], "Language");
+	sprintf(options2.name[3], "Ocarina");
+	options2.length = 4;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(settings_menu_button_png);
@@ -1589,6 +1590,8 @@ static int MenuSettings()
 			Settings.language = 0;
         if(Settings.ocarina  > 1)
 			Settings.ocarina = 0;
+        if(Settings.vpatch  > 1)
+			Settings.vpatch = 0;
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
@@ -1596,20 +1599,23 @@ static int MenuSettings()
 		else if (Settings.video == pal60) sprintf (options2.value[0],"Force PAL60");
 		else if (Settings.video == ntsc) sprintf (options2.value[0],"Force NTSC");
 
-		if (Settings.language == ConsoleLangDefault) sprintf (options2.value[1],"Console Default");
-		else if (Settings.language == jap) sprintf (options2.value[1],"Japanese");
-		else if (Settings.language == ger) sprintf (options2.value[1],"German");
-		else if (Settings.language == eng) sprintf (options2.value[1],"English");
-		else if (Settings.language == fren) sprintf (options2.value[1],"French");
-		else if (Settings.language == esp) sprintf (options2.value[1],"Spanish");
-        else if (Settings.language == it) sprintf (options2.value[1],"Italian");
-		else if (Settings.language == dut) sprintf (options2.value[1],"Dutch");
-		else if (Settings.language == schin) sprintf (options2.value[1],"S. Chinese");
-		else if (Settings.language == tchin) sprintf (options2.value[1],"T. Chinese");
-		else if (Settings.language == kor) sprintf (options2.value[1],"Korean");
+		if (Settings.language == ConsoleLangDefault) sprintf (options2.value[2],"Console Default");
+		else if (Settings.language == jap) sprintf (options2.value[2],"Japanese");
+		else if (Settings.language == ger) sprintf (options2.value[2],"German");
+		else if (Settings.language == eng) sprintf (options2.value[2],"English");
+		else if (Settings.language == fren) sprintf (options2.value[2],"French");
+		else if (Settings.language == esp) sprintf (options2.value[2],"Spanish");
+        else if (Settings.language == it) sprintf (options2.value[2],"Italian");
+		else if (Settings.language == dut) sprintf (options2.value[2],"Dutch");
+		else if (Settings.language == schin) sprintf (options2.value[2],"S. Chinese");
+		else if (Settings.language == tchin) sprintf (options2.value[2],"T. Chinese");
+		else if (Settings.language == kor) sprintf (options2.value[2],"Korean");
 
-        if (Settings.ocarina == on) sprintf (options2.value[2],"on");
-		else if (Settings.ocarina == off) sprintf (options2.value[2],"off");
+        if (Settings.ocarina == on) sprintf (options2.value[3],"ON");
+		else if (Settings.ocarina == off) sprintf (options2.value[3],"OFF");
+
+        if (Settings.vpatch == on) sprintf (options2.value[1],"ON");
+		else if (Settings.vpatch == off) sprintf (options2.value[1],"OFF");
 
 		ret = optionBrowser2.GetClickedOption();
 
@@ -1620,9 +1626,12 @@ static int MenuSettings()
 				break;
 
 			case 1:
-				Settings.language++;
+				Settings.vpatch++;
 				break;
             case 2:
+				Settings.language++;
+				break;
+            case 3:
 				Settings.ocarina++;
 				break;
 		}
@@ -1981,8 +1990,24 @@ int MainMenu(int menu)
                         break;
     }
 
+    u8 videopatch = 0;
+    switch(Settings.ocarina)
+    {
+                        case on:
+                                videopatch = 1;
+                        break;
 
-    ret = Disc_WiiBoot(videoselected, cheat);
+                        case off:
+                                videopatch = 0;
+                        break;
+
+                        default:
+                                videopatch = 1;
+                        break;
+    }
+
+
+    ret = Disc_WiiBoot(videoselected, cheat, videopatch);
     if (ret < 0) {
         printf("    ERROR: BOOT ERROR! (ret = %d)\n", ret);
         SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
