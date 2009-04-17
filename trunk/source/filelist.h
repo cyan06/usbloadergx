@@ -143,4 +143,13 @@ extern const u32	player3_grab_png_size;
 extern const u8		player4_grab_png[];
 extern const u32	player4_grab_png_size;
 
+extern const u8		battery_bar_png[];
+extern const u32	battery_bar_png_size;
+
+extern const u8		battery_red_png[];
+extern const u32	battery_red_png_size;
+
+extern const u8		battery_png[];
+extern const u32	battery_png_size;
+
 #endif

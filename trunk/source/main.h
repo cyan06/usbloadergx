@@ -37,6 +37,7 @@ enum {
 	off,
 };
 
+
 struct SSettings {
     int		video;
     int		language;

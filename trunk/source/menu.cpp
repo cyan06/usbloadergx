@@ -889,6 +889,9 @@ static int MenuInstall()
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
 	GuiImageData btnhomeOver(menu_button_over_png);
+    GuiImageData battery(battery_png);
+	GuiImageData batteryRed(battery_red_png);
+	GuiImageData batteryBar(battery_bar_png);
 
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -897,7 +900,7 @@ static int MenuInstall()
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(-278, 405);
+	poweroffBtn.SetPosition(280, 355);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -909,17 +912,55 @@ static int MenuInstall()
 	GuiImage exitBtnImgOver(&btnhomeOver);
 	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(62, 405);
+	exitBtn.SetPosition(240, 367);
 	exitBtn.SetImage(&exitBtnImg);
 	exitBtn.SetImageOver(&exitBtnImgOver);
 	exitBtn.SetSoundOver(&btnSoundOver);
 	exitBtn.SetTrigger(&trigA);
 	exitBtn.SetEffectGrow();
 
+	#ifdef HW_RVL
+	int i = 0, level;
+	GuiImage * batteryImg[4];
+	GuiImage * batteryBarImg[4];
+	GuiButton * batteryBtn[4];
+
+	for(i=0; i < 4; i++)
+	{
+
+		batteryImg[i] = new GuiImage(&battery);
+		batteryImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+		batteryImg[i]->SetPosition(0, 0);
+		batteryBarImg[i] = new GuiImage(&batteryBar);
+		batteryBarImg[i]->SetTile(0);
+		batteryBarImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+		batteryBarImg[i]->SetPosition(3, 0);
+
+		batteryBtn[i] = new GuiButton(28, 12);
+		batteryBtn[i]->SetImage(batteryImg[i]);
+		batteryBtn[i]->SetIcon(batteryBarImg[i]);
+		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+		batteryBtn[i]->SetRumble(false);
+		batteryBtn[i]->SetAlpha(90);
+	}
+
+
+	batteryBtn[0]->SetPosition(-50, 420);
+	batteryBtn[1]->SetPosition(-10, 420);
+	batteryBtn[2]->SetPosition(30, 420);
+	batteryBtn[3]->SetPosition(70, 420);
+	#endif
+
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
     w.Append(&poweroffBtn);
 	w.Append(&exitBtn);
+    #ifdef HW_RVL
+	w.Append(batteryBtn[0]);
+	w.Append(batteryBtn[1]);
+	w.Append(batteryBtn[2]);
+	w.Append(batteryBtn[3]);
+	#endif
 
     mainWindow->Append(&w);
 
@@ -928,6 +969,32 @@ static int MenuInstall()
 	while(menu == MENU_NONE)
 	{
 	    VIDEO_WaitVSync ();
+
+        #ifdef HW_RVL
+		for(i=0; i < 4; i++)
+		{
+			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
+			{
+				level = (userInput[i].wpad.battery_level / 100.0) * 4;
+				if(level > 4) level = 4;
+				batteryBarImg[i]->SetTile(level);
+
+				if(level == 0)
+					batteryImg[i]->SetImage(&batteryRed);
+				else
+					batteryImg[i]->SetImage(&battery);
+
+				batteryBtn[i]->SetAlpha(255);
+                batteryBarImg[i]->SetAlpha(255);
+			}
+			else // controller not connected
+			{
+				batteryBarImg[i]->SetTile(0);
+				batteryImg[i]->SetImage(&battery);
+				batteryBtn[i]->SetAlpha(90);
+			}
+		}
+		#endif
 
 
                 ret = DiscWait("Insert Disk","Waiting...","Cancel",0);
@@ -1081,6 +1148,10 @@ static int MenuDiscList()
 	GuiImageData btnhome(menu_button_png);
 	GuiImageData btnhomeOver(menu_button_over_png);
 
+    GuiImageData battery(battery_png);
+	GuiImageData batteryRed(battery_red_png);
+	GuiImageData batteryBar(battery_bar_png);
+
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     GuiTrigger trigHome;
@@ -1104,7 +1175,7 @@ static int MenuDiscList()
 	GuiImage installBtnImgOver(&btnInstallOver);
 	GuiButton installBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
 	installBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	installBtn.SetPosition(-290, 358);
+	installBtn.SetPosition(-283, 355);
 	installBtn.SetImage(&installBtnImg);
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
@@ -1117,7 +1188,7 @@ static int MenuDiscList()
 	GuiImage settingsBtnImgOver(&btnSettingsOver);
 	GuiButton settingsBtn(btnSettings.GetWidth(), btnSettings.GetHeight());
 	settingsBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	settingsBtn.SetPosition(-240, 380);
+	settingsBtn.SetPosition(-235, 367);
 	settingsBtn.SetImage(&settingsBtnImg);
 	settingsBtn.SetImageOver(&settingsBtnImgOver);
 	settingsBtn.SetSoundOver(&btnSoundOver);
@@ -1128,7 +1199,7 @@ static int MenuDiscList()
 	GuiImage menuBtnImgOver(&btnMenuOver);
 	GuiButton menuBtn(btnMenu.GetWidth(), btnMenu.GetHeight());
 	menuBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	menuBtn.SetPosition(252, 380);
+	menuBtn.SetPosition(240, 367);
 	menuBtn.SetImage(&menuBtnImg);
 	menuBtn.SetImageOver(&menuBtnImgOver);
 	menuBtn.SetSoundOver(&btnSoundOver);
@@ -1140,12 +1211,44 @@ static int MenuDiscList()
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(290, 358);
+	poweroffBtn.SetPosition(280, 355);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
+
+    #ifdef HW_RVL
+	int i = 0, level;
+	GuiImage * batteryImg[4];
+	GuiImage * batteryBarImg[4];
+	GuiButton * batteryBtn[4];
+
+	for(i=0; i < 4; i++)
+	{
+
+		batteryImg[i] = new GuiImage(&battery);
+		batteryImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+		batteryImg[i]->SetPosition(0, 0);
+		batteryBarImg[i] = new GuiImage(&batteryBar);
+		batteryBarImg[i]->SetTile(0);
+		batteryBarImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+		batteryBarImg[i]->SetPosition(3, 0);
+
+		batteryBtn[i] = new GuiButton(28, 12);
+		batteryBtn[i]->SetImage(batteryImg[i]);
+		batteryBtn[i]->SetIcon(batteryBarImg[i]);
+		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+		batteryBtn[i]->SetRumble(false);
+		batteryBtn[i]->SetAlpha(90);
+	}
+
+
+	batteryBtn[0]->SetPosition(-50, 420);
+	batteryBtn[1]->SetPosition(-10, 420);
+	batteryBtn[2]->SetPosition(30, 420);
+	batteryBtn[3]->SetPosition(70, 420);
+	#endif
 
 	GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
 	optionBrowser.SetPosition(200, 40);
@@ -1154,7 +1257,6 @@ static int MenuDiscList()
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
-
     w.Append(&usedSpaceTxt);
 	w.Append(&gamecntTxt);
     w.Append(&poweroffBtn);
@@ -1164,6 +1266,13 @@ static int MenuDiscList()
 	w.Append(CoverImg);
 	w.Append(GameIDTxt);
 
+    #ifdef HW_RVL
+	w.Append(batteryBtn[0]);
+	w.Append(batteryBtn[1]);
+	w.Append(batteryBtn[2]);
+	w.Append(batteryBtn[3]);
+	#endif
+
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser);
 
@@ -1172,6 +1281,32 @@ static int MenuDiscList()
 	while(menu == MENU_NONE)
 	{
 	    VIDEO_WaitVSync ();
+
+	    #ifdef HW_RVL
+		for(i=0; i < 4; i++)
+		{
+			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
+			{
+				level = (userInput[i].wpad.battery_level / 100.0) * 4;
+				if(level > 4) level = 4;
+				batteryBarImg[i]->SetTile(level);
+
+				if(level == 0)
+					batteryImg[i]->SetImage(&batteryRed);
+				else
+					batteryImg[i]->SetImage(&battery);
+
+				batteryBtn[i]->SetAlpha(255);
+                batteryBarImg[i]->SetAlpha(255);
+			}
+			else // controller not connected
+			{
+				batteryBarImg[i]->SetTile(0);
+				batteryImg[i]->SetImage(&battery);
+				batteryBtn[i]->SetAlpha(90);
+			}
+		}
+		#endif
 
 	    if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
@@ -1369,6 +1504,9 @@ static int MenuFormat()
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
 	GuiImageData btnhomeOver(menu_button_over_png);
+    GuiImageData battery(battery_png);
+	GuiImageData batteryRed(battery_red_png);
+	GuiImageData batteryBar(battery_bar_png);
 
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1387,7 +1525,7 @@ static int MenuFormat()
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(290, 358);
+	poweroffBtn.SetPosition(280, 355);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -1398,13 +1536,45 @@ static int MenuFormat()
 	GuiImage exitBtnImgOver(&btnhomeOver);
 	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(62, 405);
+	exitBtn.SetPosition(240, 367);
 	exitBtn.SetImage(&exitBtnImg);
 	exitBtn.SetImageOver(&exitBtnImgOver);
 	exitBtn.SetSoundOver(&btnSoundOver);
 	exitBtn.SetTrigger(&trigA);
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
+
+	#ifdef HW_RVL
+	int i = 0, level;
+	GuiImage * batteryImg[4];
+	GuiImage * batteryBarImg[4];
+	GuiButton * batteryBtn[4];
+
+	for(i=0; i < 4; i++)
+	{
+
+		batteryImg[i] = new GuiImage(&battery);
+		batteryImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+		batteryImg[i]->SetPosition(0, 0);
+		batteryBarImg[i] = new GuiImage(&batteryBar);
+		batteryBarImg[i]->SetTile(0);
+		batteryBarImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+		batteryBarImg[i]->SetPosition(3, 0);
+
+		batteryBtn[i] = new GuiButton(28, 12);
+		batteryBtn[i]->SetImage(batteryImg[i]);
+		batteryBtn[i]->SetIcon(batteryBarImg[i]);
+		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+		batteryBtn[i]->SetRumble(false);
+		batteryBtn[i]->SetAlpha(90);
+	}
+
+
+	batteryBtn[0]->SetPosition(-50, 420);
+	batteryBtn[1]->SetPosition(-10, 420);
+	batteryBtn[2]->SetPosition(30, 420);
+	batteryBtn[3]->SetPosition(70, 420);
+	#endif
 
 	GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
 	optionBrowser.SetPosition(200, 40);
@@ -1417,6 +1587,12 @@ static int MenuFormat()
     w.Append(&titleTxt2);
     w.Append(&poweroffBtn);
 	w.Append(&exitBtn);
+    #ifdef HW_RVL
+	w.Append(batteryBtn[0]);
+	w.Append(batteryBtn[1]);
+	w.Append(batteryBtn[2]);
+	w.Append(batteryBtn[3]);
+	#endif
 
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser);
@@ -1426,6 +1602,32 @@ static int MenuFormat()
 	while(menu == MENU_NONE)
 	{
 	    VIDEO_WaitVSync ();
+
+        #ifdef HW_RVL
+		for(i=0; i < 4; i++)
+		{
+			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
+			{
+				level = (userInput[i].wpad.battery_level / 100.0) * 4;
+				if(level > 4) level = 4;
+				batteryBarImg[i]->SetTile(level);
+
+				if(level == 0)
+					batteryImg[i]->SetImage(&batteryRed);
+				else
+					batteryImg[i]->SetImage(&battery);
+
+				batteryBtn[i]->SetAlpha(255);
+                batteryBarImg[i]->SetAlpha(255);
+			}
+			else // controller not connected
+			{
+				batteryBarImg[i]->SetTile(0);
+				batteryImg[i]->SetImage(&battery);
+				batteryBtn[i]->SetAlpha(90);
+			}
+		}
+		#endif
 
 	    selected = optionBrowser.GetClickedOption();
 
@@ -1542,7 +1744,7 @@ static int MenuSettings()
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(290, 358);
+	poweroffBtn.SetPosition(280, 355);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -1553,14 +1755,13 @@ static int MenuSettings()
 	GuiImage exitBtnImgOver(&btnhomeOver);
 	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(100, 405);
+	exitBtn.SetPosition(240, 367);
 	exitBtn.SetImage(&exitBtnImg);
 	exitBtn.SetImageOver(&exitBtnImgOver);
 	exitBtn.SetSoundOver(&btnSoundOver);
 	exitBtn.SetTrigger(&trigA);
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
-
 
 	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(0, 90);
@@ -1582,8 +1783,8 @@ static int MenuSettings()
 
 	while(menu == MENU_NONE)
 	{
-		VIDEO_WaitVSync ();
 
+		VIDEO_WaitVSync ();
 		if(Settings.video > 3)
 			Settings.video = 0;
 		if(Settings.language  > 10)
@@ -1599,6 +1800,9 @@ static int MenuSettings()
 		else if (Settings.video == pal60) sprintf (options2.value[0],"Force PAL60");
 		else if (Settings.video == ntsc) sprintf (options2.value[0],"Force NTSC");
 
+        if (Settings.vpatch == on) sprintf (options2.value[1],"ON");
+		else if (Settings.vpatch == off) sprintf (options2.value[1],"OFF");
+
 		if (Settings.language == ConsoleLangDefault) sprintf (options2.value[2],"Console Default");
 		else if (Settings.language == jap) sprintf (options2.value[2],"Japanese");
 		else if (Settings.language == ger) sprintf (options2.value[2],"German");
@@ -1613,9 +1817,6 @@ static int MenuSettings()
 
         if (Settings.ocarina == on) sprintf (options2.value[3],"ON");
 		else if (Settings.ocarina == off) sprintf (options2.value[3],"OFF");
-
-        if (Settings.vpatch == on) sprintf (options2.value[1],"ON");
-		else if (Settings.vpatch == off) sprintf (options2.value[1],"OFF");
 
 		ret = optionBrowser2.GetClickedOption();
 
@@ -1687,6 +1888,9 @@ static int MenuCheck()
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
 	GuiImageData btnhomeOver(menu_button_over_png);
+    GuiImageData battery(battery_png);
+	GuiImageData batteryRed(battery_red_png);
+	GuiImageData batteryBar(battery_bar_png);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1697,7 +1901,7 @@ static int MenuCheck()
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(-278, 405);
+	poweroffBtn.SetPosition(280, 355);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -1708,13 +1912,46 @@ static int MenuCheck()
 	GuiImage exitBtnImgOver(&btnhomeOver);
 	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(62, 405);
+	exitBtn.SetPosition(240, 367);
 	exitBtn.SetImage(&exitBtnImg);
 	exitBtn.SetImageOver(&exitBtnImgOver);
 	exitBtn.SetSoundOver(&btnSoundOver);
 	exitBtn.SetTrigger(&trigA);
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
+
+	#ifdef HW_RVL
+	i = 0;
+	int level;
+	GuiImage * batteryImg[4];
+	GuiImage * batteryBarImg[4];
+	GuiButton * batteryBtn[4];
+
+	for(i=0; i < 4; i++)
+	{
+
+		batteryImg[i] = new GuiImage(&battery);
+		batteryImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+		batteryImg[i]->SetPosition(0, 0);
+		batteryBarImg[i] = new GuiImage(&batteryBar);
+		batteryBarImg[i]->SetTile(0);
+		batteryBarImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+		batteryBarImg[i]->SetPosition(3, 0);
+
+		batteryBtn[i] = new GuiButton(28, 12);
+		batteryBtn[i]->SetImage(batteryImg[i]);
+		batteryBtn[i]->SetIcon(batteryBarImg[i]);
+		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+		batteryBtn[i]->SetRumble(false);
+		batteryBtn[i]->SetAlpha(90);
+	}
+
+
+	batteryBtn[0]->SetPosition(-50, 420);
+	batteryBtn[1]->SetPosition(-10, 420);
+	batteryBtn[2]->SetPosition(30, 420);
+	batteryBtn[3]->SetPosition(70, 420);
+	#endif
 
     GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
 	optionBrowser.SetPosition(200, 40);
@@ -1725,6 +1962,12 @@ static int MenuCheck()
 	GuiWindow w(screenwidth, screenheight);
 	w.Append(&poweroffBtn);
 	w.Append(&exitBtn);
+    #ifdef HW_RVL
+	w.Append(batteryBtn[0]);
+	w.Append(batteryBtn[1]);
+	w.Append(batteryBtn[2]);
+	w.Append(batteryBtn[3]);
+	#endif
 
     mainWindow->Append(&w);
 	mainWindow->Append(&optionBrowser);
@@ -1734,6 +1977,32 @@ static int MenuCheck()
 	while(menu == MENU_NONE)
 	{
 		VIDEO_WaitVSync ();
+
+        #ifdef HW_RVL
+		for(i=0; i < 4; i++)
+		{
+			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
+			{
+				level = (userInput[i].wpad.battery_level / 100.0) * 4;
+				if(level > 4) level = 4;
+				batteryBarImg[i]->SetTile(level);
+
+				if(level == 0)
+					batteryImg[i]->SetImage(&batteryRed);
+				else
+					batteryImg[i]->SetImage(&battery);
+
+				batteryBtn[i]->SetAlpha(255);
+                batteryBarImg[i]->SetAlpha(255);
+			}
+			else // controller not connected
+			{
+				batteryBarImg[i]->SetTile(0);
+				batteryImg[i]->SetImage(&battery);
+				batteryBtn[i]->SetAlpha(90);
+			}
+		}
+		#endif
 
         ret2 = WBFS_Init();
         if (ret2 < 0)
@@ -1991,7 +2260,7 @@ int MainMenu(int menu)
     }
 
     u8 videopatch = 0;
-    switch(Settings.ocarina)
+    switch(Settings.vpatch)
     {
                         case on:
                                 videopatch = 1;
@@ -2002,7 +2271,7 @@ int MainMenu(int menu)
                         break;
 
                         default:
-                                videopatch = 1;
+                                videopatch = 0;
                         break;
     }
 

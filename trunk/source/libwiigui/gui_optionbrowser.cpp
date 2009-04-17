@@ -66,7 +66,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	arrowUpBtn->SetImageOver(arrowUpOverImg);
 	arrowUpBtn->SetImageHold(arrowUpOverImg);
 	arrowUpBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	arrowUpBtn->SetPosition(width/2-18+7,-13);
+	arrowUpBtn->SetPosition(width/2-18+7,-18);
 	arrowUpBtn->SetSelectable(false);
 	arrowUpBtn->SetTrigger(trigA);
 	arrowUpBtn->SetSoundClick(btnSoundClick);
@@ -77,7 +77,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	arrowDownBtn->SetImageOver(arrowDownOverImg);
 	arrowDownBtn->SetImageHold(arrowDownOverImg);
 	arrowDownBtn->SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-	arrowDownBtn->SetPosition(width/2-18+7,13);
+	arrowDownBtn->SetPosition(width/2-18+7,18);
 	arrowDownBtn->SetSelectable(false);
 	arrowDownBtn->SetTrigger(trigA);
 	arrowDownBtn->SetSoundClick(btnSoundClick);
@@ -279,8 +279,8 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 
     if(position < 0)
 		position = 0;
-	if(position > 212)
-		position = 212;
+	if(position > 216)
+		position = 216;
 
 	scrollbarBoxBtn->SetPosition(width/2-18+7,position+10);
 
