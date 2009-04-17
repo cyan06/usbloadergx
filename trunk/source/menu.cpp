@@ -1561,7 +1561,7 @@ static int MenuSettings()
 	exitBtn.SetEffectGrow();
 
 
-	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 1);
+	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(200, 40);
 	optionBrowser2.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser2.SetCol2Position(150);
