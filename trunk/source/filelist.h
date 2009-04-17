@@ -59,6 +59,12 @@ extern const u32	settings_button_size;
 extern const u8		settings_button_over_png[];
 extern const u32	settings_button_over_size;
 
+extern const u8		settings_menu_button_png[];
+extern const u32	settings_menu_button_size;
+
+extern const u8		settings_menu_button_over_png[];
+extern const u32	settings_menu_button_over_size;
+
 extern const u8		button_large_png[];
 extern const u32	button_large_png_size;
 

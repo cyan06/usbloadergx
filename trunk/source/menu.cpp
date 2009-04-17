@@ -1500,8 +1500,8 @@ static int MenuSettings()
 	options2.length = 3;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
+	GuiImageData btnOutline(settings_menu_button_png);
+	GuiImageData btnOutlineOver(settings_menu_button_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
@@ -1515,7 +1515,7 @@ static int MenuSettings()
 
     GuiText titleTxt("Settings", 28, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,400);
+	titleTxt.SetPosition(0,40);
 
     GuiImage settingsbackground(&settingsbg);
 	GuiButton settingsbackgroundbtn(settingsbackground.GetWidth(), settingsbackground.GetHeight());
@@ -1528,8 +1528,8 @@ static int MenuSettings()
 	GuiImage backBtnImg(&btnOutline);
 	GuiImage backBtnImgOver(&btnOutlineOver);
 	GuiButton backBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-	backBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	backBtn.SetPosition(300, 363);
+	backBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	backBtn.SetPosition(-180, 400);
 	backBtn.SetLabel(&backBtnTxt);
 	backBtn.SetImage(&backBtnImg);
 	backBtn.SetImageOver(&backBtnImgOver);
@@ -1562,8 +1562,8 @@ static int MenuSettings()
 
 
 	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
-	optionBrowser2.SetPosition(0, 0);
-	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
+	optionBrowser2.SetPosition(0, 90);
+	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	optionBrowser2.SetCol2Position(150);
 
     HaltGui();
