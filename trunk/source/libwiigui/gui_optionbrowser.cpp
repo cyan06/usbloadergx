@@ -275,12 +275,12 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 	int next, prev, lang = options->length;
     if (scrollbaron == 1) {
 	// update the location of the scroll box based on the position in the option list
-	int position = 244*(listOffset+selectedItem)/lang;
+	int position = 237*(listOffset+selectedItem)/lang;
 
     if(position < 0)
 		position = 0;
-	if(position > 223)
-		position = 223;
+	if(position > 212)
+		position = 212;
 
 	scrollbarBoxBtn->SetPosition(width/2-18+7,position+10);
 

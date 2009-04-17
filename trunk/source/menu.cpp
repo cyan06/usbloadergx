@@ -1089,7 +1089,7 @@ static int MenuDiscList()
 	trigPlus.SetButtonOnlyTrigger(-1, WPAD_BUTTON_PLUS | WPAD_CLASSIC_BUTTON_PLUS, 0);*/
 
     char spaceinfo[30];
-	sprintf(spaceinfo,"%.2f of %.2f free",free,(free+used));
+	sprintf(spaceinfo,"%.2fGB of %.2fGB free",free,(free+used));
 	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){63, 154, 192, 255});
 	usedSpaceTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	usedSpaceTxt.SetPosition(0,330);
@@ -1562,8 +1562,8 @@ static int MenuSettings()
 
 
 	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
-	optionBrowser2.SetPosition(200, 40);
-	optionBrowser2.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
+	optionBrowser2.SetPosition(0, 0);
+	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
 	optionBrowser2.SetCol2Position(150);
 
     HaltGui();
