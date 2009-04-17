@@ -26,6 +26,9 @@ extern const u32	button_click_pcm_size;
 extern const u8     background_png[];
 extern const u32    background_png_size;
 
+extern const u8     settings_background_png[];
+extern const u32    settings_background_png_size;
+
 extern const u8     nocover_png[];
 extern const u32    nocover_png_size;
 
@@ -62,47 +65,11 @@ extern const u32	button_large_over_png_size;
 extern const u8		wiimote_poweroff_png[];
 extern const u32	wiimote_poweroff_png_size;
 
-extern const u8		wiimote_A_png[];
-extern const u32	wiimote_A_png_size;
-
-extern const u8		wiimote_B_png[];
-extern const u32	wiimote_B_png_size;
-
-extern const u8		wiimote_home_png[];
-extern const u32	wiimote_home_png_size;
-
-extern const u8		wiimote_kreuz_png[];
-extern const u32	wiimote_kreuz_png_size;
-
 extern const u8		dialogue_box_png[];
 extern const u32	dialogue_box_png_size;
 
-extern const u8		wiimote_minus_png[];
-extern const u32	wiimote_minus_png_size;
-
-extern const u8		wiimote_plus_png[];
-extern const u32	wiimote_plus_png_size;
-
 extern const u8		wiimote_poweroff_over_png[];
 extern const u32	wiimote_poweroff_over_png_size;
-
-extern const u8		wiimote_A_over_png[];
-extern const u32	wiimote_A_over_png_size;
-
-extern const u8		wiimote_B_over_png[];
-extern const u32	wiimote_B_over_png_size;
-
-extern const u8		wiimote_home_over_png[];
-extern const u32	wiimote_home_over_png_size;
-
-extern const u8		wiimote_kreuz_over_png[];
-extern const u32	wiimote_kreuz_over_png_size;
-
-extern const u8		wiimote_minus_over_png[];
-extern const u32	wiimote_minus_over_png_size;
-
-extern const u8		wiimote_plus_over_png[];
-extern const u32	wiimote_plus_over_png_size;
 
 extern const u8		bg_options_png[];
 extern const u32	bg_options_png_size;

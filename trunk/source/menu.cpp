@@ -887,8 +887,8 @@ static int MenuInstall()
 	GuiImageData btnLargeOutlineOver(button_large_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
-	GuiImageData btnhome(wiimote_home_png);
-	GuiImageData btnhomeOver(wiimote_home_over_png);
+	GuiImageData btnhome(menu_button_png);
+	GuiImageData btnhomeOver(menu_button_over_png);
 
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1078,8 +1078,8 @@ static int MenuDiscList()
 	GuiImageData btnLargeOutlineOver(button_large_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
-	GuiImageData btnhome(wiimote_home_png);
-	GuiImageData btnhomeOver(wiimote_home_over_png);
+	GuiImageData btnhome(menu_button_png);
+	GuiImageData btnhomeOver(menu_button_over_png);
 
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1367,8 +1367,8 @@ static int MenuFormat()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
-	GuiImageData btnhome(wiimote_home_png);
-	GuiImageData btnhomeOver(wiimote_home_over_png);
+	GuiImageData btnhome(menu_button_png);
+	GuiImageData btnhomeOver(menu_button_over_png);
 
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1504,8 +1504,9 @@ static int MenuSettings()
 	GuiImageData btnOutlineOver(button_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
-	GuiImageData btnhome(wiimote_home_png);
-	GuiImageData btnhomeOver(wiimote_home_over_png);
+	GuiImageData btnhome(menu_button_png);
+	GuiImageData btnhomeOver(menu_button_over_png);
+	GuiImageData settingsbg(settings_background_png);
 
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1515,6 +1516,11 @@ static int MenuSettings()
     GuiText titleTxt("Settings", 28, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,400);
+
+    GuiImage settingsbackground(&settingsbg);
+	GuiButton settingsbackgroundbtn(settingsbackground.GetWidth(), settingsbackground.GetHeight());
+	settingsbackgroundbtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	settingsbackgroundbtn.SetPosition(0, 0);
 
     GuiText backBtnTxt("Go Back", 22, (GXColor){0, 0, 0, 255});
 	backBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
@@ -1560,6 +1566,7 @@ static int MenuSettings()
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
+	w.Append(&settingsbackgroundbtn);
     w.Append(&titleTxt);
     w.Append(&backBtn);
     w.Append(&poweroffBtn);
@@ -1667,8 +1674,8 @@ static int MenuCheck()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
-	GuiImageData btnhome(wiimote_home_png);
-	GuiImageData btnhomeOver(wiimote_home_over_png);
+	GuiImageData btnhome(menu_button_png);
+	GuiImageData btnhomeOver(menu_button_over_png);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
