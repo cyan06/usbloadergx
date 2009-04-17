@@ -32,8 +32,7 @@
 #include "wpad.h"
 
 
-#define MAX_CHARACTERS		27
-
+#define MAX_CHARACTERS		34
 
 //for sd image data
 u8 * data = NULL;
@@ -50,7 +49,6 @@ static char prozent[10] = "0%";
 static char timet[100] = " ";
 static GuiText prTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static GuiText timeTxt(prozent, 26, (GXColor){0, 0, 0, 255});
-
 static GuiText *GameIDTxt = NULL;
 static GuiSound * bgMusic = NULL;
 static wbfs_t *hdd = NULL;
@@ -64,7 +62,6 @@ static GuiImage progressbarImg(&progressbar);
 static double progressDone = 0;
 static double progressTotal = 1;
 static int showProgress = 1;
-
 
 
 //loads image file from sd card
@@ -1035,7 +1032,7 @@ static int MenuDiscList()
 	f32 free, used, size = 0.0;
 	u32 cnt = 0, nolist;
 	char text[ISFS_MAXPATH];
-	int choice = 0, selectedold = 200;;
+	int choice = 0, selectedold = 100;
 	s32 ret;
 
 	WBFS_DiskSpace(&used, &free);
@@ -1066,16 +1063,16 @@ static int MenuDiscList()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_png);
 	GuiImageData btnOutlineOver(button_over_png);
-
+	
 	GuiImageData btnInstall(button_install_png);
 	GuiImageData btnInstallOver(button_install_over_png);
-
+	
 	GuiImageData btnMenu(menu_button_png);
 	GuiImageData btnMenuOver(menu_button_over_png);
-
+	
 	GuiImageData btnSettings(settings_button_png);
 	GuiImageData btnSettingsOver(settings_button_over_png);
-
+	
 	GuiImageData btnM(button_png);
 	GuiImageData btnLargeOutline(button_large_png);
 	GuiImageData btnLargeOutlineOver(button_large_over_png);
@@ -1088,14 +1085,16 @@ static int MenuDiscList()
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
+	/*GuiTrigger trigPlus;
+	trigPlus.SetButtonOnlyTrigger(-1, WPAD_BUTTON_PLUS | WPAD_CLASSIC_BUTTON_PLUS, 0);*/
 
-    char spaceinfo[100];
+    char spaceinfo[30];
 	sprintf(spaceinfo,"%.2f of %.2f free",free,(free+used));
 	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){63, 154, 192, 255});
 	usedSpaceTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	usedSpaceTxt.SetPosition(0,330);
-
-	char GamesCnt[100];
+	
+	char GamesCnt[30];
 	sprintf(GamesCnt,"Games: %i",gameCnt);
 	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
 	gamecntTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
@@ -1110,16 +1109,15 @@ static int MenuDiscList()
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
 	installBtn.SetTrigger(&trigA);
+	//installBtn.SetTrigger(&trigPlus);
 	installBtn.SetEffectGrow();
-
 	//installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
-    //GuiText settingsBtnTxt("Settings", 22, (GXColor){0, 0, 0, 255});
+
 	GuiImage settingsBtnImg(&btnSettings);
 	GuiImage settingsBtnImgOver(&btnSettingsOver);
 	GuiButton settingsBtn(btnSettings.GetWidth(), btnSettings.GetHeight());
 	settingsBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	settingsBtn.SetPosition(-240, 380);
-	//settingsBtn.SetLabel(&settingsBtnTxt);
 	settingsBtn.SetImage(&settingsBtnImg);
 	settingsBtn.SetImageOver(&settingsBtnImgOver);
 	settingsBtn.SetSoundOver(&btnSoundOver);
@@ -1148,9 +1146,9 @@ static int MenuDiscList()
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
-
+	
 	GuiOptionBrowser optionBrowser(380, 248, &options);
-	optionBrowser.SetPosition(100, 40);
+	optionBrowser.SetPosition(90, 40);
 	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
 
@@ -1240,7 +1238,7 @@ static int MenuDiscList()
 						sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
 						//load game cover
 						loadimg(ID);
-
+						
 						GameIDTxt = new GuiText(ID, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						GameIDTxt->SetPosition(70,290);
@@ -1258,10 +1256,9 @@ static int MenuDiscList()
                         struct discHdr *header = &gameList[gameSelected];
                         WBFS_GameSize(header->id, &size);
                         sprintf(text, "%s %.2fGB", header->title, size);
-						sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
                         choice = GameWindowPrompt(
+                        "Game:",
                         text,
-                        ID,
                         "Boot",
                         "Cancel",
                         "Delete");
@@ -1379,7 +1376,7 @@ static int MenuFormat()
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 	GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
-
+	
     GuiText titleTxt("Select the Partition", 18, (GXColor){0, 0, 255, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(10,40);
@@ -1411,9 +1408,9 @@ static int MenuFormat()
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
 
-	GuiOptionBrowser optionBrowser(380, 248, &options);
-	optionBrowser.SetPosition(90, 108);
-	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
+	GuiOptionBrowser optionBrowser(380, 270, &options);
+	optionBrowser.SetPosition(90, 60);
+	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
 	optionBrowser.SetCol2Position(130);
 
     HaltGui();
