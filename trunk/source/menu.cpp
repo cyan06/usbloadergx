@@ -1063,16 +1063,16 @@ static int MenuDiscList()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_png);
 	GuiImageData btnOutlineOver(button_over_png);
-	
+
 	GuiImageData btnInstall(button_install_png);
 	GuiImageData btnInstallOver(button_install_over_png);
-	
+
 	GuiImageData btnMenu(menu_button_png);
 	GuiImageData btnMenuOver(menu_button_over_png);
-	
+
 	GuiImageData btnSettings(settings_button_png);
 	GuiImageData btnSettingsOver(settings_button_over_png);
-	
+
 	GuiImageData btnM(button_png);
 	GuiImageData btnLargeOutline(button_large_png);
 	GuiImageData btnLargeOutlineOver(button_large_over_png);
@@ -1093,7 +1093,7 @@ static int MenuDiscList()
 	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){63, 154, 192, 255});
 	usedSpaceTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	usedSpaceTxt.SetPosition(0,330);
-	
+
 	char GamesCnt[30];
 	sprintf(GamesCnt,"Games: %i",gameCnt);
 	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
@@ -1146,10 +1146,10 @@ static int MenuDiscList()
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
-	
-	GuiOptionBrowser optionBrowser(380, 248, &options);
-	optionBrowser.SetPosition(90, 40);
-	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
+
+	GuiOptionBrowser optionBrowser(396, 280, &options);
+	optionBrowser.SetPosition(200, 40);
+	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
 
     HaltGui();
@@ -1184,8 +1184,8 @@ static int MenuDiscList()
 				Sys_Shutdown();
 				//exit(0);
 			} else {
-			    menu = MENU_DISCLIST;
-			    break;
+			    poweroffBtn.ResetState();
+			    optionBrowser.SetFocus(1);
 			}
 
 		} else if(menuBtn.GetState() == STATE_CLICKED)
@@ -1194,11 +1194,11 @@ static int MenuDiscList()
 		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
 			if(choice == 1)
 			{
-                SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
-                //exit(0); //zum debuggen schneller
+                //SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
+                exit(0); //zum debuggen schneller
 			} else {
-			    menu = MENU_DISCLIST;
-			    break;
+			    menuBtn.ResetState();
+			    optionBrowser.SetFocus(1);
 			}
 
         } else if(installBtn.GetState() == STATE_CLICKED)
@@ -1208,9 +1208,10 @@ static int MenuDiscList()
 			if (choice == 1)
 			{
 			    menu = MENU_INSTALL;
-			} else {
-			    menu = MENU_DISCLIST;
 			    break;
+			} else {
+                installBtn.ResetState();
+			    optionBrowser.SetFocus(1);
 			}
 
 		} else if(settingsBtn.GetState() == STATE_CLICKED)
@@ -1238,7 +1239,7 @@ static int MenuDiscList()
 						sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
 						//load game cover
 						loadimg(ID);
-						
+
 						GameIDTxt = new GuiText(ID, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						GameIDTxt->SetPosition(70,290);
@@ -1305,19 +1306,16 @@ static int MenuDiscList()
                             "Successfully deleted:",
                             text,
                             "OK",0);
-                            menu = MENU_DISCLIST;
-                            break;
+                            optionBrowser.SetFocus(1);
                             }
 
                         } else {
-                            menu = MENU_DISCLIST;
-                            break;
+                            optionBrowser.SetFocus(1);
                         }
 
 
                     } else if(choice == 0) {
-                        menu = MENU_DISCLIST;
-                        break;
+                        optionBrowser.SetFocus(1);
                     }
                 }
             }
@@ -1376,7 +1374,7 @@ static int MenuFormat()
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 	GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
-	
+
     GuiText titleTxt("Select the Partition", 18, (GXColor){0, 0, 255, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(10,40);
@@ -1408,9 +1406,9 @@ static int MenuFormat()
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
 
-	GuiOptionBrowser optionBrowser(380, 270, &options);
-	optionBrowser.SetPosition(90, 60);
-	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+	GuiOptionBrowser optionBrowser(396, 280, &options);
+	optionBrowser.SetPosition(200, 40);
+	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(130);
 
     HaltGui();
@@ -1555,9 +1553,9 @@ static int MenuSettings()
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
 
-	GuiOptionBrowser optionBrowser2(380, 248, &options2);
-	optionBrowser2.SetPosition(80, 80);
-	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
+	GuiOptionBrowser optionBrowser2(396, 280, &options2);
+	optionBrowser2.SetPosition(200, 40);
+	optionBrowser2.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser2.SetCol2Position(150);
 
     HaltGui();
@@ -1699,9 +1697,9 @@ static int MenuCheck()
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
 
-	GuiOptionBrowser optionBrowser(380, 248, &options);
-	optionBrowser.SetPosition(90, 108);
-	optionBrowser.SetAlignment(ALIGN_CENTRE, ALIGN_CENTRE);
+    GuiOptionBrowser optionBrowser(396, 280, &options);
+	optionBrowser.SetPosition(200, 40);
+	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
 
 	HaltGui();

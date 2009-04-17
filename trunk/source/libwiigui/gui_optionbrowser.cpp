@@ -11,7 +11,7 @@
 #include "gui.h"
 #include "../wpad.h"
 
-#define BROWSER_LIST		8
+#define GAMESELECTSIZE      30
 
 /**
  * Constructor for the GuiOptionBrowser class.
@@ -42,7 +42,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	scrollbarImg = new GuiImage(scrollbar);
 	scrollbarImg->SetParent(this);
 	scrollbarImg->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
-	scrollbarImg->SetPosition(0, 30);
+	scrollbarImg->SetPosition(0, 4);
 
 	arrowDown = new GuiImageData(scrollbar_arrowdown_png);
 	arrowDownImg = new GuiImage(arrowDown);
@@ -62,9 +62,9 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	arrowUpBtn->SetImage(arrowUpImg);
 	arrowUpBtn->SetImageOver(arrowUpOverImg);
 	arrowUpBtn->SetImageHold(arrowUpOverImg);
-	arrowUpBtn->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
+	arrowUpBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	arrowUpBtn->SetPosition(width/2-18+7,-13);
 	arrowUpBtn->SetSelectable(false);
-	arrowUpBtn->SetHoldable(true);
 	arrowUpBtn->SetTrigger(trigA);
 	arrowUpBtn->SetSoundClick(btnSoundClick);
 
@@ -73,9 +73,9 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	arrowDownBtn->SetImage(arrowDownImg);
 	arrowDownBtn->SetImageOver(arrowDownOverImg);
 	arrowDownBtn->SetImageHold(arrowDownOverImg);
-	arrowDownBtn->SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+	arrowDownBtn->SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+	arrowDownBtn->SetPosition(width/2-18+7,13);
 	arrowDownBtn->SetSelectable(false);
-	arrowDownBtn->SetHoldable(true);
 	arrowDownBtn->SetTrigger(trigA);
 	arrowDownBtn->SetSoundClick(btnSoundClick);
 
@@ -84,16 +84,15 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 	scrollbarBoxBtn->SetImage(scrollbarBoxImg);
 	scrollbarBoxBtn->SetImageOver(scrollbarBoxOverImg);
 	scrollbarBoxBtn->SetImageHold(scrollbarBoxOverImg);
-	scrollbarBoxBtn->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
+	scrollbarBoxBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	scrollbarBoxBtn->SetSelectable(false);
-	scrollbarBoxBtn->SetHoldable(true);
 	scrollbarBoxBtn->SetTrigger(trigA);
 
 	for(int i=0; i<PAGESIZE; i++)
 	{
 		optionTxt[i] = new GuiText(options->name[i], 20, (GXColor){0, 0, 0, 0xff});
 		optionTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
-		optionTxt[i]->SetPosition(8,0);
+		optionTxt[i]->SetPosition(24,0);
 
 		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
 		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
@@ -101,12 +100,12 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l)
 
 		optionBg[i] = new GuiImage(bgOptionsEntry);
 
-		optionBtn[i] = new GuiButton(320,30);
+		optionBtn[i] = new GuiButton(width-28,GAMESELECTSIZE);
 		optionBtn[i]->SetParent(this);
 		optionBtn[i]->SetLabel(optionTxt[i], 0);
 		optionBtn[i]->SetLabel(optionVal[i], 1);
 		optionBtn[i]->SetImageOver(optionBg[i]);
-		optionBtn[i]->SetPosition(0,30*i+3);
+		optionBtn[i]->SetPosition(5,GAMESELECTSIZE*i+4);
 		optionBtn[i]->SetTrigger(trigA);
 		optionBtn[i]->SetSoundClick(btnSoundClick);
 	}
@@ -271,12 +270,14 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 	int next, prev, lang = options->length;
 
 	// update the location of the scroll box based on the position in the option list
-	int position = 136*(listOffset+selectedItem)/lang;
+	int position = 244*(listOffset+selectedItem)/lang;
 
-	if(position > 130)
-		position = 136;
+    if(position < 0)
+		position = 0;
+	if(position > 223)
+		position = 223;
 
-	scrollbarBoxBtn->SetPosition(0,position+36);
+	scrollbarBoxBtn->SetPosition(width/2-18+7,position+10);
 
 	arrowUpBtn->Update(t);
 	arrowDownBtn->Update(t);
@@ -373,11 +374,11 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 
         if (positiony > 0) {
 
-        int nselectedItem = (positiony-108) * lang / (lang*30+3);
+        int nselectedItem = (positiony-40) * lang / (lang*GAMESELECTSIZE+4);
         if (nselectedItem < 0) {
             nselectedItem = 0;
-        } else if (nselectedItem > lang-BROWSER_LIST) {
-            nselectedItem = lang-BROWSER_LIST;
+        } else if (nselectedItem > lang-PAGESIZE) {
+            nselectedItem = lang-PAGESIZE;
         }
         optionBtn[selectedItem]->ResetState();
         selectedItem = nselectedItem;
