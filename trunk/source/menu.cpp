@@ -1521,6 +1521,7 @@ static int MenuSettings()
 	GuiButton settingsbackgroundbtn(settingsbackground.GetWidth(), settingsbackground.GetHeight());
 	settingsbackgroundbtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	settingsbackgroundbtn.SetPosition(0, 0);
+	settingsbackgroundbtn.SetImage(&settingsbackground);
 
     GuiText backBtnTxt("Go Back", 22, (GXColor){0, 0, 0, 255});
 	backBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
