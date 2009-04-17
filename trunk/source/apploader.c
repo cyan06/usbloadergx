@@ -103,6 +103,8 @@ s32 Apploader_Run(entry_point *entry, u32 cheat)
 
 		/*LANGUAGE PATCH - FISHEARS*/
 		langpatcher(dst,len);
+
+		DCFlushRange(dst, len);
 	}
 	/* Set entry point from apploader */
 	*entry = appldr_final();

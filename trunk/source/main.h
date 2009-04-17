@@ -26,6 +26,7 @@ enum {
 
 enum {
     discdefault,
+    systemdefault,
 	pal50,
 	pal60,
 	ntsc

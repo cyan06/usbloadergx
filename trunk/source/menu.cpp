@@ -1582,6 +1582,7 @@ static int MenuSettings()
 			Settings.ocarina = 0;
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
+		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
 		else if (Settings.video == pal50) sprintf (options2.value[0],"Force PAL50");
 		else if (Settings.video == pal60) sprintf (options2.value[0],"Force PAL60");
 		else if (Settings.video == ntsc) sprintf (options2.value[0],"Force NTSC");
@@ -1944,6 +1945,12 @@ int MainMenu(int menu)
 
                         case ntsc:
                                 videoselected = 3;
+
+                        case systemdefault:
+
+                                videoselected = 4;
+                        break;
+
                         default:
                                 videoselected = 0;
                         break;

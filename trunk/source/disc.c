@@ -98,19 +98,37 @@ void __Disc_SetVMode(u32 videoselected)
 	case 1:
         vmode_reg = 1;
         progressive = (CONF_GetProgressiveScan() > 0) && VIDEO_HaveComponentCable();
-        vmode     = (progressive) ? &TVNtsc480Prog : &TVPal528IntDf;
+        vmode     = (progressive) ? &TVEurgb60Hz480Prog : &TVPal528IntDf;
         break;
     case 2:
         vmode_reg = 5;
         progressive = (CONF_GetProgressiveScan() > 0) && VIDEO_HaveComponentCable();
-        vmode     = (progressive) ? &TVNtsc480Prog : &TVEurgb60Hz480IntDf;
+        vmode     = (progressive) ? &TVEurgb60Hz480Prog : &TVEurgb60Hz480IntDf;
         break;
     case 3:
         vmode_reg = 0;
         progressive = (CONF_GetProgressiveScan() > 0) && VIDEO_HaveComponentCable();
         vmode     = (progressive) ? &TVNtsc480Prog : &TVNtsc480IntDf;
         break;
-    }
+    case 4:
+        	tvmode      =  CONF_GetVideo();
+            switch (tvmode) {
+                case CONF_VIDEO_PAL:
+                vmode_reg = (CONF_GetEuRGB60() > 0) ? 5 : 1;
+                break;
+
+                case CONF_VIDEO_MPAL:
+                vmode_reg = 4;
+                break;
+
+                case CONF_VIDEO_NTSC:
+                vmode_reg = 0;
+                break;
+            }
+
+            vmode     = VIDEO_GetPreferredMode(NULL);
+            break;
+            }
 	/* Set video mode register */
 	*(vu32 *)0x800000CC = vmode_reg;
 
