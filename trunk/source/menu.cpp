@@ -72,7 +72,7 @@ int loadimg(char * filename)
     int width = 0;
     int height = 0;
 
-	char filetemp[60];
+	char filetemp[50];
 	snprintf(filetemp,sizeof(filetemp),"/images/%s.png",filename);
     ctx = PNGU_SelectImageFromDevice(filetemp);
     res = PNGU_GetImageProperties(ctx, &imgProp);
@@ -127,7 +127,7 @@ int loaddiskimg(char * filename)
     int height = 0;
 	s32 res;
 
-	char filetemp[60];
+	char filetemp[50];
 	snprintf(filetemp,sizeof(filetemp),"/images/disc/%s.png",filename);
     ctx = PNGU_SelectImageFromDevice(filetemp);
     res = PNGU_GetImageProperties(ctx, &imgProp);
@@ -1388,7 +1388,7 @@ static int MenuDiscList()
 
 		//Get selected game under cursor
 		int selectimg;
-		char ID[6];
+		char ID[3];
 		selectimg = optionBrowser.GetSelectedOption();
 
 	    gameSelected = optionBrowser.GetClickedOption();
@@ -1401,7 +1401,7 @@ static int MenuDiscList()
 						w.Remove(GameIDTxt);
 						selectedold = selectimg;
 						struct discHdr *header = &gameList[selectimg];
-						sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
+						sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 						//load game cover
 						loadimg(ID);
 
@@ -1431,8 +1431,9 @@ static int MenuDiscList()
                         strncat(buffer, "...", 3);
                         sprintf(text, "%s", buffer);
                         }
+						
                         sprintf(text2, "%.2fGB", size);
-                        sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
+                        sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 						choice = GameWindowPrompt(
                         text2,
                         text,
