@@ -690,8 +690,8 @@ ProgressWindow(const char *title, const char *msg)
 	if(showProgress == 1)
 	{
 		promptWindow.Append(&progressbarEmptyImg);
-		promptWindow.Append(&progressbarOutlineImg);
 		promptWindow.Append(&progressbarImg);
+		promptWindow.Append(&progressbarOutlineImg);
         promptWindow.Append(&prTxt);
         promptWindow.Append(&timeTxt);
 	}
