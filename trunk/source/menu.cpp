@@ -36,9 +36,10 @@
 
 //for sd image data
 u8 * data = NULL;
+u8 * datadisc = NULL;
 int width = 0;
 int height = 0;
-u8 *cover = NULL;
+
 static GuiImage * CoverImg = NULL;
 
 static struct discHdr *gameList = NULL;
@@ -105,6 +106,58 @@ int loadimg(char * filename)
 					{
 							free(data);
 							data = NULL;
+					}
+			}
+	} else {
+    return 0;
+	}
+	/* Free image context */
+	PNGU_ReleaseImageContext(ctx);
+
+return 1;
+}
+
+
+int loaddiskimg(char * filename)
+{
+	PNGUPROP imgProp;
+	IMGCTX ctx;
+
+	s32 res;
+
+	char filetemp[60];
+	snprintf(filetemp,sizeof(filetemp),"/images/disc/%s.png",filename);
+    ctx = PNGU_SelectImageFromDevice(filetemp);
+    res = PNGU_GetImageProperties(ctx, &imgProp);
+	if (res != PNGU_OK)
+    {
+       	ctx = PNGU_SelectImageFromBuffer(nodisc_png);
+        res = PNGU_GetImageProperties(ctx, &imgProp);
+	}
+
+	free(datadisc);
+	datadisc = NULL;
+
+	if(res == PNGU_OK)
+	{
+			int len = imgProp.imgWidth * imgProp.imgHeight * 4;
+			if(len%32) len += (32-len%32);
+			datadisc = (u8 *)memalign (32, len);
+
+			if(datadisc)
+			{
+					res = PNGU_DecodeTo4x4RGBA8 (ctx, imgProp.imgWidth, imgProp.imgHeight, datadisc, 255);
+
+					if(res == PNGU_OK)
+					{
+							width = imgProp.imgWidth;
+							height = imgProp.imgHeight;
+							DCFlushRange(datadisc, len);
+					}
+					else
+					{
+							free(datadisc);
+							datadisc = NULL;
 					}
 			}
 	} else {
@@ -320,9 +373,9 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
  * presenting a user with a choice
  ***************************************************************************/
 int
-GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label)
+GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, char * ID)
 {
-	int choice = -1;
+	int choice = -1, angle = 0;
 
 	GuiWindow promptWindow(448,288);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
@@ -330,8 +383,7 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_startgame_png);
 	GuiImageData btnOutlineOver(button_dialogue_box_startgame_over_png);
-	GuiImageData btnOutlineplay(play_button_png);
-	GuiImageData btnOutlineplayOver(play_button_over_png);
+
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
@@ -343,13 +395,18 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	msgTxt.SetPosition(0,-122);
 	msgTxt.SetMaxWidth(430);
 
-	GuiImage btn1Img(&btnOutlineplay);
-	GuiImage btn1ImgOver(&btnOutlineplayOver);
-	GuiButton btn1(btnOutlineplay.GetWidth(), btnOutlineplay.GetHeight());
+	//disk image load
+    loaddiskimg(ID);
+    GuiImage * DiskImg = NULL;
+    DiskImg = new GuiImage(datadisc,160,160);
+    DiskImg->SetAngle(angle);
+    DiskImg->Draw();
+
+	GuiButton btn1(160, 160);
     btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
     btn1.SetPosition(0, -20);
-	btn1.SetImage(&btn1Img);
-	btn1.SetImageOver(&btn1ImgOver);
+	btn1.SetImage(DiskImg);
+	btn1.SetImageOver(DiskImg);
 	btn1.SetSoundOver(&btnSoundOver);
 	btn1.SetTrigger(&trigA);
 	btn1.SetState(STATE_SELECTED);
@@ -397,6 +454,12 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	while(choice == -1)
 	{
 		VIDEO_WaitVSync();
+		angle++;
+		if (angle >359){ (angle = 0);
+		}
+
+        DiskImg->SetAngle(angle);
+		DiskImg->Draw();
 
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
@@ -1387,12 +1450,14 @@ static int MenuDiscList()
                         struct discHdr *header = &gameList[gameSelected];
                         WBFS_GameSize(header->id, &size);
                         sprintf(text, "%s %.2fGB", header->title, size);
-                        choice = GameWindowPrompt(
+                        sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
+						choice = GameWindowPrompt(
                         "Game:",
                         text,
                         "Boot",
                         "Cancel",
-                        "Delete");
+                        "Delete",
+                        ID);
                     if(choice == 1)
                     {
                         /* Set USB mode */

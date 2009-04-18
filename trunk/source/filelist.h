@@ -35,6 +35,9 @@ extern const u32    settings_background_png_size;
 extern const u8     nocover_png[];
 extern const u32    nocover_png_size;
 
+extern const u8     nodisc_png[];
+extern const u32    nodisc_png_size;
+
 extern const u8     button_install_png[];
 extern const u32    button_install_png_size;
 
@@ -49,12 +52,6 @@ extern const u32	button_over_png_size;
 
 extern const u8		dialogue_box_startgame_png[];
 extern const u32	dialogue_box_startgame_png_size;
-
-extern const u8		play_button_png[];
-extern const u32	play_button_size;
-
-extern const u8		play_button_over_png[];
-extern const u32	play_button_over_size;
 
 extern const u8		button_dialogue_box_startgame_png[];
 extern const u32	button_dialogue_box_startgame_size;
