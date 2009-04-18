@@ -50,7 +50,7 @@ void __WBFS_Spinner(s32 x, s32 max)
 
 	/* Calculate percentage/size */
 	percent = (x * 100.0) / max;
-	size    = (hdd->wbfs_sec_sz / GB_SIZE) * max;
+	size    = (hdd->wii_sec_sz / GB_SIZE) * max;
 
     //Con_ClearLine();
 
