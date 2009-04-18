@@ -9,6 +9,15 @@ extern "C"
 #endif
 
 #include "libwbfs/libwbfs.h"
+/* Device list */
+enum {
+	WBFS_DEVICE_USB = 1,	/* USB device */
+	WBFS_DEVICE_SDHC	/* SDHC device */
+};
+
+/* Macros */
+#define WBFS_MIN_DEVICE		1
+#define WBFS_MAX_DEVICE		2
 
 /* Prototypes */
 

@@ -49,15 +49,15 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 
 	arrowDown = new GuiImageData(scrollbar_arrowdown_png);
 	arrowDownImg = new GuiImage(arrowDown);
-	arrowDownOver = new GuiImageData(scrollbar_arrowdown_over_png);
+	arrowDownOver = new GuiImageData(scrollbar_arrowdown_png);
 	arrowDownOverImg = new GuiImage(arrowDownOver);
 	arrowUp = new GuiImageData(scrollbar_arrowup_png);
 	arrowUpImg = new GuiImage(arrowUp);
-	arrowUpOver = new GuiImageData(scrollbar_arrowup_over_png);
+	arrowUpOver = new GuiImageData(scrollbar_arrowup_png);
 	arrowUpOverImg = new GuiImage(arrowUpOver);
 	scrollbarBox = new GuiImageData(scrollbar_box_png);
 	scrollbarBoxImg = new GuiImage(scrollbarBox);
-	scrollbarBoxOver = new GuiImageData(scrollbar_box_over_png);
+	scrollbarBoxOver = new GuiImageData(scrollbar_box_png);
 	scrollbarBoxOverImg = new GuiImage(scrollbarBoxOver);
 
 	arrowUpBtn = new GuiButton(arrowUpImg->GetWidth(), arrowUpImg->GetHeight());
@@ -69,6 +69,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	arrowUpBtn->SetPosition(width/2-18+7,-18);
 	arrowUpBtn->SetSelectable(false);
 	arrowUpBtn->SetTrigger(trigA);
+	arrowUpBtn->SetEffectOnOver(EFFECT_SCALE, 50, 130);
 	arrowUpBtn->SetSoundClick(btnSoundClick);
 
 	arrowDownBtn = new GuiButton(arrowDownImg->GetWidth(), arrowDownImg->GetHeight());
@@ -80,6 +81,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	arrowDownBtn->SetPosition(width/2-18+7,18);
 	arrowDownBtn->SetSelectable(false);
 	arrowDownBtn->SetTrigger(trigA);
+	arrowDownBtn->SetEffectOnOver(EFFECT_SCALE, 50, 130);
 	arrowDownBtn->SetSoundClick(btnSoundClick);
 
 	scrollbarBoxBtn = new GuiButton(scrollbarBoxImg->GetWidth(), scrollbarBoxImg->GetHeight());
@@ -89,6 +91,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	scrollbarBoxBtn->SetImageHold(scrollbarBoxOverImg);
 	scrollbarBoxBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	scrollbarBoxBtn->SetSelectable(false);
+	scrollbarBoxBtn->SetEffectOnOver(EFFECT_SCALE, 50, 120);
 	scrollbarBoxBtn->SetTrigger(trigA);
     }
 

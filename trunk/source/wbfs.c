@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <malloc.h>
 #include <ogcsys.h>
 
+#include "sdhc.h"
 #include "usbstorage.h"
 #include "utils.h"
 #include "video.h"
@@ -168,6 +170,58 @@ s32 __WBFS_WriteUSB(void *fp, u32 lba, u32 count, void *iobuf)
 	return 0;
 }
 
+s32 __WBFS_ReadSDHC(void *fp, u32 lba, u32 count, void *iobuf)
+{
+	u32 cnt = 0;
+	s32 ret;
+
+	/* Do reads */
+	while (cnt < count) {
+		void *ptr     = ((u8 *)iobuf) + (cnt * sector_size);
+		u32   sectors = (count - cnt);
+
+		/* Read sectors is too big */
+		if (sectors > MAX_NB_SECTORS)
+			sectors = MAX_NB_SECTORS;
+
+		/* SDHC read */
+		ret = SDHC_ReadSectors(lba + cnt, sectors, ptr);
+		if (!ret)
+			return -1;
+
+		/* Increment counter */
+		cnt += sectors;
+	}
+
+	return 0;
+}
+
+s32 __WBFS_WriteSDHC(void *fp, u32 lba, u32 count, void *iobuf)
+{
+	u32 cnt = 0;
+	s32 ret;
+
+	/* Do writes */
+	while (cnt < count) {
+		void *ptr     = ((u8 *)iobuf) + (cnt * sector_size);
+		u32   sectors = (count - cnt);
+
+		/* Write sectors is too big */
+		if (sectors > MAX_NB_SECTORS)
+			sectors = MAX_NB_SECTORS;
+
+		/* SDHC write */
+		ret = SDHC_WriteSectors(lba + cnt, sectors, ptr);
+		if (!ret)
+			return -1;
+
+		/* Increment counter */
+		cnt += sectors;
+	}
+
+	return 0;
+}
+
 
 s32 WBFS_Init(void)
 {
@@ -185,6 +239,66 @@ s32 WBFS_Init(void)
 
 	return 0;
 }
+
+/*
+s32 WBFS_Init(u32 device, u32 timeout)
+{
+	u32 cnt;
+	s32 ret;
+
+	// Wrong timeout 
+	if (!timeout)
+		return -1;
+
+	// Try to mount device 
+	for (cnt = 0; cnt < timeout; cnt++) {
+		switch (device) {
+		case WBFS_DEVICE_USB: {
+			// Initialize USB storage 
+			ret = USBStorage_Init();
+
+			if (ret >= 0) {
+				// Setup callbacks
+				readCallback  = __WBFS_ReadUSB;
+				writeCallback = __WBFS_WriteUSB;
+
+				// Device info
+				nb_sectors = USBStorage_GetCapacity(&sector_size);
+
+				goto out;
+			}
+		}
+
+		case WBFS_DEVICE_SDHC: {
+			// Initialize SDHC 
+			ret = SDHC_Init();
+
+			if (ret) {
+				// Setup callbacks 
+				readCallback  = __WBFS_ReadSDHC;
+				writeCallback = __WBFS_WriteSDHC;
+
+				// Device info
+				nb_sectors  = 0;
+				sector_size = SDHC_SECTOR_SIZE;
+
+				goto out;
+			} else
+				ret = -1;
+		}
+
+		default:
+			return -1;
+		}
+
+		// Sleep 1 second 
+		sleep(1);
+	}
+
+out:
+	return ret;
+}
+*/
 
 s32 WBFS_Open(void)
 {
@@ -283,7 +397,7 @@ s32 WBFS_AddGame(void)
 		return -1;
 
 	/* Add game to USB device */
-	ret = wbfs_add_disc(hdd, __WBFS_ReadDVD, NULL, __WBFS_Spinner, ONLY_GAME_PARTITION, 0);
+	ret = wbfs_add_disc(hdd, __WBFS_ReadDVD, NULL, __WBFS_Spinner, ALL_PARTITIONS, 0);
 	if (ret < 0)
 		return ret;
 
