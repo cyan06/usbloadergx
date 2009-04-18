@@ -44,20 +44,11 @@ extern const u32    button_install_png_size;
 extern const u8     button_install_over_png[];
 extern const u32    button_install_over_png_size;
 
-extern const u8		button_png[];
-extern const u32	button_png_size;
-
-extern const u8		button_over_png[];
-extern const u32	button_over_png_size;
-
 extern const u8		dialogue_box_startgame_png[];
 extern const u32	dialogue_box_startgame_png_size;
 
 extern const u8		button_dialogue_box_startgame_png[];
 extern const u32	button_dialogue_box_startgame_size;
-
-extern const u8		button_dialogue_box_startgame_over_png[];
-extern const u32	button_dialogue_box_startgame_over_size;
 
 extern const u8		menu_button_png[];
 extern const u32	menu_button_size;
@@ -73,15 +64,6 @@ extern const u32	settings_button_over_size;
 
 extern const u8		settings_menu_button_png[];
 extern const u32	settings_menu_button_size;
-
-extern const u8		settings_menu_button_over_png[];
-extern const u32	settings_menu_button_over_size;
-
-extern const u8		button_large_png[];
-extern const u32	button_large_png_size;
-
-extern const u8		button_large_over_png[];
-extern const u32	button_large_over_png_size;
 
 extern const u8		wiimote_poweroff_png[];
 extern const u32	wiimote_poweroff_png_size;

@@ -216,8 +216,7 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
+	GuiImageData btnOutline(button_dialogue_box_startgame_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
@@ -234,7 +233,6 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 
 	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn1Img(&btnOutline);
-	GuiImage btn1ImgOver(&btnOutlineOver);
 	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
 
 	if(btn2Label)
@@ -250,7 +248,6 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 
 	btn1.SetLabel(&btn1Txt);
 	btn1.SetImage(&btn1Img);
-	btn1.SetImageOver(&btn1ImgOver);
 	btn1.SetSoundOver(&btnSoundOver);
 	btn1.SetTrigger(&trigA);
 	btn1.SetState(STATE_SELECTED);
@@ -258,13 +255,11 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 
 	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn2Img(&btnOutline);
-	GuiImage btn2ImgOver(&btnOutlineOver);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn2.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 	btn2.SetPosition(-20, -25);
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
-	btn2.SetImageOver(&btn2ImgOver);
 	btn2.SetSoundOver(&btnSoundOver);
 	btn2.SetTrigger(&trigA);
 	btn2.SetEffectGrow();
@@ -317,8 +312,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
+	GuiImageData btnOutline(button_dialogue_box_startgame_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
@@ -382,7 +376,6 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_startgame_png);
-	GuiImageData btnOutlineOver(button_dialogue_box_startgame_over_png);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -414,26 +407,22 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 
 	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn2Img(&btnOutline);
-	GuiImage btn2ImgOver(&btnOutlineOver);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
 	btn2.SetPosition(20, -20);
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
-	btn2.SetImageOver(&btn2ImgOver);
 	btn2.SetSoundOver(&btnSoundOver);
 	btn2.SetTrigger(&trigA);
 	btn2.SetEffectGrow();
 
 	GuiText btn3Txt(btn3Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn3Img(&btnOutline);
-	GuiImage btn3ImgOver(&btnOutlineOver);
 	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn3.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 	btn3.SetPosition(-30, -20);
 	btn3.SetLabel(&btn3Txt);
 	btn3.SetImage(&btn3Img);
-	btn3.SetImageOver(&btn3ImgOver);
 	btn3.SetSoundOver(&btnSoundOver);
 	btn3.SetTrigger(&trigA);
 	btn3.SetEffectGrow();
@@ -495,8 +484,7 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
+	GuiImageData btnOutline(button_dialogue_box_startgame_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
@@ -513,7 +501,6 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 
 	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn1Img(&btnOutline);
-	GuiImage btn1ImgOver(&btnOutlineOver);
 	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
 
 	if(btn2Label)
@@ -529,7 +516,6 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 
 	btn1.SetLabel(&btn1Txt);
 	btn1.SetImage(&btn1Img);
-	btn1.SetImageOver(&btn1ImgOver);
 	btn1.SetSoundOver(&btnSoundOver);
 	btn1.SetTrigger(&trigA);
 	btn1.SetState(STATE_SELECTED);
@@ -537,13 +523,11 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 
 	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn2Img(&btnOutline);
-	GuiImage btn2ImgOver(&btnOutlineOver);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn2.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 	btn2.SetPosition(-20, -25);
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
-	btn2.SetImageOver(&btn2ImgOver);
 	btn2.SetSoundOver(&btnSoundOver);
 	btn2.SetTrigger(&trigA);
 	btn2.SetEffectGrow();
@@ -595,8 +579,7 @@ FormatingPartition(const char *title, partitionEntry *entry)
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
+	GuiImageData btnOutline(button_dialogue_box_startgame_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
@@ -699,8 +682,7 @@ ProgressWindow(const char *title, const char *msg)
 	GuiWindow promptWindow(448,288);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
+	GuiImageData btnOutline(button_dialogue_box_startgame_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
@@ -939,10 +921,6 @@ static int MenuInstall()
 	static char buffer[MAX_CHARACTERS + 4];
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
-	GuiImageData btnLargeOutline(button_large_png);
-	GuiImageData btnLargeOutlineOver(button_large_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
@@ -1195,8 +1173,6 @@ static int MenuDiscList()
     options.length = cnt;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
 
 	GuiImageData btnInstall(button_install_png);
 	GuiImageData btnInstallOver(button_install_over_png);
@@ -1207,9 +1183,6 @@ static int MenuDiscList()
 	GuiImageData btnSettings(settings_button_png);
 	GuiImageData btnSettingsOver(settings_button_over_png);
 
-	GuiImageData btnM(button_png);
-	GuiImageData btnLargeOutline(button_large_png);
-	GuiImageData btnLargeOutlineOver(button_large_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
@@ -1791,7 +1764,6 @@ static int MenuSettings()
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(settings_menu_button_png);
-	GuiImageData btnOutlineOver(settings_menu_button_over_png);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
@@ -1816,13 +1788,11 @@ static int MenuSettings()
     GuiText backBtnTxt("Go Back", 22, (GXColor){0, 0, 0, 255});
 	backBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage backBtnImg(&btnOutline);
-	GuiImage backBtnImgOver(&btnOutlineOver);
 	GuiButton backBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
 	backBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	backBtn.SetPosition(-180, 400);
 	backBtn.SetLabel(&backBtnTxt);
 	backBtn.SetImage(&backBtnImg);
-	backBtn.SetImageOver(&backBtnImgOver);
 	backBtn.SetSoundOver(&btnSoundOver);
 	backBtn.SetTrigger(&trigA);
 	backBtn.SetEffectGrow();
