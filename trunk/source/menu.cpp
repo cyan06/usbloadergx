@@ -1484,6 +1484,8 @@ static int MenuDiscList()
                             text,
                             "OK",0);
                             optionBrowser.SetFocus(1);
+                            menu = MENU_DISCLIST;
+                            break;
                             }
 
                         } else {
