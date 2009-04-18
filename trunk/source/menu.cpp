@@ -328,30 +328,26 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnOutline(button_png);
-	GuiImageData btnOutlineOver(button_over_png);
+	GuiImageData btnOutline(button_dialogue_box_startgame_png);
+	GuiImageData btnOutlineOver(button_dialogue_box_startgame_over_png);
+	GuiImageData btnOutlineplay(play_button_png);
+	GuiImageData btnOutlineplayOver(play_button_over_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
-	GuiImageData dialogBox(dialogue_box_png);
+	GuiImageData dialogBox(dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
-	GuiText titleTxt(title, 26, (GXColor){0, 0, 255, 255});
-	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,40);
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	msgTxt.SetPosition(0,-20);
+	msgTxt.SetPosition(0,-122);
 	msgTxt.SetMaxWidth(430);
 
-	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
-	GuiImage btn1Img(&btnOutline);
-	GuiImage btn1ImgOver(&btnOutlineOver);
-	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
-
-    btn1.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-    btn1.SetPosition(20, -75);
-	btn1.SetLabel(&btn1Txt);
+	GuiImage btn1Img(&btnOutlineplay);
+	GuiImage btn1ImgOver(&btnOutlineplayOver);
+	GuiButton btn1(btnOutlineplay.GetWidth(), btnOutlineplay.GetHeight());
+    btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+    btn1.SetPosition(0, -20);
 	btn1.SetImage(&btn1Img);
 	btn1.SetImageOver(&btn1ImgOver);
 	btn1.SetSoundOver(&btnSoundOver);
@@ -363,8 +359,8 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	GuiImage btn2Img(&btnOutline);
 	GuiImage btn2ImgOver(&btnOutlineOver);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
-	btn2.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
-	btn2.SetPosition(-20, -75);
+	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+	btn2.SetPosition(20, -20);
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
 	btn2.SetImageOver(&btn2ImgOver);
@@ -376,8 +372,8 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	GuiImage btn3Img(&btnOutline);
 	GuiImage btn3ImgOver(&btnOutlineOver);
 	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
-	btn3.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-	btn3.SetPosition(0, -20);
+	btn3.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+	btn3.SetPosition(-30, -20);
 	btn3.SetLabel(&btn3Txt);
 	btn3.SetImage(&btn3Img);
 	btn3.SetImageOver(&btn3ImgOver);
@@ -386,7 +382,6 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	btn3.SetEffectGrow();
 
 	promptWindow.Append(&dialogBoxImg);
-	promptWindow.Append(&titleTxt);
 	promptWindow.Append(&msgTxt);
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
@@ -1693,7 +1688,7 @@ static int MenuFormat()
 static int MenuSettings()
 {
 	int menu = MENU_NONE;
-	int ret, choice = 0;
+	int ret;
 
 	OptionList options2;
 	sprintf(options2.name[0], "Video Mode");
@@ -1740,29 +1735,6 @@ static int MenuSettings()
 	backBtn.SetTrigger(&trigA);
 	backBtn.SetEffectGrow();
 
-    GuiImage poweroffBtnImg(&btnpwroff);
-	GuiImage poweroffBtnImgOver(&btnpwroffOver);
-	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
-	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(280, 355);
-	poweroffBtn.SetImage(&poweroffBtnImg);
-	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
-	poweroffBtn.SetSoundOver(&btnSoundOver);
-	poweroffBtn.SetTrigger(&trigA);
-	poweroffBtn.SetEffectGrow();
-
-	GuiImage exitBtnImg(&btnhome);
-	GuiImage exitBtnImgOver(&btnhomeOver);
-	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
-	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(240, 367);
-	exitBtn.SetImage(&exitBtnImg);
-	exitBtn.SetImageOver(&exitBtnImgOver);
-	exitBtn.SetSoundOver(&btnSoundOver);
-	exitBtn.SetTrigger(&trigA);
-	exitBtn.SetTrigger(&trigHome);
-	exitBtn.SetEffectGrow();
-
 	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(0, 90);
 	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
@@ -1773,8 +1745,6 @@ static int MenuSettings()
 	w.Append(&settingsbackgroundbtn);
     w.Append(&titleTxt);
     w.Append(&backBtn);
-    w.Append(&poweroffBtn);
-	w.Append(&exitBtn);
 
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser2);
@@ -1842,25 +1812,6 @@ static int MenuSettings()
 			menu = MENU_DISCLIST;
 			break;
 
-		} else if(poweroffBtn.GetState() == STATE_CLICKED)
-		{
-		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
-			if(choice == 1)
-			{
-			    WPAD_Flush(0);
-                WPAD_Disconnect(0);
-                WPAD_Shutdown();
-				Sys_Shutdown();
-			}
-
-		} else if(exitBtn.GetState() == STATE_CLICKED)
-		{
-		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
-			if(choice == 1)
-			{
-                SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
-                //exit(0); //zum debuggen schneller
-			}
 		}
 	}
 	HaltGui();
