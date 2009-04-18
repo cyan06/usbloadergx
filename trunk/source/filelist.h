@@ -110,9 +110,6 @@ extern const u32	progressbar_empty_png_size;
 extern const u8		progressbar_outline_png[];
 extern const u32	progressbar_outline_png_size;
 
-extern const u8		throbber_png[];
-extern const u32	throbber_png_size;
-
 extern const u8		player1_point_png[];
 extern const u32	player1_point_png_size;
 

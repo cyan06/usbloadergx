@@ -37,8 +37,6 @@
 //for sd image data
 u8 * data = NULL;
 u8 * datadisc = NULL;
-int width = 0;
-int height = 0;
 
 static GuiImage * CoverImg = NULL;
 
@@ -47,7 +45,7 @@ static GuiImageData * pointer[4];
 static GuiImage * bgImg = NULL;
 static GuiImageData * background = NULL;
 static char prozent[10] = "0%";
-static char timet[100] = " ";
+static char timet[50] = " ";
 static GuiText prTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static GuiText timeTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static GuiText *GameIDTxt = NULL;
@@ -62,7 +60,6 @@ static GuiImageData progressbar(progressbar_png);
 static GuiImage progressbarImg(&progressbar);
 static double progressDone = 0;
 static double progressTotal = 1;
-static int showProgress = 1;
 
 
 //loads image file from sd card
@@ -72,6 +69,8 @@ int loadimg(char * filename)
 	IMGCTX ctx;
 
 	s32 res;
+    int width = 0;
+    int height = 0;
 
 	char filetemp[60];
 	snprintf(filetemp,sizeof(filetemp),"/images/%s.png",filename);
@@ -123,6 +122,9 @@ int loaddiskimg(char * filename)
 	PNGUPROP imgProp;
 	IMGCTX ctx;
 
+
+    int width = 0;
+    int height = 0;
 	s32 res;
 
 	char filetemp[60];
@@ -710,11 +712,6 @@ ProgressWindow(const char *title, const char *msg)
 	progressbarImg.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 	progressbarImg.SetPosition(25, 40);
 
-	GuiImageData throbber(throbber_png);
-	GuiImage throbberImg(&throbber);
-	throbberImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	throbberImg.SetPosition(0, 40);
-
 	GuiText titleTxt(title, 26, (GXColor){70, 70, 10, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,40);
@@ -732,18 +729,11 @@ ProgressWindow(const char *title, const char *msg)
 	promptWindow.Append(&titleTxt);
 	promptWindow.Append(&msgTxt);
 
-	if(showProgress == 1)
-	{
-		promptWindow.Append(&progressbarEmptyImg);
-		promptWindow.Append(&progressbarImg);
-		promptWindow.Append(&progressbarOutlineImg);
-        promptWindow.Append(&prTxt);
-        promptWindow.Append(&timeTxt);
-	}
-	else
-	{
-		promptWindow.Append(&throbberImg);
-	}
+    promptWindow.Append(&progressbarEmptyImg);
+    promptWindow.Append(&progressbarImg);
+    promptWindow.Append(&progressbarOutlineImg);
+    promptWindow.Append(&prTxt);
+    promptWindow.Append(&timeTxt);
 
 	HaltGui();
 	mainWindow->SetState(STATE_DISABLED);
@@ -751,27 +741,13 @@ ProgressWindow(const char *title, const char *msg)
 	mainWindow->ChangeFocus(&promptWindow);
 	ResumeGui();
 
-	float angle = 0;
-	u32 count = 0;
     s32 ret;
 
 
 
-		if(showProgress == 1)
-		{
-		    ret = wbfs_add_disc(hdd, __WBFS_ReadDVD, NULL, ShowProgress, ONLY_GAME_PARTITION, 0);
-		}
-		else if(showProgress == 2)
-		{
-			if(count % 5 == 0)
-			{
-				angle+=45;
-				if(angle >= 360)
-					angle = 0;
-				throbberImg.SetAngle(angle);
-			}
-			count++;
-		}
+
+
+    ret = wbfs_add_disc(hdd, __WBFS_ReadDVD, NULL, ShowProgress, ONLY_GAME_PARTITION, 0);
 
 	HaltGui();
 	mainWindow->Remove(&promptWindow);
