@@ -1066,7 +1066,7 @@ static int MenuInstall()
                 }
                 hdd = GetHddInfo();
                 if (!hdd) {
-                    WindowPrompt ("Install error!!",0,"Back",0);
+                    WindowPrompt ("No HDD found!","Error!!","Back",0);
                     menu = MENU_DISCLIST;
                     break;
                     }
@@ -1077,7 +1077,7 @@ static int MenuInstall()
                     menu = MENU_DISCLIST;
                     break;
                 } else {
-                    WindowPrompt ("Successfully installed!",0,"OK",0);
+                    WindowPrompt ("Successfully installed:",name,"OK",0);
                     menu = MENU_DISCLIST;
                     break;
                 }
