@@ -977,8 +977,10 @@ static int MenuInstall()
 	exitBtn.SetTrigger(&trigA);
 	exitBtn.SetEffectGrow();
 
-	#ifdef HW_RVL
+    #ifdef HW_RVL
 	int i = 0, level;
+	char txt[3];
+	GuiText * batteryTxt[4];
 	GuiImage * batteryImg[4];
 	GuiImage * batteryBarImg[4];
 	GuiButton * batteryBtn[4];
@@ -986,27 +988,35 @@ static int MenuInstall()
 	for(i=0; i < 4; i++)
 	{
 
-		batteryImg[i] = new GuiImage(&battery);
-		batteryImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-		batteryImg[i]->SetPosition(0, 0);
-		batteryBarImg[i] = new GuiImage(&batteryBar);
-		batteryBarImg[i]->SetTile(0);
-		batteryBarImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-		batteryBarImg[i]->SetPosition(3, 0);
+        if(i == 0)
+			sprintf(txt, "P %d", i+1);
+		else
+			sprintf(txt, "P%d", i+1);
 
-		batteryBtn[i] = new GuiButton(28, 12);
-		batteryBtn[i]->SetImage(batteryImg[i]);
-		batteryBtn[i]->SetIcon(batteryBarImg[i]);
+		batteryTxt[i] = new GuiText(txt, 22, (GXColor){63, 154, 192, 255});
+		batteryTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryImg[i] = new GuiImage(&battery);
+		batteryImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryImg[i]->SetPosition(36, 0);
+		batteryImg[i]->SetTile(0);
+		batteryBarImg[i] = new GuiImage(&batteryBar);
+		batteryBarImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryBarImg[i]->SetPosition(33, 0);
+
+		batteryBtn[i] = new GuiButton(40, 20);
+		batteryBtn[i]->SetLabel(batteryTxt[i]);
+		batteryBtn[i]->SetImage(batteryBarImg[i]);
+		batteryBtn[i]->SetIcon(batteryImg[i]);
 		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 		batteryBtn[i]->SetRumble(false);
-		batteryBtn[i]->SetAlpha(90);
+		batteryBtn[i]->SetAlpha(70);
 	}
 
 
-	batteryBtn[0]->SetPosition(-50, 420);
-	batteryBtn[1]->SetPosition(-10, 420);
-	batteryBtn[2]->SetPosition(30, 420);
-	batteryBtn[3]->SetPosition(70, 420);
+	batteryBtn[0]->SetPosition(-55, 400);
+	batteryBtn[1]->SetPosition(35, 400);
+	batteryBtn[2]->SetPosition(-55, 425);
+	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
     HaltGui();
@@ -1028,28 +1038,27 @@ static int MenuInstall()
 	{
 	    VIDEO_WaitVSync ();
 
-        #ifdef HW_RVL
+	    #ifdef HW_RVL
 		for(i=0; i < 4; i++)
 		{
 			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
 			{
 				level = (userInput[i].wpad.battery_level / 100.0) * 4;
 				if(level > 4) level = 4;
-				batteryBarImg[i]->SetTile(level);
+				batteryImg[i]->SetTile(level);
 
 				if(level == 0)
-					batteryImg[i]->SetImage(&batteryRed);
+					batteryBarImg[i]->SetImage(&batteryRed);
 				else
-					batteryImg[i]->SetImage(&battery);
+					batteryBarImg[i]->SetImage(&batteryBar);
 
 				batteryBtn[i]->SetAlpha(255);
-                batteryBarImg[i]->SetAlpha(255);
 			}
 			else // controller not connected
 			{
-				batteryBarImg[i]->SetTile(0);
+				batteryImg[i]->SetTile(0);
 				batteryImg[i]->SetImage(&battery);
-				batteryBtn[i]->SetAlpha(90);
+				batteryBtn[i]->SetAlpha(70);
 			}
 		}
 		#endif
@@ -1278,6 +1287,8 @@ static int MenuDiscList()
 
     #ifdef HW_RVL
 	int i = 0, level;
+	char txt[3];
+	GuiText * batteryTxt[4];
 	GuiImage * batteryImg[4];
 	GuiImage * batteryBarImg[4];
 	GuiButton * batteryBtn[4];
@@ -1285,27 +1296,35 @@ static int MenuDiscList()
 	for(i=0; i < 4; i++)
 	{
 
-		batteryImg[i] = new GuiImage(&battery);
-		batteryImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-		batteryImg[i]->SetPosition(0, 0);
-		batteryBarImg[i] = new GuiImage(&batteryBar);
-		batteryBarImg[i]->SetTile(0);
-		batteryBarImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-		batteryBarImg[i]->SetPosition(3, 0);
+        if(i == 0)
+			sprintf(txt, "P %d", i+1);
+		else
+			sprintf(txt, "P%d", i+1);
 
-		batteryBtn[i] = new GuiButton(28, 12);
-		batteryBtn[i]->SetImage(batteryImg[i]);
-		batteryBtn[i]->SetIcon(batteryBarImg[i]);
+		batteryTxt[i] = new GuiText(txt, 22, (GXColor){63, 154, 192, 255});
+		batteryTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryImg[i] = new GuiImage(&battery);
+		batteryImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryImg[i]->SetPosition(36, 0);
+		batteryImg[i]->SetTile(0);
+		batteryBarImg[i] = new GuiImage(&batteryBar);
+		batteryBarImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryBarImg[i]->SetPosition(33, 0);
+
+		batteryBtn[i] = new GuiButton(40, 20);
+		batteryBtn[i]->SetLabel(batteryTxt[i]);
+		batteryBtn[i]->SetImage(batteryBarImg[i]);
+		batteryBtn[i]->SetIcon(batteryImg[i]);
 		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 		batteryBtn[i]->SetRumble(false);
-		batteryBtn[i]->SetAlpha(90);
+		batteryBtn[i]->SetAlpha(70);
 	}
 
 
-	batteryBtn[0]->SetPosition(-50, 420);
-	batteryBtn[1]->SetPosition(-10, 420);
-	batteryBtn[2]->SetPosition(30, 420);
-	batteryBtn[3]->SetPosition(70, 420);
+	batteryBtn[0]->SetPosition(-55, 400);
+	batteryBtn[1]->SetPosition(35, 400);
+	batteryBtn[2]->SetPosition(-55, 425);
+	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
 	GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
@@ -1347,21 +1366,20 @@ static int MenuDiscList()
 			{
 				level = (userInput[i].wpad.battery_level / 100.0) * 4;
 				if(level > 4) level = 4;
-				batteryBarImg[i]->SetTile(level);
+				batteryImg[i]->SetTile(level);
 
 				if(level == 0)
-					batteryImg[i]->SetImage(&batteryRed);
+					batteryBarImg[i]->SetImage(&batteryRed);
 				else
-					batteryImg[i]->SetImage(&battery);
+					batteryBarImg[i]->SetImage(&batteryBar);
 
 				batteryBtn[i]->SetAlpha(255);
-                batteryBarImg[i]->SetAlpha(255);
 			}
 			else // controller not connected
 			{
-				batteryBarImg[i]->SetTile(0);
+				batteryImg[i]->SetTile(0);
 				batteryImg[i]->SetImage(&battery);
-				batteryBtn[i]->SetAlpha(90);
+				batteryBtn[i]->SetAlpha(70);
 			}
 		}
 		#endif
@@ -1604,8 +1622,10 @@ static int MenuFormat()
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
 
-	#ifdef HW_RVL
+    #ifdef HW_RVL
 	int i = 0, level;
+	char txt[3];
+	GuiText * batteryTxt[4];
 	GuiImage * batteryImg[4];
 	GuiImage * batteryBarImg[4];
 	GuiButton * batteryBtn[4];
@@ -1613,27 +1633,35 @@ static int MenuFormat()
 	for(i=0; i < 4; i++)
 	{
 
-		batteryImg[i] = new GuiImage(&battery);
-		batteryImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-		batteryImg[i]->SetPosition(0, 0);
-		batteryBarImg[i] = new GuiImage(&batteryBar);
-		batteryBarImg[i]->SetTile(0);
-		batteryBarImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-		batteryBarImg[i]->SetPosition(3, 0);
+        if(i == 0)
+			sprintf(txt, "P %d", i+1);
+		else
+			sprintf(txt, "P%d", i+1);
 
-		batteryBtn[i] = new GuiButton(28, 12);
-		batteryBtn[i]->SetImage(batteryImg[i]);
-		batteryBtn[i]->SetIcon(batteryBarImg[i]);
+		batteryTxt[i] = new GuiText(txt, 22, (GXColor){63, 154, 192, 255});
+		batteryTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryImg[i] = new GuiImage(&battery);
+		batteryImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryImg[i]->SetPosition(36, 0);
+		batteryImg[i]->SetTile(0);
+		batteryBarImg[i] = new GuiImage(&batteryBar);
+		batteryBarImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryBarImg[i]->SetPosition(33, 0);
+
+		batteryBtn[i] = new GuiButton(40, 20);
+		batteryBtn[i]->SetLabel(batteryTxt[i]);
+		batteryBtn[i]->SetImage(batteryBarImg[i]);
+		batteryBtn[i]->SetIcon(batteryImg[i]);
 		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 		batteryBtn[i]->SetRumble(false);
-		batteryBtn[i]->SetAlpha(90);
+		batteryBtn[i]->SetAlpha(70);
 	}
 
 
-	batteryBtn[0]->SetPosition(-50, 420);
-	batteryBtn[1]->SetPosition(-10, 420);
-	batteryBtn[2]->SetPosition(30, 420);
-	batteryBtn[3]->SetPosition(70, 420);
+	batteryBtn[0]->SetPosition(-55, 400);
+	batteryBtn[1]->SetPosition(35, 400);
+	batteryBtn[2]->SetPosition(-55, 425);
+	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
 	GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
@@ -1663,28 +1691,27 @@ static int MenuFormat()
 	{
 	    VIDEO_WaitVSync ();
 
-        #ifdef HW_RVL
+	    #ifdef HW_RVL
 		for(i=0; i < 4; i++)
 		{
 			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
 			{
 				level = (userInput[i].wpad.battery_level / 100.0) * 4;
 				if(level > 4) level = 4;
-				batteryBarImg[i]->SetTile(level);
+				batteryImg[i]->SetTile(level);
 
 				if(level == 0)
-					batteryImg[i]->SetImage(&batteryRed);
+					batteryBarImg[i]->SetImage(&batteryRed);
 				else
-					batteryImg[i]->SetImage(&battery);
+					batteryBarImg[i]->SetImage(&batteryBar);
 
 				batteryBtn[i]->SetAlpha(255);
-                batteryBarImg[i]->SetAlpha(255);
 			}
 			else // controller not connected
 			{
-				batteryBarImg[i]->SetTile(0);
+				batteryImg[i]->SetTile(0);
 				batteryImg[i]->SetImage(&battery);
-				batteryBtn[i]->SetAlpha(90);
+				batteryBtn[i]->SetAlpha(70);
 			}
 		}
 		#endif
@@ -1936,9 +1963,10 @@ static int MenuCheck()
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
 
-	#ifdef HW_RVL
-	i = 0;
+    #ifdef HW_RVL
 	int level;
+	char txt[3];
+	GuiText * batteryTxt[4];
 	GuiImage * batteryImg[4];
 	GuiImage * batteryBarImg[4];
 	GuiButton * batteryBtn[4];
@@ -1946,27 +1974,35 @@ static int MenuCheck()
 	for(i=0; i < 4; i++)
 	{
 
-		batteryImg[i] = new GuiImage(&battery);
-		batteryImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-		batteryImg[i]->SetPosition(0, 0);
-		batteryBarImg[i] = new GuiImage(&batteryBar);
-		batteryBarImg[i]->SetTile(0);
-		batteryBarImg[i]->SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-		batteryBarImg[i]->SetPosition(3, 0);
+        if(i == 0)
+			sprintf(txt, "P %d", i+1);
+		else
+			sprintf(txt, "P%d", i+1);
 
-		batteryBtn[i] = new GuiButton(28, 12);
-		batteryBtn[i]->SetImage(batteryImg[i]);
-		batteryBtn[i]->SetIcon(batteryBarImg[i]);
+		batteryTxt[i] = new GuiText(txt, 22, (GXColor){63, 154, 192, 255});
+		batteryTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryImg[i] = new GuiImage(&battery);
+		batteryImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryImg[i]->SetPosition(36, 0);
+		batteryImg[i]->SetTile(0);
+		batteryBarImg[i] = new GuiImage(&batteryBar);
+		batteryBarImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		batteryBarImg[i]->SetPosition(33, 0);
+
+		batteryBtn[i] = new GuiButton(40, 20);
+		batteryBtn[i]->SetLabel(batteryTxt[i]);
+		batteryBtn[i]->SetImage(batteryBarImg[i]);
+		batteryBtn[i]->SetIcon(batteryImg[i]);
 		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 		batteryBtn[i]->SetRumble(false);
-		batteryBtn[i]->SetAlpha(90);
+		batteryBtn[i]->SetAlpha(70);
 	}
 
 
-	batteryBtn[0]->SetPosition(-50, 420);
-	batteryBtn[1]->SetPosition(-10, 420);
-	batteryBtn[2]->SetPosition(30, 420);
-	batteryBtn[3]->SetPosition(70, 420);
+	batteryBtn[0]->SetPosition(-55, 400);
+	batteryBtn[1]->SetPosition(35, 400);
+	batteryBtn[2]->SetPosition(-55, 425);
+	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
     GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
@@ -1994,28 +2030,27 @@ static int MenuCheck()
 	{
 		VIDEO_WaitVSync ();
 
-        #ifdef HW_RVL
+	    #ifdef HW_RVL
 		for(i=0; i < 4; i++)
 		{
 			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
 			{
 				level = (userInput[i].wpad.battery_level / 100.0) * 4;
 				if(level > 4) level = 4;
-				batteryBarImg[i]->SetTile(level);
+				batteryImg[i]->SetTile(level);
 
 				if(level == 0)
-					batteryImg[i]->SetImage(&batteryRed);
+					batteryBarImg[i]->SetImage(&batteryRed);
 				else
-					batteryImg[i]->SetImage(&battery);
+					batteryBarImg[i]->SetImage(&batteryBar);
 
 				batteryBtn[i]->SetAlpha(255);
-                batteryBarImg[i]->SetAlpha(255);
 			}
 			else // controller not connected
 			{
-				batteryBarImg[i]->SetTile(0);
+				batteryImg[i]->SetTile(0);
 				batteryImg[i]->SetImage(&battery);
-				batteryBtn[i]->SetAlpha(90);
+				batteryBtn[i]->SetAlpha(70);
 			}
 		}
 		#endif
