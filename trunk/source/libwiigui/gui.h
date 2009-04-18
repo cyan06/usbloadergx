@@ -51,7 +51,7 @@ extern FreeTypeGX *fontSystem;
 #define SCROLL_INITIAL_DELAY 	20
 #define SCROLL_LOOP_DELAY 		3
 #define PAGESIZE	 			9
-#define MAX_OPTIONS 			190
+#define MAX_OPTIONS 			170
 
 typedef void (*UpdateCallback)(void * e);
 

@@ -367,7 +367,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
  * presenting a user with a choice
  ***************************************************************************/
 int
-GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, char * ID)
+GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, char * ID)
 {
 	int choice = -1, angle = 0;
 
@@ -383,10 +383,14 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 	GuiImageData dialogBox(dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
-	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
+	GuiText msgTxt(msg, 22, (GXColor){50, 50, 50, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	msgTxt.SetPosition(0,-122);
 	msgTxt.SetMaxWidth(430);
+
+    GuiText sizeTxt(size, 22, (GXColor){50, 50, 50, 255});
+	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
+	sizeTxt.SetPosition(-40,50);
 
 	//disk image load
     loaddiskimg(ID);
@@ -429,6 +433,7 @@ GameWindowPrompt(const char *title, const char *msg, const char *btn1Label, cons
 
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&msgTxt);
+	promptWindow.Append(&sizeTxt);
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
     promptWindow.Append(&btn3);
@@ -1143,7 +1148,7 @@ static int MenuDiscList()
 	OptionList options;
 	f32 free, used, size = 0.0;
 	u32 cnt = 0, nolist;
-	char text[ISFS_MAXPATH];
+	char text[ISFS_MAXPATH], text2[20];
 	int choice = 0, selectedold = 100;
 	s32 ret;
 
@@ -1440,10 +1445,20 @@ static int MenuDiscList()
                 if ((s32) (cnt) == gameSelected) {
                         struct discHdr *header = &gameList[gameSelected];
                         WBFS_GameSize(header->id, &size);
-                        sprintf(text, "%s %.2fGB", header->title, size);
+
+                        static char buffer[36 + 4];
+                        memset(buffer, 0, sizeof(buffer));
+                        if (strlen(header->title) < (36 + 3)) {
+                        sprintf(text, "%s", header->title);
+                        } else {
+                        strncpy(buffer, header->title,  36);
+                        strncat(buffer, "...", 3);
+                        sprintf(text, "%s", buffer);
+                        }
+                        sprintf(text2, "%.2fGB", size);
                         sprintf (ID,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3],header->id[4],header->id[5]);
 						choice = GameWindowPrompt(
-                        "Game:",
+                        text2,
                         text,
                         "Boot",
                         "Cancel",
