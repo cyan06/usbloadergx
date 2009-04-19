@@ -225,7 +225,7 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
-	GuiText titleTxt(title, 26, (GXColor){0, 0, 255, 255});
+	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,40);
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
@@ -321,7 +321,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
-	GuiText titleTxt(title, 26, (GXColor){0, 0, 255, 255});
+	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,40);
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
@@ -498,7 +498,7 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
-	GuiText titleTxt(title, 26, (GXColor){0, 0, 255, 255});
+	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,40);
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
@@ -593,7 +593,7 @@ FormatingPartition(const char *title, partitionEntry *entry)
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
-	GuiText titleTxt(title, 26, (GXColor){0, 0, 255, 255});
+	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,0);
 
@@ -1559,11 +1559,11 @@ static int MenuFormat()
 	GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
-    GuiText titleTxt("Select the Partition", 18, (GXColor){0, 0, 255, 255});
+    GuiText titleTxt("Select the Partition", 18, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(10,40);
 
-    GuiText titleTxt2("you want to format:", 18, (GXColor){0, 0, 255, 255});
+    GuiText titleTxt2("you want to format:", 18, (GXColor){0, 0, 0, 255});
 	titleTxt2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt2.SetPosition(20,60);
 
