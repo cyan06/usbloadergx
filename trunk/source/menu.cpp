@@ -216,6 +216,104 @@ HaltGui()
 		usleep(50);
 }
 
+
+int
+WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2Label, const char *btn3Label)
+{
+	int choice = -1;
+
+	GuiWindow promptWindow(448,288);
+	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	promptWindow.SetPosition(0, -10);
+	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	GuiImageData btnOutline(button_dialogue_box_startgame_png);
+
+	GuiTrigger trigA;
+	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	GuiTrigger trigB;
+	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+	
+	GuiImageData dialogBox(dialogue_box_png);
+	GuiImage dialogBoxImg(&dialogBox);
+
+	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
+	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	titleTxt.SetPosition(0,40);
+
+	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn1Img(&btnOutline);
+	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
+    btn1.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+	btn1.SetPosition(-30, -100);
+	btn1.SetImage(&btn1Img);
+	btn1.SetLabel(&btn1Txt);
+	btn1.SetSoundOver(&btnSoundOver);
+	btn1.SetTrigger(&trigA);
+	btn1.SetState(STATE_SELECTED);
+	btn1.SetEffectGrow();
+
+	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn2Img(&btnOutline);
+	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
+	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+	btn2.SetPosition(20, -100);
+	btn2.SetLabel(&btn2Txt);
+	btn2.SetImage(&btn2Img);
+	btn2.SetSoundOver(&btnSoundOver);
+	btn2.SetTrigger(&trigA);
+	btn2.SetEffectGrow();
+
+	GuiText btn3Txt(btn3Label, 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn3Img(&btnOutline);
+	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
+	btn3.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+    btn3.SetPosition(0, -45);
+	btn3.SetLabel(&btn3Txt);
+	btn3.SetImage(&btn3Img);
+	btn3.SetSoundOver(&btnSoundOver);
+	btn3.SetTrigger(&trigB);
+	btn3.SetTrigger(&trigA);
+	btn3.SetEffectGrow();
+
+	promptWindow.Append(&dialogBoxImg);
+	promptWindow.Append(&titleTxt);
+	//promptWindow.Append(&msgTxt);
+	//promptWindow.Append(&sizeTxt);
+	promptWindow.Append(&btn1);
+    promptWindow.Append(&btn2);
+    promptWindow.Append(&btn3);
+
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	HaltGui();
+	mainWindow->SetState(STATE_DISABLED);
+	mainWindow->Append(&promptWindow);
+	mainWindow->ChangeFocus(&promptWindow);
+	ResumeGui();
+
+	while(choice == -1)
+	{
+		VIDEO_WaitVSync();
+
+		if(btn1.GetState() == STATE_CLICKED) {
+			choice = 1;
+		}
+		else if(btn2.GetState() == STATE_CLICKED) {
+			choice = 2;
+		}
+        else if(btn3.GetState() == STATE_CLICKED) {
+            choice = 0;
+        }
+	}
+
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+	while(promptWindow.GetEffect() > 0) usleep(50);
+	HaltGui();
+	mainWindow->Remove(&promptWindow);
+	mainWindow->SetState(STATE_DEFAULT);
+	ResumeGui();
+	return choice;
+
+}
 /****************************************************************************
  * WindowPrompt
  *
@@ -232,9 +330,12 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_startgame_png);
+	
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-
+	GuiTrigger trigB;
+	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+	
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
@@ -276,6 +377,7 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
 	btn2.SetSoundOver(&btnSoundOver);
+	btn2.SetTrigger(&trigB);
 	btn2.SetTrigger(&trigA);
 	btn2.SetEffectGrow();
 
@@ -394,7 +496,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-
+	GuiTrigger trigB;
+	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+	
 	GuiImageData dialogBox(dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
@@ -432,6 +536,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
 	btn2.SetSoundOver(&btnSoundOver);
+	btn2.SetTrigger(&trigB);
 	btn2.SetTrigger(&trigA);
 	btn2.SetEffectGrow();
 
@@ -507,6 +612,9 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 	GuiImageData btnOutline(button_dialogue_box_startgame_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	GuiTrigger trigB;
+	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+
 
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
@@ -537,6 +645,7 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 	btn1.SetLabel(&btn1Txt);
 	btn1.SetImage(&btn1Img);
 	btn1.SetSoundOver(&btnSoundOver);
+	btn1.SetTrigger(&trigB);
 	btn1.SetTrigger(&trigA);
 	btn1.SetState(STATE_SELECTED);
 	btn1.SetEffectGrow();
@@ -926,7 +1035,7 @@ static int MenuInstall()
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
-    GuiImage poweroffBtnImg(&btnpwroff);
+	GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
@@ -1107,12 +1216,13 @@ static int MenuInstall()
 
 		} else if(exitBtn.GetState() == STATE_CLICKED)
 		{
-		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
+		    choice = WindowPrompt ("Shutdown System","Are you sure ?","Yes","No");
 			if(choice == 1)
 			{
                 SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
-                //exit(0); //zum debuggen schneller
+                exit(0); //zum debuggen schneller
 			}
+			
 		}
 	}
 
@@ -1353,6 +1463,7 @@ static int MenuDiscList()
 
 	    if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
+
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
 			if(choice == 1)
 			{
@@ -1369,16 +1480,19 @@ static int MenuDiscList()
 		} else if(menuBtn.GetState() == STATE_CLICKED)
 		{
 
-		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
+			choice = WiiMenuWindowPrompt ("Exit USB ISO Loader ?","Wii Menu","HBC","Cancel");
 			if(choice == 1)
 			{
-                //SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
-                exit(0); //zum debuggen schneller
-			} else {
-			    menuBtn.ResetState();
-			    optionBrowser.SetFocus(1);
+                SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0); // Back to System Menu
 			}
-
+			else if (choice == 2) 
+			{
+				exit(0); //Back to HBC
+			} else {
+			menuBtn.ResetState();
+			optionBrowser.SetFocus(1);
+			}
+					    
         } else if(installBtn.GetState() == STATE_CLICKED)
 		{
 
@@ -1411,24 +1525,26 @@ static int MenuDiscList()
 
                 if ((s32) (cnt) == selectimg) {
 					if (selectimg != selectedold){
-						w.Remove(CoverImg);
-						w.Remove(GameIDTxt);
+
 						selectedold = selectimg;
 						struct discHdr *header = &gameList[selectimg];
 						sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+						w.Remove(CoverImg);
+						w.Remove(GameIDTxt);						
 						//load game cover
 						loadimg(ID, IDfull);
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						GameIDTxt->SetPosition(70,290);
-						GameIDTxt->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 35);
+						GameIDTxt->SetPosition(68,290);
+						GameIDTxt->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 180);
 						CoverImg = new GuiImage(data,160,224);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						CoverImg->SetPosition(34,55);
-						CoverImg->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 35);
+						CoverImg->SetPosition(30,55);
+						CoverImg->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 180);
 						w.Append(GameIDTxt);
 						w.Append(CoverImg);
+						break;
 					}
 				}
 
@@ -1784,6 +1900,9 @@ static int MenuSettings()
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
+	GuiTrigger trigB;
+	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+
 
     GuiText titleTxt("Settings", 28, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
@@ -1805,6 +1924,7 @@ static int MenuSettings()
 	backBtn.SetImage(&backBtnImg);
 	backBtn.SetSoundOver(&btnSoundOver);
 	backBtn.SetTrigger(&trigA);
+	backBtn.SetTrigger(&trigB);
 	backBtn.SetEffectGrow();
 
 	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
