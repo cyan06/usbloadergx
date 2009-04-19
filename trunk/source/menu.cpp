@@ -63,7 +63,7 @@ static double progressTotal = 1;
 
 
 //loads image file from sd card
-int loadimg(char * filename)
+int loadimg(char * filenameshort, char * filename)
 {
 	PNGUPROP imgProp;
 	IMGCTX ctx;
@@ -78,8 +78,15 @@ int loadimg(char * filename)
     res = PNGU_GetImageProperties(ctx, &imgProp);
 	if (res != PNGU_OK)
     {
+        snprintf(filetemp,sizeof(filetemp),"/images/%s.png",filenameshort);
+        ctx = PNGU_SelectImageFromDevice(filetemp);
+        res = PNGU_GetImageProperties(ctx, &imgProp);
+
+        if (res != PNGU_OK)
+        {
        	ctx = PNGU_SelectImageFromBuffer(nocover_png);
         res = PNGU_GetImageProperties(ctx, &imgProp);
+        }
 	}
 
 	free(data);
@@ -117,7 +124,7 @@ return 1;
 }
 
 
-int loaddiskimg(char * filename)
+int loaddiskimg(char * filenameshort, char * filename)
 {
 	PNGUPROP imgProp;
 	IMGCTX ctx;
@@ -133,8 +140,14 @@ int loaddiskimg(char * filename)
     res = PNGU_GetImageProperties(ctx, &imgProp);
 	if (res != PNGU_OK)
     {
+        snprintf(filetemp,sizeof(filetemp),"/images/disc/%s.png",filenameshort);
+        ctx = PNGU_SelectImageFromDevice(filetemp);
+        res = PNGU_GetImageProperties(ctx, &imgProp);
+        if (res != PNGU_OK)
+        {
        	ctx = PNGU_SelectImageFromBuffer(nodisc_png);
         res = PNGU_GetImageProperties(ctx, &imgProp);
+        }
 	}
 
 	free(datadisc);
@@ -369,7 +382,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
  * presenting a user with a choice
  ***************************************************************************/
 int
-GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, char * ID)
+GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, char * ID, char * IDfull)
 {
 	int choice = -1, angle = 0;
 
@@ -395,7 +408,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	sizeTxt.SetPosition(-40,50);
 
 	//disk image load
-    loaddiskimg(ID);
+    loaddiskimg(ID, IDfull);
     GuiImage * DiskImg = NULL;
     DiskImg = new GuiImage(datadisc,160,160);
     DiskImg->SetAngle(angle);
@@ -1405,7 +1418,7 @@ static int MenuDiscList()
 						sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						//load game cover
-						loadimg(ID);
+						loadimg(ID, IDfull);
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						GameIDTxt->SetPosition(70,290);
@@ -1432,16 +1445,18 @@ static int MenuDiscList()
                         strncat(buffer, "...", 3);
                         sprintf(text, "%s", buffer);
                         }
-						
+
                         sprintf(text2, "%.2fGB", size);
                         sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
+						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						choice = GameWindowPrompt(
                         text2,
                         text,
                         "Boot",
                         "Cancel",
                         "Delete",
-                        ID);
+                        ID,
+                        IDfull);
                     if(choice == 1)
                     {
                         /* Set USB mode */
