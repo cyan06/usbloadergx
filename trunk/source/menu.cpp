@@ -1389,6 +1389,7 @@ static int MenuDiscList()
 		//Get selected game under cursor
 		int selectimg;
 		char ID[3];
+		char IDfull[6];
 		selectimg = optionBrowser.GetSelectedOption();
 
 	    gameSelected = optionBrowser.GetClickedOption();
@@ -1402,10 +1403,10 @@ static int MenuDiscList()
 						selectedold = selectimg;
 						struct discHdr *header = &gameList[selectimg];
 						sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
+						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						//load game cover
 						loadimg(ID);
-
-						GameIDTxt = new GuiText(ID, 22, (GXColor){63, 154, 192, 255});
+						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						GameIDTxt->SetPosition(70,290);
 						GameIDTxt->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 35);
