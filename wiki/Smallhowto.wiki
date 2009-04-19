@@ -6,4 +6,4 @@ To get the USB Loader working you need to follow a few rules.
 
 -DVD covers image need a resolution of *160x160* and must be placed in *SDRoot:/images/disc/*
 
--DVD and Boxart images must both named like this RUU.png for example so only the first 3 characters of the GameID.
+-It doesn´t matter if you use Boxart/DVD images with 6 or 3 characters if the USB Loader can´t find the 6 character images the USB Loader will load the images with 3 characters. ;)
