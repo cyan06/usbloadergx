@@ -1,0 +1,7 @@
+= Small How-To =
+
+To get the USB Loader working you need to follow a few rules.
+
+-cover images need a resolution of *160x224* and must be place in *SDRoot:/images/*
+
+-DVD covers image need a resolution of *160x160* and must be placed in *SDRoot:/images/disc/*
