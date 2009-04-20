@@ -31,6 +31,8 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 
 	trigA = new GuiTrigger;
 	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	trigB = new GuiTrigger;
+	trigB->SetSimpleTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, 0);
 
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 
@@ -92,7 +94,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	scrollbarBoxBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	scrollbarBoxBtn->SetSelectable(false);
 	scrollbarBoxBtn->SetEffectOnOver(EFFECT_SCALE, 50, 120);
-	scrollbarBoxBtn->SetTrigger(trigA);
+	scrollbarBoxBtn->SetTrigger(trigB);
     }
 
 	for(int i=0; i<PAGESIZE; i++)
@@ -400,7 +402,7 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
         /* Get pressed buttons */
         for (cnt = 0; cnt < 4; cnt++)
             buttons |= WPAD_ButtonsHeld(cnt);
-        if (buttons == WPAD_BUTTON_A) {
+        if (buttons == WPAD_BUTTON_B) {
 
         } else {
             scrollbarBoxBtn->ResetState();

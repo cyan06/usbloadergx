@@ -20,6 +20,9 @@
 #include "menu.h"
 #include "main.h"
 #include "input.h"
+#include "http.h"
+#include "dns.h"
+
 
 #include "partition.h"
 #include "wbfs.h"
@@ -44,6 +47,7 @@ static GuiImage * CoverImg = NULL;
 static struct discHdr *gameList = NULL;
 static GuiImageData * pointer[4];
 static GuiImage * bgImg = NULL;
+static GuiButton * btnLogo = NULL;
 static GuiImageData * background = NULL;
 static char prozent[10] = "0%";
 static char timet[50] = " ";
@@ -160,7 +164,7 @@ int loadimg(char * filenameshort, char * filename)
 return 1;
 }
 
-
+//loads disk image file from sd card
 int loaddiskimg(char * filenameshort, char * filename)
 {
 	PNGUPROP imgProp;
@@ -253,6 +257,94 @@ HaltGui()
 		usleep(50);
 }
 
+/****************************************************************************
+ * WindowCredits
+ * Display credits
+ ***************************************************************************/
+static void WindowCredits(void * ptr)
+{
+	if(btnLogo->GetState() != STATE_CLICKED)
+		return;
+
+	btnLogo->ResetState();
+
+	bool exit = false;
+	int i = 0;
+	int y = 95;
+
+	GuiWindow creditsWindow(screenwidth,screenheight);
+	GuiWindow creditsWindowBox(580,448);
+	creditsWindowBox.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+
+	GuiImageData creditsBox(credits_box_png);
+	GuiImage creditsBoxImg(&creditsBox);
+	creditsBoxImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	creditsWindowBox.Append(&creditsBoxImg);
+
+	int numEntries = 8;
+	GuiText * txt[numEntries];
+
+	txt[i] = new GuiText("Credits", 24, (GXColor){255, 255, 255, 255});
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+
+	txt[i] = new GuiText("Official Site: http://code.google.com/p/usbloader-gui/", 20, (GXColor){255, 255, 255, 255});
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=30;
+
+	txt[i]->SetPresets(22, (GXColor){255, 255, 255,  255}, 0,
+			FTGX_JUSTIFY_LEFT | FTGX_ALIGN_TOP, ALIGN_LEFT, ALIGN_TOP);
+
+	txt[i] = new GuiText("Coding:");
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	txt[i] = new GuiText("Waninkoko/Kwiirk/dimok/nIxx");
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	
+	txt[i] = new GuiText("Design:");
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	txt[i] = new GuiText("cyrex");
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=30;
+
+	txt[i] = new GuiText("Special thanks to Waninkoko & Kwiirk");
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	txt[i] = new GuiText("for the USB Loader and releasing the source code");
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	for(i=0; i < numEntries; i++)
+		creditsWindowBox.Append(txt[i]);
+
+	creditsWindow.Append(&creditsWindowBox);
+
+	while(!exit)
+	{
+		creditsWindow.Draw();
+
+		for(i=3; i >= 0; i--)
+		{
+			#ifdef HW_RVL
+			if(userInput[i].wpad.ir.valid)
+				Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
+					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
+			DoRumble(i);
+			#endif
+		}
+
+		Menu_Render();
+
+		for(i=0; i < 4; i++)
+		{
+			if(userInput[i].wpad.btns_d || userInput[i].pad.btns_d)
+				exit = true;
+		}
+	}
+
+	// clear buttons pressed
+	for(i=0; i < 4; i++)
+	{
+		userInput[i].wpad.btns_d = 0;
+		userInput[i].pad.btns_d = 0;
+	}
+
+	for(i=0; i < numEntries; i++)
+		delete txt[i];
+}
 
 int
 WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2Label, const char *btn3Label)
@@ -1459,10 +1551,13 @@ static int MenuDiscList()
 	installBtn.SetImage(&installBtnImg);
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
-	installBtn.SetTrigger(&trigA);
-	//installBtn.SetTrigger(&trigPlus);
-	installBtn.SetEffectGrow();
 	//installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
+	if (godmode == 1)
+		{
+		//installBtn.SetTrigger(&trigPlus);
+		installBtn.SetTrigger(&trigA);
+		installBtn.SetEffectGrow();
+		}
 
 	GuiImage settingsBtnImg(&btnSettings);
 	GuiImage settingsBtnImgOver(&btnSettingsOver);
@@ -1551,12 +1646,8 @@ static int MenuDiscList()
     w.Append(&usedSpaceTxt);
 	w.Append(&gamecntTxt);
     w.Append(&poweroffBtn);
-	
-	//check if unlocked
-	if (godmode == 1)
-	{
     w.Append(&installBtn);
-	}
+	
 	
 	w.Append(&menuBtn);
     w.Append(&settingsBtn);
@@ -1683,11 +1774,11 @@ static int MenuDiscList()
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						GameIDTxt->SetPosition(68,290);
-						GameIDTxt->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 180);
+						GameIDTxt->SetEffect(EFFECT_FADE, 20);
 						CoverImg = new GuiImage(data,160,224);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						CoverImg->SetPosition(30,55);
-						CoverImg->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 180);
+						CoverImg->SetEffect(EFFECT_FADE, 20);
 						w.Append(GameIDTxt);
 						w.Append(CoverImg);
 						break;
@@ -2052,7 +2143,6 @@ static int MenuSettings()
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
 
-
     GuiText titleTxt("Settings", 28, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,40);
@@ -2073,6 +2163,8 @@ static int MenuSettings()
 	backBtn.SetImage(&backBtnImg);
 	backBtn.SetSoundOver(&btnSoundOver);
 	backBtn.SetTrigger(&trigA);
+	backBtn.SetTrigger(&trigB);
+	backBtn.SetEffectGrow();
 	
 	GuiText lockBtnTxt("Lock", 22, (GXColor){0, 0, 0, 255});
 	lockBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
@@ -2084,10 +2176,20 @@ static int MenuSettings()
 	lockBtn.SetImage(&lockBtnImg);
 	lockBtn.SetSoundOver(&btnSoundOver);
 	lockBtn.SetTrigger(&trigA);
-
 	
-	backBtn.SetTrigger(&trigB);
-	backBtn.SetEffectGrow();
+	GuiImageData logo(logo_png);
+	GuiImage logoImg(&logo);
+	GuiImageData logoOver(logo_png);
+	GuiImage logoImgOver(&logoOver);
+	btnLogo = new GuiButton(logoImg.GetWidth(), logoImg.GetHeight());
+	btnLogo->SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+	btnLogo->SetPosition(0, -45);
+	btnLogo->SetImage(&logoImg);
+	btnLogo->SetImageOver(&logoImgOver);
+	btnLogo->SetEffectGrow();
+	btnLogo->SetSoundOver(&btnSoundOver);
+	btnLogo->SetTrigger(&trigA);
+	btnLogo->SetUpdateCallback(WindowCredits);
 
 	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(0, 90);
@@ -2100,6 +2202,7 @@ static int MenuSettings()
     w.Append(&titleTxt);
     w.Append(&backBtn);
 	w.Append(&lockBtn);
+	w.Append(btnLogo);
 
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser2);
