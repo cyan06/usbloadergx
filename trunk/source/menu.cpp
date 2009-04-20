@@ -1547,7 +1547,7 @@ static int MenuDiscList()
 	GuiImage installBtnImgOver(&btnInstallOver);
 	GuiButton installBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
 	installBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	installBtn.SetPosition(-283, 355);
+	installBtn.SetPosition(-280, 355);
 	installBtn.SetImage(&installBtnImg);
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
@@ -1578,7 +1578,6 @@ static int MenuDiscList()
 	menuBtn.SetImage(&menuBtnImg);
 	menuBtn.SetImageOver(&menuBtnImgOver);
 	menuBtn.SetSoundOver(&btnSoundOver);
-	//menuBtn.SetAngle(45);
 	menuBtn.SetTrigger(&trigA);
 	menuBtn.SetTrigger(&trigHome);
 	menuBtn.SetEffectGrow();
