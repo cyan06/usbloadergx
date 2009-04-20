@@ -642,6 +642,7 @@ class GuiButton : public GuiElement
 		void SetImageOver(GuiImage* i);
 		//!Sets the button's image on hold
 		//!\param i Pointer to GuiImage object
+		void SetAngle(float a);
 		void SetImageHold(GuiImage* i);
 		//!Sets the button's image on click
 		//!\param i Pointer to GuiImage object

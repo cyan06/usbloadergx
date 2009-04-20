@@ -13,7 +13,7 @@
 
 void InitGUIThreads();
 int MainMenu (int menuitem);
-
+void wiilight(int enable);
 enum
 {
 	MENU_EXIT = -1,

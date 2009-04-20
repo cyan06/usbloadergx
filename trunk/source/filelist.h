@@ -50,6 +50,9 @@ extern const u32	dialogue_box_startgame_png_size;
 extern const u8		button_dialogue_box_startgame_png[];
 extern const u32	button_dialogue_box_startgame_size;
 
+extern const u8		button_dialogue_box_png[];
+extern const u32	button_dialogue_box_size;
+
 extern const u8		menu_button_png[];
 extern const u32	menu_button_size;
 
