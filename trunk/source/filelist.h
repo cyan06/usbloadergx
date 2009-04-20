@@ -53,6 +53,27 @@ extern const u32	button_dialogue_box_startgame_size;
 extern const u8		button_dialogue_box_png[];
 extern const u32	button_dialogue_box_size;
 
+extern const u8		keyboard_textbox_png[];
+extern const u32	keyboard_textbox_png_size;
+
+extern const u8		keyboard_key_png[];
+extern const u32	keyboard_key_png_size;
+
+extern const u8		keyboard_key_over_png[];
+extern const u32	keyboard_key_over_png_size;
+
+extern const u8		keyboard_mediumkey_png[];
+extern const u32	keyboard_mediumkey_png_size;
+
+extern const u8		keyboard_mediumkey_over_png[];
+extern const u32	keyboard_mediumkey_over_png_size;
+
+extern const u8		keyboard_largekey_png[];
+extern const u32	keyboard_largekey_png_size;
+
+extern const u8		keyboard_largekey_over_png[];
+extern const u32	keyboard_largekey_over_png_size;
+
 extern const u8		menu_button_png[];
 extern const u32	menu_button_size;
 

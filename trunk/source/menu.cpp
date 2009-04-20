@@ -14,6 +14,7 @@
 #include <string.h>
 #include <wiiuse/wpad.h>
 #include <fat.h>
+#include <sdcard/wiisd_io.h>
 
 #include "libwiigui/gui.h"
 #include "menu.h"
@@ -60,16 +61,45 @@ static GuiImageData progressbar(progressbar_png);
 static GuiImage progressbarImg(&progressbar);
 static double progressDone = 0;
 static double progressTotal = 1;
-int godmode, timer, codecount;
+int godmode = 0;
+
+
+//Wiilight stuff
 static vu32 *_wiilight_reg = (u32*)0xCD0000C0;
 void wiilight(int enable){             // Toggle wiilight (thanks Bool for wiilight source)
     u32 val = (*_wiilight_reg&~0x20);        
     if(enable) val |= 0x20;            
     *_wiilight_reg=val;}
-int goback = 2;
+
+//libfat helper functions
+int isSdInserted() {    return __io_wiisd.isInserted(); }
+
+//Initialise SD CARD
+int SDCard_Init()
+{
+    __io_wiisd.startup();
+    if (!isSdInserted()){    
+        printf("No SD card inserted!");
+        return -1;
+
+    }
+    if (!fatMountSimple ("fat", &__io_wiisd)){
+        printf("Failed to mount front SD card!");
+        return -1;
+    }
+    
+    return 1;
+}
+
+void SDCARD_deInit()
+{
+    //First unmount all the devs...
+    fatUnmount ("fat");
+    //...and then shutdown em!
+    __io_wiisd.shutdown();
+}
+
 //loads image file from sd card
-
-
 int loadimg(char * filenameshort, char * filename)
 {
 	PNGUPROP imgProp;
@@ -538,8 +568,17 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn2Img(&btnOutline);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
+	//check if unlocked
+	if (godmode == 1)
+	{
 	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
 	btn2.SetPosition(20, -20);
+	} else
+	{
+	btn2.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+	btn2.SetPosition(0, -20);
+	}
+	
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
 	btn2.SetSoundOver(&btnSoundOver);
@@ -563,7 +602,12 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	promptWindow.Append(&sizeTxt);
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
+	
+	//check if unlocked
+	if (godmode == 1)
+	{
     promptWindow.Append(&btn3);
+	}
 
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
 	HaltGui();
@@ -584,6 +628,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
+			SDCARD_deInit();
 		}
 		else if(btn2.GetState() == STATE_CLICKED) {
 			choice = 0;
@@ -1016,6 +1061,81 @@ err:
 }
 
 /****************************************************************************
+ * OnScreenKeyboard
+ *
+ * Opens an on-screen keyboard window, with the data entered being stored
+ * into the specified variable.
+ ***************************************************************************/
+static void OnScreenKeyboard(char * var, u16 maxlen)
+{
+	int save = -1;
+
+	GuiKeyboard keyboard(var, maxlen);
+
+	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	GuiImageData btnOutline(button_dialogue_box_png);
+	GuiTrigger trigA;
+	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	GuiTrigger trigB;
+	trigB.SetSimpleTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+
+	GuiText okBtnTxt("OK", 22, (GXColor){0, 0, 0, 255});
+	GuiImage okBtnImg(&btnOutline);
+	GuiButton okBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+
+	okBtn.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+	okBtn.SetPosition(25, -25);
+
+	okBtn.SetLabel(&okBtnTxt);
+	okBtn.SetImage(&okBtnImg);
+	okBtn.SetSoundOver(&btnSoundOver);
+	okBtn.SetTrigger(&trigA);
+	okBtn.SetEffectGrow();
+
+	GuiText cancelBtnTxt("Cancel", 22, (GXColor){0, 0, 0, 255});
+	GuiImage cancelBtnImg(&btnOutline);
+	GuiButton cancelBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	cancelBtn.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+	cancelBtn.SetPosition(-25, -25);
+	cancelBtn.SetLabel(&cancelBtnTxt);
+	cancelBtn.SetImage(&cancelBtnImg);
+	cancelBtn.SetSoundOver(&btnSoundOver);
+	cancelBtn.SetTrigger(&trigA);
+	cancelBtn.SetTrigger(&trigB);
+	cancelBtn.SetEffectGrow();
+
+	keyboard.Append(&okBtn);
+	keyboard.Append(&cancelBtn);
+
+	HaltGui();
+	mainWindow->SetState(STATE_DISABLED);
+	mainWindow->Append(&keyboard);
+	mainWindow->ChangeFocus(&keyboard);
+	ResumeGui();
+
+	while(save == -1)
+	{
+		VIDEO_WaitVSync();
+
+		if(okBtn.GetState() == STATE_CLICKED)
+			save = 1;
+		else if(cancelBtn.GetState() == STATE_CLICKED)
+			save = 0;
+	}
+
+	if(save)
+	{
+		snprintf(var, maxlen, "%s", keyboard.kbtextstr);
+	}
+
+	HaltGui();
+	mainWindow->Remove(&keyboard);
+	mainWindow->SetState(STATE_DEFAULT);
+	ResumeGui();
+}
+
+
+/****************************************************************************
  * MenuInstall
  ***************************************************************************/
 
@@ -1431,7 +1551,13 @@ static int MenuDiscList()
     w.Append(&usedSpaceTxt);
 	w.Append(&gamecntTxt);
     w.Append(&poweroffBtn);
+	
+	//check if unlocked
+	if (godmode == 1)
+	{
     w.Append(&installBtn);
+	}
+	
 	w.Append(&menuBtn);
     w.Append(&settingsBtn);
 	w.Append(CoverImg);
@@ -1494,10 +1620,11 @@ static int MenuDiscList()
 			    optionBrowser.SetFocus(1);
 			}
 
-		} else if(menuBtn.GetState() == STATE_CLICKED)
+		} 
+		else if(menuBtn.GetState() == STATE_CLICKED)
 		{
 
-			choice = WiiMenuWindowPrompt ("Exit USB ISO Loader ?","Wii Menu","HBC","Cancel");
+			choice = WiiMenuWindowPrompt ("Exit USB ISO Loader ?","Wii Menu","HBC","Back");
 			if(choice == 1)
 			{
                 SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0); // Back to System Menu
@@ -1510,20 +1637,22 @@ static int MenuDiscList()
 			optionBrowser.SetFocus(1);
 			}
 					    
-        } else if((installBtn.GetState() == STATE_CLICKED) && (godmode == 1))
+        } 
+		else if(installBtn.GetState() == STATE_CLICKED)
 		{
-
-		    choice = WindowPrompt ("Install a game?",0,"Yes","No");
-			if ((choice == 1) && (godmode == 1))
-			{
-			    menu = MENU_INSTALL;
-			    break;
-			} else {
-                installBtn.ResetState();
-			    optionBrowser.SetFocus(1);
-			}
-
-		} else if(settingsBtn.GetState() == STATE_CLICKED)
+				choice = WindowPrompt ("Install a game?",0,"Yes","No");
+				if (choice == 1)
+				{
+					menu = MENU_INSTALL;
+					break;
+				} 
+				else 
+				{
+					installBtn.ResetState();
+					optionBrowser.SetFocus(1);
+				}
+		} 
+		else if(settingsBtn.GetState() == STATE_CLICKED)
 		{
 			    menu = MENU_SETTINGS;
 			    break;
@@ -1561,36 +1690,6 @@ static int MenuDiscList()
 						CoverImg->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 180);
 						w.Append(GameIDTxt);
 						w.Append(CoverImg);
-						//goback--
-						//if (goback != 0){goto repeat;}
-					//	}
-						
-						///////////////////////////////////////////////////////////////////////////////////////
-						//discHdr *header = &gameList[selectimg-1];
-						//sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
-						//sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-						//w.Remove(CoverImg1);
-						//w.Remove(GameIDTxt);						
-						//load game cover
-						//loadimg(ID, IDfull);
-						//GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
-						//GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						//GameIDTxt->SetPosition(68,290);
-						//GameIDTxt->SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 180);
-						//CoverImg1 = new GuiImage(data,160,224);
-						//CoverImg1->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-						//CoverImg1->SetPosition(0,55);
-						//CoverImg1->SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 180);
-						//w.Append(GameIDTxt);
-						//w.Append(CoverImg1);
-						
-						
-						
-						
-						
-						
-						
-						/////////////////////////////////////////////////////////////////////////////////////////
 						break;
 					}
 				}
@@ -1616,7 +1715,7 @@ static int MenuDiscList()
                         text2,
                         text,
                         "Boot",
-                        "Cancel",
+                        "Back",
                         "Delete",
                         ID,
                         IDfull);
@@ -1643,12 +1742,14 @@ static int MenuDiscList()
                             menu = MENU_EXIT;
                         }
                         }
-                    } else if ((choice == 2) && (godmode == 1)){wiilight(0);
+                    } else if (choice == 2)
+					{
+						wiilight(0);
 
-                           choice = WindowPrompt(
-                            "Do you really want to delete:",
-                            text,
-                            "Yes","Cancel");
+                        choice = WindowPrompt(
+                        "Do you really want to delete:",
+                        text,
+                        "Yes","Cancel");
 
                         if (choice == 1) {
                             ret = WBFS_RemoveGame(header->id);
@@ -1973,7 +2074,19 @@ static int MenuSettings()
 	backBtn.SetSoundOver(&btnSoundOver);
 	backBtn.SetTrigger(&trigA);
 	
-	//backBtn.SetTrigger(&trigB);
+	GuiText lockBtnTxt("Lock", 22, (GXColor){0, 0, 0, 255});
+	lockBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
+	GuiImage lockBtnImg(&btnOutline);
+	GuiButton lockBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	lockBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	lockBtn.SetPosition(180, 400);
+	lockBtn.SetLabel(&lockBtnTxt);
+	lockBtn.SetImage(&lockBtnImg);
+	lockBtn.SetSoundOver(&btnSoundOver);
+	lockBtn.SetTrigger(&trigA);
+
+	
+	backBtn.SetTrigger(&trigB);
 	backBtn.SetEffectGrow();
 
 	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
@@ -1986,6 +2099,7 @@ static int MenuSettings()
 	w.Append(&settingsbackgroundbtn);
     w.Append(&titleTxt);
     w.Append(&backBtn);
+	w.Append(&lockBtn);
 
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser2);
@@ -1996,54 +2110,6 @@ static int MenuSettings()
 	{
 
 		VIDEO_WaitVSync ();
-		timer--;
-		if (timer == 0){codecount = 0;} 
-		WPAD_ScanPads();
-        u8 cnt, buttons = NULL;
-        for (cnt = 0; cnt < 4; cnt++)
-            buttons |= WPAD_ButtonsHeld(cnt);
-        if (buttons == WPAD_BUTTON_A) {codecount = 1; timer = 360;}
-		
-		if (timer != 0){
-			if (codecount == 1){
-				WPAD_ScanPads();
-				for (cnt = 0; cnt < 4; cnt++)
-				buttons |= WPAD_ButtonsHeld(cnt);
-				if (buttons == WPAD_BUTTON_A){}
-				if (buttons == WPAD_BUTTON_B){codecount++;}}
-			
-			if (codecount == 2){
-				WPAD_ScanPads();
-				for (cnt = 0; cnt < 4; cnt++)
-				buttons |= WPAD_ButtonsHeld(cnt);
-				if (buttons == WPAD_BUTTON_B){}
-				if (buttons == WPAD_BUTTON_1){codecount++;}}
-			
-			if (codecount == 3){
-				WPAD_ScanPads();
-				for (cnt = 0; cnt < 4; cnt++)
-				buttons |= WPAD_ButtonsHeld(cnt);
-				if (buttons == WPAD_BUTTON_1){}
-				if (buttons == WPAD_BUTTON_2){codecount++;}}
-			
-			if (codecount == 4){
-				WPAD_ScanPads();
-				for (cnt = 0; cnt < 4; cnt++)
-				buttons |= WPAD_ButtonsHeld(cnt);
-				if (buttons == WPAD_BUTTON_2){}
-				if (buttons == WPAD_BUTTON_1){codecount++;}}
-			
-			if (codecount == 5){
-				WPAD_ScanPads();
-				for (cnt = 0; cnt < 4; cnt++)
-				buttons |= WPAD_ButtonsHeld(cnt);
-				if (buttons == WPAD_BUTTON_1){}
-				if (buttons == WPAD_BUTTON_B){
-				if (godmode == 1){godmode = 0;WindowPrompt("Code Accepted...","Install and Format are locked.","OK",0);} else {godmode = 1;
-		WindowPrompt("Holy Crap!:","God Mode Started!","I Rock",0);}
-        }}} 
-		
-		
 		if(Settings.video > 3)
 			Settings.video = 0;
 		if(Settings.language  > 10)
@@ -2100,8 +2166,25 @@ static int MenuSettings()
 		{
 			menu = MENU_DISCLIST;
 			break;
-
 		}
+		
+		if(lockBtn.GetState() == STATE_CLICKED)
+		{
+			//password check to un/lock Install,Delete and Format
+			char entered[10] = "";
+			OnScreenKeyboard(entered, 10);
+			if (!strcmp(entered,"AB121B"))
+			{
+			WindowPrompt("Correct Password","Install and Delete are unlocked.","OK",0);
+			godmode = 1;
+			}
+			else 
+			{
+			WindowPrompt("Wrong Password","Install and Delete are locked.","OK","");
+			godmode = 0;
+			}
+		}
+
 	}
 	HaltGui();
 	mainWindow->Remove(&optionBrowser2);
