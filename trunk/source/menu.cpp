@@ -68,6 +68,8 @@ static double progressDone = 0;
 static double progressTotal = 1;
 int godmode = 0;
 
+//power button fix
+extern u8 shutdown;
 
 //Wiilight stuff
 static vu32 *_wiilight_reg = (u32*)0xCD0000C0;
@@ -489,7 +491,8 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 	while(choice == -1)
 	{
 		VIDEO_WaitVSync();
-
+		if(shutdown == 1)
+			Sys_Shutdown();
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
 		}
@@ -595,7 +598,8 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	while(choice == -1)
 	{
 		VIDEO_WaitVSync();
-
+		if(shutdown == 1)
+			Sys_Shutdown();
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
 		}
@@ -785,6 +789,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
         DiskImg->SetAngle(angle);
 		DiskImg->Draw();
 
+		if(shutdown == 1)
+			Sys_Shutdown();
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
 			SDCARD_deInit();
@@ -1526,6 +1532,9 @@ static int MenuInstall()
 					wiilight(0);
                     break;
                 }
+		if (shutdown == 1)
+			Sys_Shutdown();
+			
         if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
@@ -1730,8 +1739,8 @@ static int MenuDiscList()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
-	optionBrowser.SetPosition(200, 40);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bg_options_png, 1);
+	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
 
@@ -1789,6 +1798,10 @@ static int MenuDiscList()
 		}
 		#endif
 
+		if(shutdown == 1)
+		{
+			Sys_Shutdown();
+		}
 	    if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 
@@ -2097,8 +2110,8 @@ static int MenuFormat()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
-	optionBrowser.SetPosition(200, 40);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bg_options_png, 1);
+	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(130);
 
@@ -2176,6 +2189,9 @@ static int MenuFormat()
                     }
                 }
             }
+		if (shutdown == 1)
+			Sys_Shutdown();
+			
 	    if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
@@ -2358,7 +2374,9 @@ static int MenuSettings()
 				Settings.ocarina++;
 				break;
 		}
-
+		if(shutdown == 1)
+			Sys_Shutdown();
+			
 		if(backBtn.GetState() == STATE_CLICKED)
 		{
 			menu = MENU_DISCLIST;
@@ -2482,8 +2500,8 @@ wiilight(0);
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-    GuiOptionBrowser optionBrowser(396, 280, &options, bg_options_png, 1);
-	optionBrowser.SetPosition(200, 40);
+    GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bg_options_png, 1);
+	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
 
@@ -2589,7 +2607,9 @@ wiilight(0);
                 }
         }
 
-
+		if(shutdown == 1)
+			Sys_Shutdown();
+			
 		if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");

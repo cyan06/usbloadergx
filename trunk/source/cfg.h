@@ -79,7 +79,16 @@ struct CFG
 	char theme_path[100];
 };
 
+struct THEME
+{
+	int selection_x;
+	int selection_y;
+	int selection_w;
+	int selection_h;
+};
+
 extern struct CFG CFG;
+extern struct THEME THEME;
 //extern u8 ocarinaChoice;
 //extern u8 videoChoice;
 //extern u8 languageChoice;

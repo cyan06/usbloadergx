@@ -26,6 +26,7 @@ char current_path[100];
 //int COVER_YCOORD     = 105;
 
 struct CFG CFG;
+struct THEME THEME;
 //u8 ocarinaChoice;
 //u8 videoChoice;
 //u8 languageChoice;
@@ -87,20 +88,6 @@ struct TextMap map_language[] =
 	{ NULL, -1 }
 };
 
-struct TextMap map_layout[] =
-{
-	{ "original",  CFG_LAYOUT_ORIG },
-	{ "original1", CFG_LAYOUT_ORIG },
-	{ "original2", CFG_LAYOUT_ORIG_12 },
-	{ "small",     CFG_LAYOUT_SMALL },
-	{ "medium",    CFG_LAYOUT_MEDIUM },
-	{ "large",     CFG_LAYOUT_LARGE },
-	{ "large2",    CFG_LAYOUT_LARGE_2 },
-	{ "ultimate1", CFG_LAYOUT_ULTIMATE1 },
-	{ "ultimate2", CFG_LAYOUT_ULTIMATE2 },
-	{ "ultimatew", CFG_LAYOUT_ULTIMATE_W },
-	{ NULL, -1 }
-};
 */
 int map_get_id(struct TextMap *map, char *name)
 {
@@ -169,130 +156,7 @@ void cfg_int(char *name, short *var, int count)
 }
 
 /* Mapping */
-/*
-void cfg_layout()
-{
 
-	switch (CFG.layout) {
-		case CFG_LAYOUT_ORIG: // 1.0+
-			ENTRIES_PER_PAGE = 6;
-			MAX_CHARACTERS   = 30;
-			CONSOLE_XCOORD   = 260;
-			CONSOLE_YCOORD   = 115;
-			CONSOLE_WIDTH    = 340;
-			CONSOLE_HEIGHT   = 218;
-			CONSOLE_FG_COLOR = 15;
-			CONSOLE_BG_COLOR = 0;
-			break;
-
-		case CFG_LAYOUT_ORIG_12: // 1.2+
-			ENTRIES_PER_PAGE = 12;
-			MAX_CHARACTERS   = 30;
-			CONSOLE_XCOORD   = 258;
-			CONSOLE_YCOORD   = 112;
-			CONSOLE_WIDTH    = 354;
-			CONSOLE_HEIGHT   = 304;
-			CONSOLE_FG_COLOR = 15;
-			CONSOLE_BG_COLOR = 0;
-			COVER_XCOORD     = 24;
-			COVER_YCOORD     = 104;
-			break;
-
-		case CFG_LAYOUT_SMALL: // same as 1.0 + use more space
-			ENTRIES_PER_PAGE = 9;
-			MAX_CHARACTERS   = 38;
-			CONSOLE_XCOORD   = 260;
-			CONSOLE_YCOORD   = 115;
-			CONSOLE_WIDTH    = 340;
-			CONSOLE_HEIGHT   = 218;
-			CONSOLE_FG_COLOR = 15;
-			CONSOLE_BG_COLOR = 0;
-			break;
-
-		case CFG_LAYOUT_MEDIUM:
-			ENTRIES_PER_PAGE = 19; //17;
-			MAX_CHARACTERS   = 38;
-			CONSOLE_XCOORD   = 260;
-			CONSOLE_YCOORD   = 50;
-			CONSOLE_WIDTH    = 340;
-			CONSOLE_HEIGHT   = 380;
-			CONSOLE_FG_COLOR = 15;
-			CONSOLE_BG_COLOR = 0;
-			COVER_XCOORD     = 28;
-			COVER_YCOORD     = 175;
-			break;
-
-		// nixx:
-		case CFG_LAYOUT_LARGE:
-			ENTRIES_PER_PAGE = 21;
-			MAX_CHARACTERS   = 38;
-			CONSOLE_XCOORD   = 260;
-			CONSOLE_YCOORD   = 40;
-			CONSOLE_WIDTH    = 340;
-			CONSOLE_HEIGHT   = 402;
-			CONSOLE_FG_COLOR = 15;
-			CONSOLE_BG_COLOR = 0;
-			COVER_XCOORD     = 28;
-			COVER_YCOORD     = 175;
-			break;
-
-		// usptactical:
-		case CFG_LAYOUT_LARGE_2:
-			ENTRIES_PER_PAGE = 21;
-			MAX_CHARACTERS   = 38;
-			CONSOLE_XCOORD   = 260;
-			CONSOLE_YCOORD   = 40;
-			CONSOLE_WIDTH    = 340;
-			CONSOLE_HEIGHT   = 402;
-			CONSOLE_FG_COLOR = 15;
-			CONSOLE_BG_COLOR = 0;
-			COVER_XCOORD     = 30;
-			COVER_YCOORD     = 180;
-			break;
-
-		// Ultimate1: (WiiShizza) White background
-		case CFG_LAYOUT_ULTIMATE1:
-			ENTRIES_PER_PAGE = 12;
-			MAX_CHARACTERS   = 37;
-			CONSOLE_XCOORD   = 260;
-			CONSOLE_YCOORD   = 30;
-			CONSOLE_WIDTH    = 340;
-			CONSOLE_HEIGHT   = 290;
-			CONSOLE_FG_COLOR = 0;
-			CONSOLE_BG_COLOR = 15;
-			COVER_XCOORD     = 28;
-			COVER_YCOORD     = 105;
-			break;
-
-		// Ultimate2: (jservs7 / hungyip84)
-		case CFG_LAYOUT_ULTIMATE2:
-			ENTRIES_PER_PAGE = 12;
-			MAX_CHARACTERS   = 37;
-			CONSOLE_XCOORD   = 40;
-			CONSOLE_YCOORD   = 71;
-			CONSOLE_WIDTH    = 340;
-			CONSOLE_HEIGHT   = 290;
-			CONSOLE_FG_COLOR = 0;
-			CONSOLE_BG_COLOR = 15;
-			COVER_XCOORD     = 446;
-			COVER_YCOORD     = 109;
-			break;
-		
-		case CFG_LAYOUT_ULTIMATE_W: // Ultimate with widescreen
-			ENTRIES_PER_PAGE = 12;
-			MAX_CHARACTERS   = 37;
-			CONSOLE_XCOORD   = 40;
-			CONSOLE_YCOORD   = 71;
-			CONSOLE_WIDTH    = 340;
-			CONSOLE_HEIGHT   = 290;
-			CONSOLE_FG_COLOR = 0;
-			CONSOLE_BG_COLOR = 15;
-			COVER_XCOORD     = 482;
-			COVER_YCOORD     = 110;
-			break;
-	}
-}
-*/
 //static char bg_path[100];
 
 void CFG_Default()
@@ -328,6 +192,11 @@ void CFG_Default()
 //	CFG.installdownload = 0;
 //	CFG.hidesettingmenu = 0;
 //	cfg_layout();
+
+	THEME.selection_x = 200;
+	THEME.selection_y = 40;
+	THEME.selection_w = 396;
+	THEME.selection_h = 280;
 	
 }
 
@@ -504,32 +373,22 @@ void cfg_set(char *name, char *val)
 	
 	cfg_int("parentalcontrol", &CFG.parentalcontrol, 4);
 }
-/*
-void console_set(char *name, char *val)
+
+void theme_set(char *name, char *val)
 {
 	cfg_name = name;
 	cfg_val = val;
 
-	if ((!CFG.widescreen && (strcmp(cfg_name, "background")==0)) || (CFG.widescreen && (strcmp(cfg_name, "wbackground") == 0))){
-		if (strcmp(val, "0")==0) {
-			CFG.background = NULL;
-		} 
-		else {
-			snprintf(bg_path, sizeof(bg_path), "%s%s", CFG.images_path, val);
-			CFG.background = bg_path;
-		}
-	}
-	
-	else if ((!CFG.widescreen && (strcmp(cfg_name, "console_coords")==0)) || (CFG.widescreen && (strcmp(cfg_name, "wconsole_coords")==0))) {
+	if(strcmp(cfg_name, "gamelist_coords") == 0) {
 		int x,y,w,h;
 		if (sscanf(val, "%d,%d,%d,%d", &x, &y, &w, &h) == 4) {
-			CONSOLE_XCOORD = x;
-			CONSOLE_YCOORD = y;
-			CONSOLE_WIDTH  = w;
-			CONSOLE_HEIGHT = h;
+			THEME.selection_x = x;
+			THEME.selection_y = y;
+			THEME.selection_w  = w;
+			THEME.selection_h = h;
 		}
 	}
-	
+	/*
 	else if (strcmp(cfg_name, "console_color")==0) {
 		int fg,bg;
 		if (sscanf(val, "%d,%d", &fg, &bg) == 2) {
@@ -558,9 +417,9 @@ void console_set(char *name, char *val)
 		if (sscanf(val, "%d", &x) == 1) {
 			MAX_CHARACTERS = x;
 		}
-	}
+	}*/
 }
-*/
+
 
 // split line to part1 delimiter part2 
 bool trimsplit(char *line, char *part1, char *part2, char delim, int size)
@@ -852,11 +711,13 @@ void CFG_Load(int argc, char **argv)
 	
 	CFG_Default();
 	
-	snprintf(pathname, sizeof(pathname), "%s", "config.txt");
+	snprintf(pathname, sizeof(pathname), "config.txt");
 	
 	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
 	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
-//	ret = cfg_parsefile(pathname, &console_set); //finally set console information
+	
+	snprintf(pathname, sizeof(pathname), "%stheme.txt", CFG.theme_path);
+	cfg_parsefile(pathname, &theme_set); //finally set console information
 	
 //	if (!ret)
 //	{
