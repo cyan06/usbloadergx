@@ -121,6 +121,124 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 }
 
 /**
+ * Constructor for the GuiOptionBrowser class.
+ */
+GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *custombg, const u8 *imagebg, int scrollon)
+{
+	width = w;
+	height = h;
+	options = l;
+	scrollbaron = scrollon;
+	selectable = true;
+	listOffset = this->FindMenuItem(-1, 1);
+	selectedItem = 0;
+	focus = 1; // allow focus
+
+	trigA = new GuiTrigger;
+	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	trigB = new GuiTrigger;
+	trigB->SetSimpleTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, 0);
+
+	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
+
+	if (custombg)
+	{
+		bgOptions = new GuiImageData(custombg);
+	
+		if (!bgOptions->GetImage())
+		{
+			delete(bgOptions);
+			bgOptions = new GuiImageData(imagebg);
+		}
+	}
+	else
+	{
+		bgOptions = new GuiImageData(imagebg);
+	}
+	bgOptionsImg = new GuiImage(bgOptions);
+	bgOptionsImg->SetParent(this);
+	bgOptionsImg->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+
+	bgOptionsEntry = new GuiImageData(bg_options_entry_png);
+    if (scrollbaron == 1) {
+	scrollbar = new GuiImageData(scrollbar_png);
+	scrollbarImg = new GuiImage(scrollbar);
+	scrollbarImg->SetParent(this);
+	scrollbarImg->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
+	scrollbarImg->SetPosition(0, 4);
+
+	arrowDown = new GuiImageData(scrollbar_arrowdown_png);
+	arrowDownImg = new GuiImage(arrowDown);
+	arrowDownOver = new GuiImageData(scrollbar_arrowdown_png);
+	arrowDownOverImg = new GuiImage(arrowDownOver);
+	arrowUp = new GuiImageData(scrollbar_arrowup_png);
+	arrowUpImg = new GuiImage(arrowUp);
+	arrowUpOver = new GuiImageData(scrollbar_arrowup_png);
+	arrowUpOverImg = new GuiImage(arrowUpOver);
+	scrollbarBox = new GuiImageData(scrollbar_box_png);
+	scrollbarBoxImg = new GuiImage(scrollbarBox);
+	scrollbarBoxOver = new GuiImageData(scrollbar_box_png);
+	scrollbarBoxOverImg = new GuiImage(scrollbarBoxOver);
+
+	arrowUpBtn = new GuiButton(arrowUpImg->GetWidth(), arrowUpImg->GetHeight());
+	arrowUpBtn->SetParent(this);
+	arrowUpBtn->SetImage(arrowUpImg);
+	arrowUpBtn->SetImageOver(arrowUpOverImg);
+	arrowUpBtn->SetImageHold(arrowUpOverImg);
+	arrowUpBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	arrowUpBtn->SetPosition(width/2-18+7,-18);
+	arrowUpBtn->SetSelectable(false);
+	arrowUpBtn->SetTrigger(trigA);
+	arrowUpBtn->SetEffectOnOver(EFFECT_SCALE, 50, 130);
+	arrowUpBtn->SetSoundClick(btnSoundClick);
+
+	arrowDownBtn = new GuiButton(arrowDownImg->GetWidth(), arrowDownImg->GetHeight());
+	arrowDownBtn->SetParent(this);
+	arrowDownBtn->SetImage(arrowDownImg);
+	arrowDownBtn->SetImageOver(arrowDownOverImg);
+	arrowDownBtn->SetImageHold(arrowDownOverImg);
+	arrowDownBtn->SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+	arrowDownBtn->SetPosition(width/2-18+7,18);
+	arrowDownBtn->SetSelectable(false);
+	arrowDownBtn->SetTrigger(trigA);
+	arrowDownBtn->SetEffectOnOver(EFFECT_SCALE, 50, 130);
+	arrowDownBtn->SetSoundClick(btnSoundClick);
+
+	scrollbarBoxBtn = new GuiButton(scrollbarBoxImg->GetWidth(), scrollbarBoxImg->GetHeight());
+	scrollbarBoxBtn->SetParent(this);
+	scrollbarBoxBtn->SetImage(scrollbarBoxImg);
+	scrollbarBoxBtn->SetImageOver(scrollbarBoxOverImg);
+	scrollbarBoxBtn->SetImageHold(scrollbarBoxOverImg);
+	scrollbarBoxBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	scrollbarBoxBtn->SetSelectable(false);
+	scrollbarBoxBtn->SetEffectOnOver(EFFECT_SCALE, 50, 120);
+	scrollbarBoxBtn->SetTrigger(trigB);
+    }
+
+	for(int i=0; i<PAGESIZE; i++)
+	{
+		optionTxt[i] = new GuiText(options->name[i], 20, (GXColor){0, 0, 0, 0xff});
+		optionTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		optionTxt[i]->SetPosition(24,0);
+
+		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
+		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		optionVal[i]->SetPosition(250,0);
+
+		optionBg[i] = new GuiImage(bgOptionsEntry);
+
+		optionBtn[i] = new GuiButton(width-28,GAMESELECTSIZE);
+		optionBtn[i]->SetParent(this);
+		optionBtn[i]->SetLabel(optionTxt[i], 0);
+		optionBtn[i]->SetLabel(optionVal[i], 1);
+		optionBtn[i]->SetImageOver(optionBg[i]);
+		optionBtn[i]->SetPosition(5,GAMESELECTSIZE*i+4);
+		optionBtn[i]->SetTrigger(trigA);
+		optionBtn[i]->SetSoundClick(btnSoundClick);
+	}
+}
+
+/**
  * Destructor for the GuiOptionBrowser class.
  */
 GuiOptionBrowser::~GuiOptionBrowser()

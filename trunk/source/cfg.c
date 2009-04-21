@@ -382,9 +382,9 @@ void theme_set(char *name, char *val)
 	if(strcmp(cfg_name, "gamelist_coords") == 0) {
 		int x,y,w,h;
 		if (sscanf(val, "%d,%d,%d,%d", &x, &y, &w, &h) == 4) {
-			THEME.selection_x = x;
+			THEME.selection_x = x - (x % 4);
 			THEME.selection_y = y;
-			THEME.selection_w  = w;
+			THEME.selection_w = w;
 			THEME.selection_h = h;
 		}
 	}
