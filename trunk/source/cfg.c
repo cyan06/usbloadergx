@@ -696,7 +696,7 @@ void chdir_app(char *arg)
 		strncpy(dir, pos1, pos2 - pos1);
 		dir[pos2 - pos1] = 0;
 		strcat(appdir,dir);
-		chdir(appdir);
+//		chdir(appdir);
 		strncpy(current_path, appdir, sizeof(current_path));
 	}
 }   
@@ -711,7 +711,7 @@ void CFG_Load(int argc, char **argv)
 	
 	CFG_Default();
 	
-	snprintf(pathname, sizeof(pathname), "config.txt");
+	snprintf(pathname, sizeof(pathname), "%sconfig.txt", current_path);
 	
 	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
 	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
@@ -726,7 +726,7 @@ void CFG_Load(int argc, char **argv)
 //		cfg_parsefile("SD:/config.txt", &console_set);
 //	}
 	
-	snprintf(pathname, sizeof(pathname), "%s%s", current_path, "titles.txt");
+	snprintf(pathname, sizeof(pathname), "%stitles.txt", current_path);
 	cfg_parsetitlefile(pathname, &title_set);
 	
 	// load per-game settings
