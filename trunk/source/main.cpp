@@ -29,6 +29,9 @@
 #include "sys.h"
 #include "video2.h"
 #include "wpad.h"
+#include "cfg.h"
+#include <sdcard/wiisd_io.h>
+#include <fat.h>
 
 
 /* Constants */
@@ -77,6 +80,11 @@ main(int argc, char *argv[])
 	//Con_Init(CONSOLE_XCOORD, CONSOLE_YCOORD, CONSOLE_WIDTH, CONSOLE_HEIGHT);
 	//Wpad_Init();
 
+	__io_wiisd.startup();
+	fatMountSimple("SD", &__io_wiisd);
+	
+	CFG_Load(argc, argv);
+	
     PAD_Init();
 	InitVideo(); // Initialise video
 	InitAudio(); // Initialize audio

@@ -305,12 +305,10 @@ s32 Apploader_Run(entry_point *entry, u32 cheat, u8 videopatch)
 			Search_and_patch_Video_Modes(dst, len, table);
 		}
 
-        if (cheat)
-		{
-		    /*GAME HOOK - FISHEARS*/
-			dogamehooks(dst,len);
-			vidolpatcher(dst,len);
-		}
+	    /*GAME HOOK - FISHEARS*/
+		dogamehooks(dst,len);
+		vidolpatcher(dst,len);
+
 
 		/*LANGUAGE PATCH - FISHEARS*/
 		langpatcher(dst,len);

@@ -34,6 +34,7 @@
 #include "sys.h"
 #include "patchcode.h"
 #include "wpad.h"
+#include "cfg.h"
 
 
 #define MAX_CHARACTERS		34
@@ -87,7 +88,7 @@ int SDCard_Init()
         return -1;
 
     }
-    if (!fatMountSimple ("fat", &__io_wiisd)){
+    if (!fatMountSimple ("SD", &__io_wiisd)){
         printf("Failed to mount front SD card!");
         return -1;
     }
@@ -98,7 +99,7 @@ int SDCard_Init()
 void SDCARD_deInit()
 {
     //First unmount all the devs...
-    fatUnmount ("fat");
+    fatUnmount ("SD");
     //...and then shutdown em!
     __io_wiisd.shutdown();
 }
@@ -1093,7 +1094,7 @@ s32 __Menu_EntryCmp(const void *a, const void *b)
 	struct discHdr *hdr2 = (struct discHdr *)b;
 
 	/* Compare strings */
-	return strcmp(hdr1->title, hdr2->title);
+	return stricmp(get_title(hdr1), get_title(hdr2));
 }
 
 /****************************************************************************
@@ -1488,11 +1489,11 @@ static int MenuDiscList()
             struct discHdr *header = &gameList[cnt];
             static char buffer[MAX_CHARACTERS + 4];
             memset(buffer, 0, sizeof(buffer));
-            if (strlen(header->title) < (MAX_CHARACTERS + 3)) {
-                sprintf(options.name[cnt], "%s", header->title);
+            if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
+                sprintf(options.name[cnt], "%s", get_title(header));
 
             } else {
-                strncpy(buffer, header->title,  MAX_CHARACTERS);
+                strncpy(buffer, get_title(header),  MAX_CHARACTERS);
                 strncat(buffer, "...", 3);
 
                 sprintf(options.name[cnt], "%s", buffer);
@@ -1790,10 +1791,10 @@ static int MenuDiscList()
 
                         static char buffer[36 + 4];
                         memset(buffer, 0, sizeof(buffer));
-                        if (strlen(header->title) < (36 + 3)) {
-                        sprintf(text, "%s", header->title);
+                        if (strlen(get_title(header)) < (36 + 3)) {
+                        sprintf(text, "%s", get_title(header));
                         } else {
-                        strncpy(buffer, header->title,  36);
+                        strncpy(buffer, get_title(header),  36);
                         strncat(buffer, "...", 3);
                         sprintf(text, "%s", buffer);
                         }
@@ -2445,7 +2446,8 @@ wiilight(0);
             Wpad_Init();
             WPAD_SetDataFormat(WPAD_CHAN_ALL,WPAD_FMT_BTNS_ACC_IR);
             WPAD_SetVRes(WPAD_CHAN_ALL, screenwidth, screenheight);
-            fatInitDefault();
+            __io_wiisd.startup();
+			fatMountSimple("SD", &__io_wiisd);
         }
         if (ret2 < 0) {
             WindowPrompt ("ERROR:","USB-Device not found!", "ok", 0);
@@ -2455,7 +2457,8 @@ wiilight(0);
             Wpad_Init();
             WPAD_SetDataFormat(WPAD_CHAN_ALL,WPAD_FMT_BTNS_ACC_IR);
             WPAD_SetVRes(WPAD_CHAN_ALL, screenwidth, screenheight);
-            fatInitDefault();
+            __io_wiisd.startup();
+			fatMountSimple("SD", &__io_wiisd);
         }
 
         ret2 = Disc_Init();
@@ -2591,7 +2594,8 @@ int MainMenu(int menu)
 	delete pointer[2];
 	delete pointer[3];
 	mainWindow = NULL;
-	fatUnmount("sd");
+	fatUnmount("SD");
+	__io_wiisd.shutdown();
     ExitApp();
     //boot game
     s32 ret;
