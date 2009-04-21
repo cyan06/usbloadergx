@@ -1104,6 +1104,8 @@ s32 __Menu_EntryCmp(const void *a, const void *b)
 s32 __Menu_GetEntries(void)
 {
 	struct discHdr *buffer = NULL;
+	struct discHdr *buffer2 = NULL;
+	struct discHdr *header = NULL;
 
 	u32 cnt, len;
 	s32 ret;
@@ -1129,6 +1131,32 @@ s32 __Menu_GetEntries(void)
 	if (ret < 0)
 		goto err;
 
+	if (CFG.parentalcontrol)
+	{
+		u32 cnt2 = 0;
+		
+		for (u32 i = 0; i < cnt; i++)
+		{
+			header = &buffer[i];
+			if (get_block(header) < CFG.parentalcontrol)
+			{
+				buffer2 = (discHdr *) realloc(buffer2, (cnt2+1) * sizeof(struct discHdr));
+				if (!buffer2)
+				{
+					free(buffer);
+					return -1;
+				}
+					
+				memcpy((buffer2 + cnt2), (buffer + i), sizeof(struct discHdr));
+				cnt2++;
+			}
+		}
+		free(buffer);
+		buffer = buffer2;
+		buffer2 = NULL;
+		cnt = cnt2;
+	}
+	
 	/* Sort entries */
 	qsort(buffer, cnt, sizeof(struct discHdr), __Menu_EntryCmp);
 

@@ -37,7 +37,7 @@ struct ID_Title
 {
 	u8 id[5];
 	char title[TITLE_MAX];
-//	u8 block;
+	u8 block;
 };
 
 // renamed titles
@@ -51,14 +51,14 @@ struct ID_Title *cfg_title = NULL;
 
 /* For Mapping */
 
-//static char *cfg_name, *cfg_val;
-/*
+static char *cfg_name, *cfg_val;
+
 struct TextMap
 {
 	char *name;
 	int id;
 };
-
+/*
 struct TextMap map_video[] =
 {
 	{ "system", CFG_VIDEO_SYS },
@@ -101,7 +101,7 @@ struct TextMap map_layout[] =
 	{ "ultimatew", CFG_LAYOUT_ULTIMATE_W },
 	{ NULL, -1 }
 };
-
+*/
 int map_get_id(struct TextMap *map, char *name)
 {
 	int i;
@@ -167,7 +167,7 @@ void cfg_int(char *name, short *var, int count)
 		cfg_map(name, tmp, var, i);
 	}
 }
-*/
+
 /* Mapping */
 /*
 void cfg_layout()
@@ -356,7 +356,7 @@ char *get_title(struct discHdr *header)
 	return header->title;
 }
 
-void title_set(char *id, char *title)//, u8 block)
+void title_set(char *id, char *title, u8 block)
 {
 	char *idt = cfg_get_title((u8*)id);
 	if (idt) {
@@ -372,12 +372,12 @@ void title_set(char *id, char *title)//, u8 block)
 		// add
 		memcpy(cfg_title[num_title].id, id, 4);
 		cfg_title[num_title].id[4] = 0;
-//		cfg_title[num_title].block = block;
+		cfg_title[num_title].block = block;
 		strcopy(cfg_title[num_title].title, title, TITLE_MAX);
 		num_title++;
 	}
 }
-/*
+
 u8 cfg_get_block(u8 *id)
 {
 	int i;
@@ -393,7 +393,7 @@ u8 get_block(struct discHdr *header)
 {
 	return cfg_get_block(header->id);
 }
-*/
+
 // trim leading and trailing whitespace
 // copy at max n or at max size-1
 char* trim_n_copy(char *dest, char *src, int n, int size)
@@ -449,12 +449,12 @@ void widescreen_set(char *name, char *val)
 }
 */
 
-/*
+
 void cfg_set(char *name, char *val)
 {
 	cfg_name = name;
 	cfg_val = val;
-
+/*
 	if (!CFG.widescreen &&(strcmp(name, "images_path") == 0)) {
 		strcopy(CFG.images_path, val, sizeof(CFG.images_path));
 		snprintf(bg_path, sizeof(bg_path), "%sbg.png", CFG.images_path); //reset path
@@ -486,9 +486,10 @@ void cfg_set(char *name, char *val)
 	cfg_map("home", "exit",   &CFG.home, CFG_HOME_EXIT);
 	cfg_map("home", "reboot", &CFG.home, CFG_HOME_REBOOT);
 	cfg_int("simple", &CFG.simple, 3);
+*/
 	cfg_int("parentalcontrol", &CFG.parentalcontrol, 4);
 }
-
+/*
 void console_set(char *name, char *val)
 {
 	cfg_name = name;
@@ -569,7 +570,7 @@ void cfg_parseline(char *line, void (*set_func)(char*, char*))
 	set_func(name, val);
 }
 
-void cfg_parsetitleline(char *line, void (*set_func)(char*, char*))//, u8))
+void cfg_parsetitleline(char *line, void (*set_func)(char*, char*, u8))
 {
 	// split name = value
 	char tmp[200], name[100], val[100];
@@ -594,7 +595,7 @@ void cfg_parsetitleline(char *line, void (*set_func)(char*, char*))//, u8))
 			block = 0;
 		}
 	}
-	set_func(name, val);//, block);
+	set_func(name, val, block);
 }
 	
 bool cfg_parsefile(char *fname, void (*set_func)(char*, char*))
@@ -617,7 +618,7 @@ bool cfg_parsefile(char *fname, void (*set_func)(char*, char*))
 	return true;
 }
 
-bool cfg_parsetitlefile(char *fname, void (*set_func)(char*, char*))//, u8))
+bool cfg_parsetitlefile(char *fname, void (*set_func)(char*, char*, u8))
 {
 	FILE *f;
 	char line[200];
@@ -836,10 +837,10 @@ void CFG_Load(int argc, char **argv)
 	
 //	CFG_Default();
 	
-//	snprintf(pathname, sizeof(pathname), "%s", "config.txt");
+	snprintf(pathname, sizeof(pathname), "%s", "config.txt");
 	
 //	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
-//	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
+	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
 //	ret = cfg_parsefile(pathname, &console_set); //finally set console information
 	
 //	if (!ret)
