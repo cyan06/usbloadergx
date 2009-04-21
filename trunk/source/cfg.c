@@ -294,43 +294,44 @@ void cfg_layout()
 }
 */
 //static char bg_path[100];
-/*
+
 void CFG_Default()
 {
-	u8 widescreen = CONF_GetAspectRatio();
+	CFG.widescreen = CONF_GetAspectRatio();
 	
-	if (widescreen)
+	if (CFG.widescreen)
 	{
-		snprintf(bg_path, sizeof(bg_path), "SD:/wimages/wbg.png");
-		CFG.layout = CFG_LAYOUT_ULTIMATE_W;
-		CFG.widescreen = 1;
-		snprintf(CFG.images_path, sizeof(CFG.images_path), "SD:/wimages/");
+//		snprintf(bg_path, sizeof(bg_path), "SD:/wimages/wbg.png");
+//		CFG.layout = CFG_LAYOUT_ULTIMATE_W;
+		snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/wimages/");
+		snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
 	}
 	else
 	{
-		snprintf(bg_path, sizeof(bg_path), "SD:/images/bg.png");
-		CFG.layout = CFG_LAYOUT_ULTIMATE2;
-		CFG.widescreen = 0;
-		snprintf(CFG.images_path, sizeof(CFG.images_path), "SD:/images/");
+//		snprintf(bg_path, sizeof(bg_path), "SD:/images/bg.png");
+//		CFG.layout = CFG_LAYOUT_ULTIMATE2;
+		snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
+		snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/theme/");
 	}
 
-	CFG.background = bg_path;
-	CFG.covers  = 1;
-	CFG.simple  = 0;
-	CFG.video	= CFG_VIDEO_DEFAULT;
-	CFG.home	= CFG_HOME_REBOOT;
-	CFG.download = 0;
-	CFG.language = CFG_LANG_CONSOLE;
-	CFG.ocarina = 0;
-	CFG.vipatch = 0;
-	CFG.savesettings = 0;
+//	CFG.background = bg_path;
+//	CFG.covers  = 1;
+//	CFG.simple  = 0;
+//	CFG.video	= CFG_VIDEO_DEFAULT;
+//	CFG.home	= CFG_HOME_REBOOT;
+//	CFG.download = 0;
+//	CFG.language = CFG_LANG_CONSOLE;
+//	CFG.ocarina = 0;
+//	CFG.vipatch = 0;
+//	CFG.savesettings = 0;
 	CFG.parentalcontrol = 0;
-	CFG.installdownload = 0;
-	CFG.hidesettingmenu = 0;
-	cfg_layout();
+//	CFG.installdownload = 0;
+//	CFG.hidesettingmenu = 0;
+//	cfg_layout();
+	
 }
 
-*/
+
 char* strcopy(char *dest, char *src, int size)
 {
 	strncpy(dest,src,size);
@@ -424,7 +425,7 @@ char* trimcopy(char *dest, char *src, int size)
 	dest[len] = 0;
 	return dest;
 }
-/*
+
 void widescreen_set(char *name, char *val)
 {
 	cfg_name = name;
@@ -433,21 +434,23 @@ void widescreen_set(char *name, char *val)
 	if (cfg_bool("widescreen", &CFG.widescreen)) //reset default
 	{
 		if (CFG.widescreen) {
-			snprintf(bg_path, sizeof(bg_path), "SD:/wimages/wbg.png");
-			CFG.layout = CFG_LAYOUT_ULTIMATE_W;
-			snprintf(CFG.images_path, sizeof(CFG.images_path), "SD:/wimages/");
-			cfg_layout();
+//			snprintf(bg_path, sizeof(bg_path), "SD:/wimages/wbg.png");
+//			CFG.layout = CFG_LAYOUT_ULTIMATE_W;
+			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/wimages/");
+			snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
+//			cfg_layout();
 		}
 		else
 		{
-			snprintf(bg_path, sizeof(bg_path), "SD:/images/bg.png");
-			CFG.layout = CFG_LAYOUT_ULTIMATE2;
-			snprintf(CFG.images_path, sizeof(CFG.images_path), "SD:/images/");
-			cfg_layout();
+//			snprintf(bg_path, sizeof(bg_path), "SD:/images/bg.png");
+//			CFG.layout = CFG_LAYOUT_ULTIMATE2;
+			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
+			snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/theme/");
+//			cfg_layout();
 		}
 	}
 }
-*/
+
 
 
 void cfg_set(char *name, char *val)
@@ -487,6 +490,18 @@ void cfg_set(char *name, char *val)
 	cfg_map("home", "reboot", &CFG.home, CFG_HOME_REBOOT);
 	cfg_int("simple", &CFG.simple, 3);
 */
+	if (!CFG.widescreen &&(strcmp(name, "theme_path") == 0)) {
+		strcopy(CFG.theme_path, val, sizeof(CFG.theme_path));
+//		snprintf(bg_path, sizeof(bg_path), "%sbackground.png", CFG.theme_path); //reset path
+		return;
+	}
+
+	if (CFG.widescreen && strcmp(name, "wtheme_path") == 0) {
+		strcopy(CFG.theme_path, val, sizeof(CFG.theme_path));
+//		snprintf(bg_path, sizeof(bg_path), "%sbackground.png", CFG.theme_path); //reset path
+		return;
+	}
+	
 	cfg_int("parentalcontrol", &CFG.parentalcontrol, 4);
 }
 /*
@@ -835,11 +850,11 @@ void CFG_Load(int argc, char **argv)
 	//set app path
 	chdir_app(argv[0]);
 	
-//	CFG_Default();
+	CFG_Default();
 	
 	snprintf(pathname, sizeof(pathname), "%s", "config.txt");
 	
-//	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
+	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
 	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
 //	ret = cfg_parsefile(pathname, &console_set); //finally set console information
 	

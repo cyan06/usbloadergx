@@ -60,29 +60,30 @@ extern char *cfg_path;
 
 struct CFG
 {
-	char *background;
-	short layout;
-	short covers;
-	short simple;
-	short video;
-	short language;
-	short ocarina;
-	short vipatch;
-	short home;
-	short download;
-	short installdownload;
-	short hidesettingmenu;
-	short savesettings;
+//	char *background;
+//	short layout;
+//	short covers;
+//	short simple;
+//	short video;
+//	short language;
+//	short ocarina;
+//	short vipatch;
+//	short home;
+//	short download;
+//	short installdownload;
+//	short hidesettingmenu;
+//	short savesettings;
 	short widescreen;
 	short parentalcontrol;
-	char images_path[100];
+	char covers_path[100];
+	char theme_path[100];
 };
 
 extern struct CFG CFG;
-extern u8 ocarinaChoice;
-extern u8 videoChoice;
-extern u8 languageChoice;
-extern u8 viChoice;
+//extern u8 ocarinaChoice;
+//extern u8 videoChoice;
+//extern u8 languageChoice;
+//extern u8 viChoice;
 
 struct Game_CFG
 {

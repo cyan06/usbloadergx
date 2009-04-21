@@ -2640,7 +2640,18 @@ int MainMenu(int menu)
 	#endif
 
 	mainWindow = new GuiWindow(screenwidth, screenheight);
-    background = new GuiImageData(background_png);
+	
+	char bgPath[100];
+	
+	snprintf(bgPath, sizeof(bgPath), "%sbackground.png", CFG.theme_path);
+	background = new GuiImageData(bgPath);
+	
+	if (!background->GetImage())
+	{
+		delete(background);
+		background = new GuiImageData(background_png);
+	}
+	
     bgImg = new GuiImage(background);
 	mainWindow->Append(bgImg);
 
