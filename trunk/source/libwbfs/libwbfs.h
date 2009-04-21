@@ -190,6 +190,8 @@ u32 wbfs_add_disc(wbfs_t*p,read_wiidisc_callback_t read_src_wii_disc, void *call
 /*! remove a wiidvd inside a partition */
 u32 wbfs_rm_disc(wbfs_t*p, u8* discid);
 
+/*! rename a game */
+u32 wbfs_ren_disc(wbfs_t*p, u8* discid, u8* newname);
 
 /*! trim the file-system to its minimum size
   This allows to use wbfs as a wiidisc container

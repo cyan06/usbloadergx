@@ -22,8 +22,6 @@
 #include "input.h"
 #include "http.h"
 #include "dns.h"
-
-
 #include "partition.h"
 #include "wbfs.h"
 #include "utils.h"
@@ -35,7 +33,6 @@
 #include "patchcode.h"
 #include "wpad.h"
 #include "cfg.h"
-
 
 #define MAX_CHARACTERS		34
 
@@ -95,8 +92,7 @@ int SDCard_Init()
         printf("No SD card inserted!");
         return -1;
 
-    }
-    if (!fatMountSimple ("SD", &__io_wiisd)){
+    }    if (!fatMountSimple ("SD", &__io_wiisd)){
         printf("Failed to mount front SD card!");
         return -1;
     }
@@ -116,17 +112,17 @@ void SDCARD_deInit()
 int loadimg(char * filenameshort, char * filename)
 {
 	//check if SD Card is inserted
-	if (!isSdInserted())
+	while (!isSdInserted())
 	{
-	int choice = WindowPrompt("No SD Card found","","Retry","Exit");
+	int choice = WindowPrompt("No SD Card found",0,"Retry","Exit");
 	if (choice == 1)
 		{
 			//restart SD Card
 			SDCARD_deInit();
 			SDCard_Init();
+			break;
 		}
 		else exit(0);
-	return 0;
 	}
 	
 	PNGUPROP imgProp;
@@ -230,6 +226,7 @@ int loadimg(char * filenameshort, char * filename)
 
 return 1;
 }
+
 //loads disk image file from sd card
 int loaddiskimg(char * filenameshort, char * filename)
 {
@@ -475,8 +472,6 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&titleTxt);
-	//promptWindow.Append(&msgTxt);
-	//promptWindow.Append(&sizeTxt);
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
     promptWindow.Append(&btn3);
@@ -511,8 +506,8 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 	mainWindow->SetState(STATE_DEFAULT);
 	ResumeGui();
 	return choice;
-
 }
+
 /****************************************************************************
  * WindowPrompt
  *
@@ -832,7 +827,6 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
 
-
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
@@ -1067,7 +1061,6 @@ ProgressWindow(const char *title, const char *msg)
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&titleTxt);
 	promptWindow.Append(&msgTxt);
-
     promptWindow.Append(&progressbarEmptyImg);
     promptWindow.Append(&progressbarImg);
     promptWindow.Append(&progressbarOutlineImg);
@@ -1081,10 +1074,6 @@ ProgressWindow(const char *title, const char *msg)
 	ResumeGui();
 
     s32 ret;
-
-
-
-
 
     ret = wbfs_add_disc(hdd, __WBFS_ReadDVD, NULL, ShowProgress, ONLY_GAME_PARTITION, 0);
 
@@ -1592,17 +1581,18 @@ static int MenuDiscList()
             struct discHdr *header = &gameList[cnt];
             static char buffer[MAX_CHARACTERS + 4];
             memset(buffer, 0, sizeof(buffer));
-            if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
+            if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) 
+			{
                 sprintf(options.name[cnt], "%s", get_title(header));
-
-            } else {
+            } 
+			else 
+			{
                 strncpy(buffer, get_title(header),  MAX_CHARACTERS);
                 strncat(buffer, "...", 3);
 
                 sprintf(options.name[cnt], "%s", buffer);
             }
             sprintf (options.value[cnt],0);
-
         }
     }
 
@@ -1632,8 +1622,6 @@ static int MenuDiscList()
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
-	/*GuiTrigger trigPlus;
-	trigPlus.SetButtonOnlyTrigger(-1, WPAD_BUTTON_PLUS | WPAD_CLASSIC_BUTTON_PLUS, 0);*/
 
     char spaceinfo[30];
 	sprintf(spaceinfo,"%.2fGB of %.2fGB free",free,(free+used));
@@ -1656,9 +1644,9 @@ static int MenuDiscList()
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
 	//installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
+
 	if (godmode == 1)
 		{
-		//installBtn.SetTrigger(&trigPlus);
 		installBtn.SetTrigger(&trigA);
 		installBtn.SetEffectGrow();
 		}
@@ -1731,7 +1719,6 @@ static int MenuDiscList()
 		batteryBtn[i]->SetRumble(false);
 		batteryBtn[i]->SetAlpha(70);
 	}
-
 
 	batteryBtn[0]->SetPosition(-55, 400);
 	batteryBtn[1]->SetPosition(35, 400);
@@ -1862,20 +1849,20 @@ static int MenuDiscList()
 		char ID[3];
 		char IDfull[6];
 		selectimg = optionBrowser.GetSelectedOption();
-
 	    gameSelected = optionBrowser.GetClickedOption();
 
             for (cnt = 0; cnt < gameCnt; cnt++) {
 
                 if ((s32) (cnt) == selectimg) {
-					if (selectimg != selectedold){
-						// void repeat(){
+					if (selectimg != selectedold)
+					{
 						selectedold = selectimg;
 						struct discHdr *header = &gameList[selectimg];
 						sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						w.Remove(CoverImg);
 						w.Remove(GameIDTxt);						
+
 						//load game cover
 						loadimg(ID, IDfull);
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
@@ -1966,13 +1953,10 @@ static int MenuDiscList()
                             optionBrowser.SetFocus(1);
                             menu = MENU_DISCLIST;
                             break;
-                            
-
+							
                         } else wiilight(0);
                             optionBrowser.SetFocus(1);
                         
-
-
                     } else if(choice == 0) wiilight(0);
                         optionBrowser.SetFocus(1);
                     
@@ -2005,7 +1989,8 @@ static int MenuFormat()
 
 	s32 ret2;
     ret2 = Partition_GetEntries(partitions, &sector_size);
-    //erstellen der partitionlist
+    
+	//create the partitionlist
     for (cnt = 0; cnt < MAX_PARTITIONS; cnt++) {
 		partitionEntry *entry = &partitions[cnt];
 
@@ -2019,8 +2004,8 @@ static int MenuFormat()
             sprintf(options.name[cnt], "Partition %d:", cnt+1);
             sprintf (options.value[cnt],"(Can't be formated)");
         }
-
     }
+	
     options.length = cnt;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
@@ -2102,7 +2087,6 @@ static int MenuFormat()
 		batteryBtn[i]->SetRumble(false);
 		batteryBtn[i]->SetAlpha(70);
 	}
-
 
 	batteryBtn[0]->SetPosition(-55, 400);
 	batteryBtn[1]->SetPosition(35, 400);
@@ -2207,7 +2191,7 @@ static int MenuFormat()
 		{
 		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
 			if(choice == 1)
-			{wiilight(0);
+			{
                 SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
                 //exit(0); //zum debuggen schneller
 			}
@@ -2286,6 +2270,7 @@ static int MenuSettings()
 	lockBtn.SetImage(&lockBtnImg);
 	lockBtn.SetSoundOver(&btnSoundOver);
 	lockBtn.SetTrigger(&trigA);
+	lockBtn.SetEffectGrow();
 	
 	GuiImageData logo(logo_png);
 	GuiImage logoImg(&logo);
@@ -2386,21 +2371,24 @@ static int MenuSettings()
 		if(lockBtn.GetState() == STATE_CLICKED)
 		{
 			//password check to un/lock Install,Delete and Format
-			char entered[10] = "";
-			OnScreenKeyboard(entered, 10);
+			char entered[8] = "";
+			OnScreenKeyboard(entered, 8);
 			if (!strcmp(entered,"AB121B"))
 			{
-			WindowPrompt("Correct Password","Install and Delete are unlocked.","OK",0);
-			godmode = 1;
-			}
-			else 
-			{
-			WindowPrompt("Wrong Password","Install and Delete are locked.","OK","");
-			godmode = 0;
+			if (godmode == 0) 
+				{
+				WindowPrompt("Correct Password","Install and Delete are unlocked.","OK",0);
+				godmode = 1;
+				}
+				else 
+				{
+				WindowPrompt("Correct Password","Install and Delete are locked.","OK",0);
+				godmode = 0;
+				}
 			}
 		}
-
 	}
+	
 	HaltGui();
 	mainWindow->Remove(&optionBrowser2);
 	mainWindow->Remove(&w);
@@ -2722,7 +2710,8 @@ int MainMenu(int menu)
 	fatUnmount("SD");
 	__io_wiisd.shutdown();
     ExitApp();
-    //boot game
+    
+	//boot game
     s32 ret;
 
     switch(Settings.language)

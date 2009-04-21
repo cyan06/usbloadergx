@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <malloc.h>
 #include <ogcsys.h>
+#include <errno.h>
 
 #include "sdhc.h"
 #include "usbstorage.h"
@@ -465,6 +466,20 @@ s32 WBFS_DiskSpace(f32 *used, f32 *free)
 	/* Copy values */
 	*free = ssize * cnt;
 	*used = ssize * (hdd->n_wbfs_sec - cnt);
+
+	return 0;
+}
+
+s32 WBFS_RenameGame(u8 *discid, const void *newname)
+{
+	s32 ret;
+
+	/* No USB device open */
+	if (!hdd)
+		return -1;
+	ret = wbfs_ren_disc(hdd, discid,(u8*)newname);
+	if (ret < 0)
+		return ret;
 
 	return 0;
 }
