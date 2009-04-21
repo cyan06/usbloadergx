@@ -44,6 +44,7 @@
 FreeTypeGX *fontSystem;
 struct SSettings Settings;
 int ExitRequested = 0;
+bool netcheck = false;
 
 /*Networking - Forsaekn*/
 int Net_Init(char *ip){
@@ -105,12 +106,14 @@ main(int argc, char *argv[])
 	CFG_Load(argc, argv);
 
 	//Init Network 
-	char myIP[16];
+/*	char myIP[16];
 	if( !Net_Init(myIP) ){
 		printf("Net_Init error");
-		sleep(2);
-		exit(0);
+		sleep(1);
+		netcheck = false;
 	}	
+	else netcheck = true;*/
+	
     PAD_Init();
 	InitVideo(); // Initialise video
 	InitAudio(); // Initialize audio

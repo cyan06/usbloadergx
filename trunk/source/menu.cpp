@@ -120,7 +120,6 @@ int loadimg(char * filenameshort, char * filename)
 			//restart SD Card
 			SDCARD_deInit();
 			SDCard_Init();
-			break;
 		}
 		else exit(0);
 	}
@@ -144,34 +143,37 @@ int loadimg(char * filenameshort, char * filename)
 
         if (res != PNGU_OK)
         {
-       	int choice = WindowPrompt("Download Boxart image ?",0,"Yes","No");
-					
-			//download boxart image
-			if (choice == 1)
+ if (netcheck)
 			{
-				HaltGui();
-				char region[6] = "ntscj";
-				switch(filename[3])
-					{
-					case 'E':
-					sprintf(region,"ntsc");
-					break;
-		
-					case 'J':
-					sprintf(region,"ntscj");
-					break;
+			int choice = WindowPrompt("Download Boxart image ?",0,"Yes","No");
+						
+				//download boxart image
+				if (choice == 1)
+				{
+					HaltGui();
+					char region[6] = "ntscj";
+					switch(filename[3])
+						{
+						case 'E':
+						sprintf(region,"ntsc");
+						break;
 			
-					case 'P':
-					sprintf(region,"pal");
-					break;
-				}
-			
-				char imgPath[30];
-				char URLFile[50];
-				sprintf(URLFile,"http://www.theotherzone.com/wii/resize/%s/160/224/%s.png",region,filename);
-				sprintf(imgPath,"/images/%s.png",filenameshort);
+						case 'J':
+						sprintf(region,"ntscj");
+						break;
 				
+						case 'P':
+						sprintf(region,"pal");
+						break;
+					}
+				
+					char imgPath[30];
+					char URLFile[50];
+					sprintf(URLFile,"http://www.theotherzone.com/wii/resize/%s/160/224/%s.png",region,filename);
+					sprintf(imgPath,"/images/%s.png",filenameshort);
+					
 					struct block file = downloadfile(URLFile);
+					
 					if(file.data != NULL)
 					{
 						// save png to sd card 
@@ -184,6 +186,12 @@ int loadimg(char * filenameshort, char * filename)
 						ResumeGui();
 						return loadimg(filenameshort,filename);
 					}
+				}
+				else
+				{
+				ctx = PNGU_SelectImageFromBuffer(nocover_png);
+				res = PNGU_GetImageProperties(ctx, &imgProp);
+				}
 			}
 			else
 			{
@@ -1809,14 +1817,17 @@ static int MenuDiscList()
 		else if(menuBtn.GetState() == STATE_CLICKED)
 		{
 
-			choice = WiiMenuWindowPrompt ("Exit USB ISO Loader ?","Wii Menu","HBC","Back");
+			choice = WiiMenuWindowPrompt ("Exit USB ISO Loader ?","Wii Menu","Back to Loader","Back");
 			if(choice == 1)
 			{
                 SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0); // Back to System Menu
 			}
 			else if (choice == 2) 
 			{
-				exit(0); //Back to HBC
+				if (*(unsigned int*) 0x80001800) exit(0);
+				// Channel Version
+				SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
+				//exit(0); //Back to HBC
 			} else {
 			menuBtn.ResetState();
 			optionBrowser.SetFocus(1);
