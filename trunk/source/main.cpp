@@ -22,7 +22,8 @@
 #include "input.h"
 #include "filelist.h"
 #include "main.h"
-
+#include "http.h"
+#include "dns.h"
 
 #include "disc.h"
 #include "wbfs.h"
@@ -43,6 +44,23 @@
 FreeTypeGX *fontSystem;
 struct SSettings Settings;
 int ExitRequested = 0;
+
+/*Networking - Forsaekn*/
+int Net_Init(char *ip){
+	
+	s32 res;
+    while ((res = net_init()) == -EAGAIN)
+	{
+		usleep(100 * 1000); //100ms
+	}
+	
+    if (if_config(ip, NULL, NULL, true) < 0) {
+		printf("      Error reading IP address, exiting");
+		usleep(1000 * 1000 * 1); //1 sec
+		return FALSE;
+	}
+	return TRUE;
+}
 
 void ExitApp()
 {
@@ -83,8 +101,16 @@ main(int argc, char *argv[])
 	__io_wiisd.startup();
 	fatMountSimple("SD", &__io_wiisd);
 	
+	//load config file
 	CFG_Load(argc, argv);
-	
+
+	//Init Network 
+	char myIP[16];
+	if( !Net_Init(myIP) ){
+		printf("Net_Init error");
+		sleep(2);
+		exit(0);
+	}	
     PAD_Init();
 	InitVideo(); // Initialise video
 	InitAudio(); // Initialize audio

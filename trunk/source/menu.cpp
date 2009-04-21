@@ -76,6 +76,12 @@ void wiilight(int enable){             // Toggle wiilight (thanks Bool for wiili
     if(enable) val |= 0x20;            
     *_wiilight_reg=val;}
 
+//Prototypes
+int WindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label);
+static void HaltGui();
+static void ResumeGui();
+
+
 //libfat helper functions
 int isSdInserted() {    return __io_wiisd.isInserted(); }
 
@@ -107,6 +113,20 @@ void SDCARD_deInit()
 //loads image file from sd card
 int loadimg(char * filenameshort, char * filename)
 {
+	//check if SD Card is inserted
+	if (!isSdInserted())
+	{
+	int choice = WindowPrompt("No SD Card found","","Retry","Exit");
+	if (choice == 1)
+		{
+			//restart SD Card
+			SDCARD_deInit();
+			SDCard_Init();
+		}
+		else exit(0);
+	return 0;
+	}
+	
 	PNGUPROP imgProp;
 	IMGCTX ctx;
 
@@ -126,9 +146,53 @@ int loadimg(char * filenameshort, char * filename)
 
         if (res != PNGU_OK)
         {
-       	ctx = PNGU_SelectImageFromBuffer(nocover_png);
-        res = PNGU_GetImageProperties(ctx, &imgProp);
-        }
+       	int choice = WindowPrompt("Download Boxart image ?",0,"Yes","No");
+					
+			//download boxart image
+			if (choice == 1)
+			{
+				HaltGui();
+				char region[6] = "ntscj";
+				switch(filename[3])
+					{
+					case 'E':
+					sprintf(region,"ntsc");
+					break;
+		
+					case 'J':
+					sprintf(region,"ntscj");
+					break;
+			
+					case 'P':
+					sprintf(region,"pal");
+					break;
+				}
+			
+				char imgPath[30];
+				char URLFile[50];
+				sprintf(URLFile,"http://www.theotherzone.com/wii/resize/%s/160/224/%s.png",region,filename);
+				sprintf(imgPath,"/images/%s.png",filenameshort);
+				
+					struct block file = downloadfile(URLFile);
+					if(file.data != NULL)
+					{
+						// save png to sd card 
+						FILE *pfile;
+						pfile = fopen(imgPath, "wb");	
+						fwrite(file.data,1,file.size,pfile);
+						fclose (pfile);
+						free(file.data);
+						WindowPrompt("Finished download",filename,"Back",0);
+						ResumeGui();
+						return loadimg(filenameshort,filename);
+					}
+			}
+			else
+			{
+			ctx = PNGU_SelectImageFromBuffer(nocover_png);
+			res = PNGU_GetImageProperties(ctx, &imgProp);
+			}
+		}
 	}
 
 	free(data);
@@ -164,7 +228,6 @@ int loadimg(char * filenameshort, char * filename)
 
 return 1;
 }
-
 //loads disk image file from sd card
 int loaddiskimg(char * filenameshort, char * filename)
 {
@@ -282,7 +345,7 @@ static void WindowCredits(void * ptr)
 	creditsBoxImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	creditsWindowBox.Append(&creditsBoxImg);
 
-	int numEntries = 8;
+	int numEntries = 9;
 	GuiText * txt[numEntries];
 
 	txt[i] = new GuiText("Credits", 24, (GXColor){255, 255, 255, 255});
@@ -296,7 +359,7 @@ static void WindowCredits(void * ptr)
 
 	txt[i] = new GuiText("Coding:");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("Waninkoko/Kwiirk/dimok/nIxx");
+	txt[i] = new GuiText("Waninkoko/Kwiirk/dimok/nIxx/hungyip84/giantpune");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
 	
 	txt[i] = new GuiText("Design:");
@@ -304,10 +367,13 @@ static void WindowCredits(void * ptr)
 	txt[i] = new GuiText("cyrex");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=30;
 
-	txt[i] = new GuiText("Special thanks to Waninkoko & Kwiirk");
+	txt[i] = new GuiText("Special thanks to Tantric for libwiigui");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("for the USB Loader and releasing the source code");
+	txt[i] = new GuiText("and to Waninkoko & Kwiirk for the USB Loader ");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	txt[i] = new GuiText("and releasing the source code ;)");
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	
 	for(i=0; i < numEntries; i++)
 		creditsWindowBox.Append(txt[i]);
 
