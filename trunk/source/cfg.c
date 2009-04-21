@@ -696,7 +696,7 @@ void chdir_app(char *arg)
 		strncpy(dir, pos1, pos2 - pos1);
 		dir[pos2 - pos1] = 0;
 		strcat(appdir,dir);
-//		chdir(appdir);
+		chdir(appdir);
 		strncpy(current_path, appdir, sizeof(current_path));
 	}
 }   
@@ -717,7 +717,7 @@ void CFG_Load(int argc, char **argv)
 	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
 	
 	snprintf(pathname, sizeof(pathname), "%stheme.txt", CFG.theme_path);
-	cfg_parsefile(pathname, &theme_set); //finally set console information
+	cfg_parsefile(pathname, &theme_set); //finally set console information 
 	
 //	if (!ret)
 //	{
