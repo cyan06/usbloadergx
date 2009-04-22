@@ -714,11 +714,11 @@ void CFG_Load(int argc, char **argv)
 //	bool ret = false;
 
 	//set app path
-	chdir_app(argv[0]);
+//	chdir_app(argv[0]);
 	
 	CFG_Default();
 	
-	snprintf(pathname, sizeof(pathname), "%sconfig.txt", current_path);
+	snprintf(pathname, sizeof(pathname), "SD:/config.txt");
 	
 	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
 	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
@@ -733,7 +733,7 @@ void CFG_Load(int argc, char **argv)
 //		cfg_parsefile("SD:/config.txt", &console_set);
 //	}
 	
-	snprintf(pathname, sizeof(pathname), "%stitles.txt", current_path);
+	snprintf(pathname, sizeof(pathname), "SD:/titles.txt");
 	cfg_parsetitlefile(pathname, &title_set);
 	
 	// load per-game settings

@@ -112,17 +112,17 @@ void SDCARD_deInit()
 int loadimg(char * filenameshort, char * filename)
 {
 	//check if SD Card is inserted
-	while (!isSdInserted())
-	{
-	int choice = WindowPrompt("No SD Card found",0,"Retry","Exit");
-	if (choice == 1)
-		{
-			//restart SD Card
-			SDCARD_deInit();
-			SDCard_Init();
-		}
-		else exit(0);
-	}
+//	while (!isSdInserted())
+//	{
+//	int choice = WindowPrompt("No SD Card found",0,"Retry","Exit");
+//	if (choice == 1)
+//		{
+//			//restart SD Card
+//			SDCARD_deInit();
+//			SDCard_Init();
+//		}
+//		else exit(0);
+//	}
 	
 	PNGUPROP imgProp;
 	IMGCTX ctx;
@@ -132,12 +132,12 @@ int loadimg(char * filenameshort, char * filename)
     int height = 0;
 
 	char filetemp[50];
-	snprintf(filetemp,sizeof(filetemp),"/images/%s.png",filename);
+	snprintf(filetemp,sizeof(filetemp),"SD:/images/%s.png",filename);
     ctx = PNGU_SelectImageFromDevice(filetemp);
     res = PNGU_GetImageProperties(ctx, &imgProp);
 	if (res != PNGU_OK)
     {
-        snprintf(filetemp,sizeof(filetemp),"/images/%s.png",filenameshort);
+        snprintf(filetemp,sizeof(filetemp),"SD:/images/%s.png",filenameshort);
         ctx = PNGU_SelectImageFromDevice(filetemp);
         res = PNGU_GetImageProperties(ctx, &imgProp);
 
@@ -170,7 +170,7 @@ int loadimg(char * filenameshort, char * filename)
 					char imgPath[30];
 					char URLFile[50];
 					sprintf(URLFile,"http://www.theotherzone.com/wii/resize/%s/160/224/%s.png",region,filename);
-					sprintf(imgPath,"/images/%s.png",filenameshort);
+					sprintf(imgPath,"SD:/images/%s.png",filenameshort);
 					
 					struct block file = downloadfile(URLFile);
 					
@@ -247,12 +247,12 @@ int loaddiskimg(char * filenameshort, char * filename)
 	s32 res;
 
 	char filetemp[50];
-	snprintf(filetemp,sizeof(filetemp),"/images/disc/%s.png",filename);
+	snprintf(filetemp,sizeof(filetemp),"SD:/images/disc/%s.png",filename);
     ctx = PNGU_SelectImageFromDevice(filetemp);
     res = PNGU_GetImageProperties(ctx, &imgProp);
 	if (res != PNGU_OK)
     {
-        snprintf(filetemp,sizeof(filetemp),"/images/disc/%s.png",filenameshort);
+        snprintf(filetemp,sizeof(filetemp),"SD:/images/disc/%s.png",filenameshort);
         ctx = PNGU_SelectImageFromDevice(filetemp);
         res = PNGU_GetImageProperties(ctx, &imgProp);
         if (res != PNGU_OK)
