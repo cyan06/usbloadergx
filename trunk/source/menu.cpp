@@ -373,7 +373,7 @@ static void WindowCredits(void * ptr)
 
 	txt[i] = new GuiText("Design:");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("cyrex");
+	txt[i] = new GuiText("cyrex/NeoRame");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=30;
 
 	txt[i] = new GuiText("Special thanks to Tantric for libwiigui");
@@ -427,7 +427,7 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 {
 	int choice = -1;
 
-	GuiWindow promptWindow(448,288);
+	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
@@ -443,13 +443,13 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 
 	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,40);
+	titleTxt.SetPosition(0,55);
 
 	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn1Img(&btnOutline);
 	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
     btn1.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
-	btn1.SetPosition(-30, -100);
+	btn1.SetPosition(-50, -120);
 	btn1.SetImage(&btn1Img);
 	btn1.SetLabel(&btn1Txt);
 	btn1.SetSoundOver(&btnSoundOver);
@@ -461,7 +461,7 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 	GuiImage btn2Img(&btnOutline);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-	btn2.SetPosition(20, -100);
+	btn2.SetPosition(50, -120);
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
 	btn2.SetSoundOver(&btnSoundOver);
@@ -472,7 +472,7 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 	GuiImage btn3Img(&btnOutline);
 	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn3.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-    btn3.SetPosition(0, -45);
+    btn3.SetPosition(0, -65);
 	btn3.SetLabel(&btn3Txt);
 	btn3.SetImage(&btn3Img);
 	btn3.SetSoundOver(&btnSoundOver);
@@ -532,7 +532,7 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 {
 	int choice = -1;
 
-	GuiWindow promptWindow(448,288);
+	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
@@ -548,10 +548,10 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 
 	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,40);
+	titleTxt.SetPosition(0,55);
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	msgTxt.SetPosition(0,-20);
+	msgTxt.SetPosition(0,-40);
 	msgTxt.SetMaxWidth(430);
 
 	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
@@ -561,12 +561,12 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	if(btn2Label)
 	{
 		btn1.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-		btn1.SetPosition(20, -25);
+		btn1.SetPosition(40, -45);
 	}
 	else
 	{
 		btn1.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-		btn1.SetPosition(0, -25);
+		btn1.SetPosition(0, -45);
 	}
 
 	btn1.SetLabel(&btn1Txt);
@@ -580,7 +580,7 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	GuiImage btn2Img(&btnOutline);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn2.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
-	btn2.SetPosition(-20, -25);
+	btn2.SetPosition(-40, -45);
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
 	btn2.SetSoundOver(&btnSoundOver);
@@ -636,7 +636,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 {
 	int i = 30;
 
-	GuiWindow promptWindow(448,288);
+	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
@@ -649,7 +649,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 
 	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,40);
+	titleTxt.SetPosition(0,60);
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	msgTxt.SetPosition(0,0);
@@ -699,7 +699,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 {
 	int choice = -1, angle = 0;
 
-	GuiWindow promptWindow(448,288);
+	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
@@ -720,7 +720,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 
     GuiText sizeTxt(size, 22, (GXColor){50, 50, 50, 255});
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
-	sizeTxt.SetPosition(-40,50);
+	sizeTxt.SetPosition(-60,70);
 
 	//disk image load
     loaddiskimg(ID, IDfull);
@@ -746,11 +746,11 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	if (godmode == 1)
 	{
 	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-	btn2.SetPosition(20, -20);
+	btn2.SetPosition(40, -40);
 	} else
 	{
 	btn2.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-	btn2.SetPosition(0, -20);
+	btn2.SetPosition(0, -40);
 	}
 
 	btn2.SetLabel(&btn2Txt);
@@ -764,7 +764,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiImage btn3Img(&btnOutline);
 	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn3.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
-	btn3.SetPosition(-30, -20);
+	btn3.SetPosition(-50, -40);
 	btn3.SetLabel(&btn3Txt);
 	btn3.SetImage(&btn3Img);
 	btn3.SetSoundOver(&btnSoundOver);
@@ -846,7 +846,7 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
     u32 cover = 0;
 	s32 ret;
 
-	GuiWindow promptWindow(448,288);
+	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
@@ -861,10 +861,10 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 
 	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,40);
+	titleTxt.SetPosition(0,60);
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	msgTxt.SetPosition(0,-20);
+	msgTxt.SetPosition(0,-40);
 	msgTxt.SetMaxWidth(430);
 
 	GuiText btn1Txt(btn1Label, 22, (GXColor){0, 0, 0, 255});
@@ -874,12 +874,12 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 	if(btn2Label)
 	{
 		btn1.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-		btn1.SetPosition(20, -25);
+		btn1.SetPosition(40, -45);
 	}
 	else
 	{
 		btn1.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-		btn1.SetPosition(0, -25);
+		btn1.SetPosition(0, -45);
 	}
 
 	btn1.SetLabel(&btn1Txt);
@@ -944,7 +944,7 @@ int
 FormatingPartition(const char *title, partitionEntry *entry)
 {
     int ret;
-	GuiWindow promptWindow(448,288);
+	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
@@ -1048,7 +1048,7 @@ int
 ProgressWindow(const char *title, const char *msg)
 {
 
-	GuiWindow promptWindow(448,288);
+	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiImageData btnOutline(button_dialogue_box_png);
@@ -1076,10 +1076,10 @@ ProgressWindow(const char *title, const char *msg)
 
 	GuiText titleTxt(title, 26, (GXColor){70, 70, 10, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,40);
+	titleTxt.SetPosition(0,60);
 	GuiText msgTxt(msg, 26, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	msgTxt.SetPosition(0,110);
+	msgTxt.SetPosition(0,130);
 
 	prTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	prTxt.SetPosition(0, 40);
