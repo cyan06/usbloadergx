@@ -1882,7 +1882,7 @@ static int MenuDiscList()
 						GameIDTxt->SetEffect(EFFECT_FADE, 20);
 						CoverImg = new GuiImage(data,160,224);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						CoverImg->SetPosition(30,55);
+						CoverImg->SetPosition(THEME.cover_x,THEME.cover_y);
 						CoverImg->SetEffect(EFFECT_FADE, 20);
 						w.Append(GameIDTxt);
 						w.Append(CoverImg);

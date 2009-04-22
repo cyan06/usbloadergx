@@ -197,7 +197,8 @@ void CFG_Default()
 	THEME.selection_y = 40;
 	THEME.selection_w = 396;
 	THEME.selection_h = 280;
-	
+	THEME.cover_x = 30;
+	THEME.cover_y = 55;
 }
 
 
@@ -396,15 +397,15 @@ void theme_set(char *name, char *val)
 			CONSOLE_BG_COLOR = bg;
 		}
 	}
-	
-	else if ((!CFG.widescreen && (strcmp(cfg_name, "covers_coords")==0)) || (CFG.widescreen && (strcmp(cfg_name, "wcovers_coords")==0))) {
+	*/
+	else if (strcmp(cfg_name, "covers_coords") == 0) {
 		int x,y;
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
-			COVER_XCOORD = x - (x % 4);
-			COVER_YCOORD = y;
+			THEME.cover_x = x - (x % 4);
+			THEME.cover_y = y;
 		}
 	}
-	
+	/*
 	else if (strcmp(cfg_name, "entry_lines") == 0) {
 		int x;
 		if (sscanf(val, "%d", &x) == 1) {

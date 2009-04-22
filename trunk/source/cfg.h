@@ -85,6 +85,8 @@ struct THEME
 	int selection_y;
 	int selection_w;
 	int selection_h;
+	int cover_x;
+	int cover_y;
 };
 
 extern struct CFG CFG;
