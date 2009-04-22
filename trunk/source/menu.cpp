@@ -672,7 +672,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 		VIDEO_WaitVSync();
 		IOS_ReloadIOS(249);
 		sleep(1);
-		ret2 = WBFS_Init();
+		ret2 = WBFS_Init(WBFS_DEVICE_USB);
         if(ret2>=0)
         break;
 
@@ -2611,9 +2611,11 @@ static int MenuCheck()
 		}
 		#endif
 
-        ret2 = WBFS_Init();
+        ret2 = WBFS_Init(WBFS_DEVICE_USB);
         if (ret2 < 0)
         {
+			fatUnmount("SD");
+			__io_wiisd.shutdown();
             ret2 = DeviceWait("No USB Device:", "Waiting for USB Device 30 secs", 0, 0);
             PAD_Init();
             Wpad_Init();

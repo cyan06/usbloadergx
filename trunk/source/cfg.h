@@ -79,6 +79,18 @@ struct THEME
 	short showID;
 	int id_x;
 	int id_y;
+	int power_x;
+	int power_y;
+	int home_x;
+	int home_y;
+	short showPower;
+	short showHome;
+	int setting_x;
+	int setting_y;
+	int install_x;
+	int install_y;
+	short showHDD;
+	short showGameCnt;
 };
 
 extern struct CFG CFG;

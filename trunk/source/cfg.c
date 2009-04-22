@@ -202,6 +202,8 @@ void CFG_Default()
 	THEME.showID = 1;
 	THEME.id_x = 68;
 	THEME.id_y = 305;
+	THEME.power_x = 280;
+	THEME.power_y = 355;
 }
 
 

@@ -9,17 +9,23 @@
 #include "utils.h"
 #include "video.h"
 #include "wdvd.h"
+#include "wbfs.h"
 
 #include "libwbfs/libwbfs.h"
 
 /* Constants */
 #define MAX_NB_SECTORS	32
 
+/* WBFS HDD */
+static wbfs_t *hdd = NULL;
+
+/* WBFS callbacks */
+static rw_sector_callback_t readCallback  = NULL;
+static rw_sector_callback_t writeCallback = NULL;
+
 /* Variables */
 
 static u32 nb_sectors, sector_size;
-static wbfs_t *hdd = NULL;
-
 void __WBFS_Spinner(s32 x, s32 max)
 {
 	static time_t start;
@@ -223,23 +229,63 @@ s32 __WBFS_WriteSDHC(void *fp, u32 lba, u32 count, void *iobuf)
 	return 0;
 }
 
-
-s32 WBFS_Init(void)
+s32 WBFS_Init(u32 device)
 {
 	s32 ret;
 
-	/* Initialize USB storage */
-	ret = USBStorage_Init();
-	if (ret < 0)
-		return ret;
+	switch (device) {
+	case WBFS_DEVICE_USB:
+		/* Initialize USB storage */
+		ret = USBStorage_Init();
+		if (ret >= 0) {
+			/* Setup callbacks */
+			readCallback = __WBFS_ReadUSB;
+			writeCallback = __WBFS_WriteUSB;
+			/* Device info */
+			/* Get USB capacity */
+			nb_sectors = USBStorage_GetCapacity(&sector_size);
+			if (!nb_sectors)
+				return -1;
+		}
+		else 
+			return ret;
+		break;
+	case WBFS_DEVICE_SDHC:
+		/* Initialize SDHC */
+		ret = SDHC_Init();
 
-	/* Get USB capacity */
-	nb_sectors = USBStorage_GetCapacity(&sector_size);
-	if (!nb_sectors)
-		return -1;
+		if (ret) {
+			/* Setup callbacks */
+			readCallback  = __WBFS_ReadSDHC;
+			writeCallback = __WBFS_WriteSDHC;
 
+			/* Device info */
+			nb_sectors  = 0;
+			sector_size = SDHC_SECTOR_SIZE;
+		} 
+		else
+			return -1;
+		break;
+	}
+	
 	return 0;
 }
+//s32 WBFS_Init(void)
+//{
+//	s32 ret;
+//
+//	/* Initialize USB storage */
+//	ret = USBStorage_Init();
+//	if (ret < 0)
+//		return ret;
+//
+//	/* Get USB capacity */
+//	nb_sectors = USBStorage_GetCapacity(&sector_size);
+//	if (!nb_sectors)
+//		return -1;
+//
+//	return 0;
+//}
 
 /*
 s32 WBFS_Init(u32 device, u32 timeout)
@@ -308,7 +354,7 @@ s32 WBFS_Open(void)
 		wbfs_close(hdd);
 
 	/* Open hard disk */
-	hdd = wbfs_open_hd(__WBFS_ReadUSB, __WBFS_WriteUSB, NULL, sector_size, nb_sectors, 0);
+	hdd = wbfs_open_hd(readCallback, writeCallback, NULL, sector_size, nb_sectors, 0);
 	if (!hdd)
 		return -1;
 
@@ -330,7 +376,7 @@ s32 WBFS_Format(u32 lba, u32 size)
 	wbfs_t *partition = NULL;
 
 	/* Reset partition */
-	partition = wbfs_open_partition(__WBFS_ReadUSB, __WBFS_WriteUSB, NULL, sector_size, size, lba, 1);
+	partition = wbfs_open_partition(readCallback, writeCallback, NULL, sector_size, size, lba, 1);
 	if (!partition)
 		return -1;
 
@@ -342,7 +388,7 @@ s32 WBFS_Format(u32 lba, u32 size)
 
 s32 WBFS_GetCount(u32 *count)
 {
-	/* No USB device open */
+	/* No device open */
 	if (!hdd)
 		return -1;
 
@@ -357,7 +403,7 @@ s32 WBFS_GetHeaders(void *outbuf, u32 cnt, u32 len)
 	u32 idx, size;
 	s32 ret;
 
-	/* No USB device open */
+	/* No device open */
 	if (!hdd)
 		return -1;
 
@@ -393,11 +439,11 @@ s32 WBFS_AddGame(void)
 {
 	s32 ret;
 
-	/* No USB device open */
+	/* No device open */
 	if (!hdd)
 		return -1;
 
-	/* Add game to USB device */
+	/* Add game to device */
 	ret = wbfs_add_disc(hdd, __WBFS_ReadDVD, NULL, __WBFS_Spinner, ALL_PARTITIONS, 0);
 	if (ret < 0)
 		return ret;
@@ -409,7 +455,7 @@ s32 WBFS_RemoveGame(u8 *discid)
 {
 	s32 ret;
 
-	/* No USB device open */
+	/* No device open */
 	if (!hdd)
 		return -1;
 
@@ -427,7 +473,7 @@ s32 WBFS_GameSize(u8 *discid, f32 *size)
 
 	u32 sectors;
 
-	/* No USB device open */
+	/* No device open */
 	if (!hdd)
 		return -1;
 
@@ -453,7 +499,7 @@ s32 WBFS_DiskSpace(f32 *used, f32 *free)
 	f32 ssize;
 	u32 cnt;
 
-	/* No USB device open */
+	/* No device open */
 	if (!hdd)
 		return -1;
 
