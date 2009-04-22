@@ -197,11 +197,11 @@ void CFG_Default()
 	THEME.selection_y = 40;
 	THEME.selection_w = 396;
 	THEME.selection_h = 280;
-	THEME.cover_x = 30;
+	THEME.cover_x = 26;
 	THEME.cover_y = 55;
 	THEME.showID = 1;
 	THEME.id_x = 68;
-	THEME.id_y = 290;
+	THEME.id_y = 305;
 }
 
 

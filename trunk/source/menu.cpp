@@ -114,7 +114,7 @@ void SDCARD_deInit()
 int loadimg(char * filenameshort, char * filename)
 {
 	//check if SD Card is inserted
-	while (!isSdInserted())
+/*	while (!isSdInserted())
 	{
 	int choice = WindowPrompt("No SD Card found",0,"Retry","Exit");
 	if (choice == 1)
@@ -124,7 +124,7 @@ int loadimg(char * filenameshort, char * filename)
 			SDCard_Init();
 		}
 		else exit(0);
-	}
+	}*/
 	
 	PNGUPROP imgProp;
 	IMGCTX ctx;
@@ -1898,8 +1898,8 @@ static int MenuDiscList()
 						loadimg(ID, IDfull);
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						GameIDTxt->SetPosition(68,305);
-						//GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
+						//GameIDTxt->SetPosition(68,305);
+						GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameIDTxt->SetEffect(EFFECT_FADE, 20);
 						CoverImg = new GuiImage(data,width,height);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
