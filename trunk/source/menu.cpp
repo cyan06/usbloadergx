@@ -495,7 +495,10 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 	{
 		VIDEO_WaitVSync();
 		if(shutdown == 1)
+		{
+			wiilight(0);
 			Sys_Shutdown();
+		}
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
 		}
@@ -602,7 +605,10 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	{
 		VIDEO_WaitVSync();
 		if(shutdown == 1)
+		{
+			wiilight(0);
 			Sys_Shutdown();
+		}
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
 		}
@@ -793,7 +799,10 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		DiskImg->Draw();
 
 		if(shutdown == 1)
+		{
+			wiilight(0);
 			Sys_Shutdown();
+		}
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
 			SDCARD_deInit();
@@ -1465,14 +1474,12 @@ static int MenuInstall()
                 ret = DiscWait("Insert Disk","Waiting...","Cancel",0);
                 if (ret < 0) {
                     WindowPrompt ("Error reading Disc",0,"Back",0);
-					wiilight(0);
                     menu = MENU_DISCLIST;
                     break;
                 }
                 ret = Disc_Open();
                 if (ret < 0) {
                     WindowPrompt ("Could not open Disc",0,"Back",0);
-					wiilight(0);
                     menu = MENU_DISCLIST;
                     break;
                 }
@@ -1482,11 +1489,9 @@ static int MenuInstall()
                     choice = WindowPrompt ("Not a Wii Disc","Insert a Wii Disc!","OK","Back");
 					
                     if (choice == 1) {
-					wiilight(0);
                         menu = MENU_INSTALL;
                         break;
                     } else
-						wiilight(0);
                         menu = MENU_DISCLIST;
                         break;
                     }
@@ -1505,14 +1510,12 @@ static int MenuInstall()
                 ret = WBFS_CheckGame(headerdisc.id);
                 if (ret) {
                     WindowPrompt ("Game is already installed:",name,"Back",0);
-					wiilight(0);
                     menu = MENU_DISCLIST;
                     break;
                 }
                 hdd = GetHddInfo();
                 if (!hdd) {
                     WindowPrompt ("No HDD found!","Error!!","Back",0);
-					wiilight(0);
                     menu = MENU_DISCLIST;
                     break;
                     }
@@ -1520,10 +1523,10 @@ static int MenuInstall()
                 ret = ProgressWindow("Installing game:", name);
                 if (ret != 0) {
                     WindowPrompt ("Install error!",0,"Back",0);
-					wiilight(0);
                     menu = MENU_DISCLIST;
                     break;
                 } else {
+					wiilight(1);
                     WindowPrompt ("Successfully installed:",name,"OK",0);
                     menu = MENU_DISCLIST;
 					wiilight(0);
@@ -1536,7 +1539,7 @@ static int MenuInstall()
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
 			if(choice == 1)
-			{	wiilight(0);
+			{
 			    WPAD_Flush(0);
                 WPAD_Disconnect(0);
                 WPAD_Shutdown();
@@ -1547,7 +1550,7 @@ static int MenuInstall()
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure ?","Yes","No");
 			if(choice == 1)
-			{	wiilight(0);
+			{
                 SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
                 exit(0); //zum debuggen schneller
 			}
@@ -1566,7 +1569,7 @@ static int MenuInstall()
  ***************************************************************************/
 
 static int MenuDiscList()
-{	wiilight(0);
+{
 	int menu = MENU_NONE;
 
     //Spieleliste laden
@@ -1915,8 +1918,9 @@ static int MenuDiscList()
                         "Delete",
                         ID,
                         IDfull);
+						wiilight(0);
                     if(choice == 1)
-                    {wiilight(0);
+                    {
                         /* Set USB mode */
                         ret = Disc_SetUSB(header->id);
                         if (ret < 0) {
@@ -1925,23 +1929,22 @@ static int MenuDiscList()
                             "Failed to set USB:",
                             text,
                             "OK",0);
-                        } else {wiilight(0);
-                        /* Open disc */
-                        ret = Disc_Open();
-                        if (ret < 0) {
-                            sprintf(text, "Error: %i", ret);
-                            WindowPrompt(
-                            "Failed to boot:",
-                            text,
-                            "OK",0);
-                        } else {wiilight(0);
-                            menu = MENU_EXIT;
+                        } else {
+							/* Open disc */
+							ret = Disc_Open();
+							if (ret < 0) {
+								sprintf(text, "Error: %i", ret);
+								WindowPrompt(
+								"Failed to boot:",
+								text,
+								"OK",0);
+							} else {
+								menu = MENU_EXIT;
+							}
                         }
-                        }
-                    } else if (choice == 2)
+                    } 
+					else if (choice == 2)
 					{
-						wiilight(0);
-
                         choice = WindowPrompt(
                         "Do you really want to delete:",
                         text,
@@ -1950,25 +1953,28 @@ static int MenuDiscList()
                         if (choice == 1) {
                             ret = WBFS_RemoveGame(header->id);
                             if (ret < 0) {
-                            sprintf(text, "Error: %i", ret);
-                            WindowPrompt(
-                            "Can't delete:",
-                            text,
-                            "OK",0);
-                            } else wiilight(0);
-                            WindowPrompt(
-                            "Successfully deleted:",
-                            text,
-                            "OK",0);
-							wiilight(0);
-                            optionBrowser.SetFocus(1);
+								sprintf(text, "Error: %i", ret);
+								WindowPrompt(
+								"Can't delete:",
+								text,
+								"OK",0);
+								} 
+							else 
+								WindowPrompt(
+								"Successfully deleted:",
+								text,
+								"OK",0);
+								optionBrowser.SetFocus(1);
+							
                             menu = MENU_DISCLIST;
                             break;
 							
-                        } else wiilight(0);
+                        } 
+						else
                             optionBrowser.SetFocus(1);
                         
-                    } else if(choice == 0) wiilight(0);
+                    } 
+					else if(choice == 0)
                         optionBrowser.SetFocus(1);
                     
                 }
@@ -2173,12 +2179,12 @@ static int MenuFormat()
                     ret = FormatingPartition("Formatting, please wait...", entry);
                         if (ret < 0) {
                             WindowPrompt("Error:","Failed formating","Return",0);
-                            menu = MENU_SETTINGS;wiilight(0);
+                            menu = MENU_SETTINGS;
 
                         } else {
                             WBFS_Open();
                             WindowPrompt("Success:","Partion formated!","OK",0);
-                            menu = MENU_DISCLIST;wiilight(0);
+                            menu = MENU_DISCLIST;
                         }
                     }
                     }
@@ -2191,7 +2197,7 @@ static int MenuFormat()
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
 			if(choice == 1)
-			{wiilight(0);
+			{
 			    WPAD_Flush(0);
                 WPAD_Disconnect(0);
                 WPAD_Shutdown();
@@ -2222,7 +2228,7 @@ static int MenuFormat()
  ***************************************************************************/
 
 static int MenuSettings()
-{wiilight(0);
+{
 	int menu = MENU_NONE;
 	int ret;
 
@@ -2412,7 +2418,6 @@ static int MenuSettings()
 static int MenuCheck()
 {
 	int menu = MENU_NONE;
-wiilight(0);
 	int i = 0;
 	int choice;
 	s32 ret2;
