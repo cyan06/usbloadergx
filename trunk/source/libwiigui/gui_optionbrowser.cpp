@@ -32,7 +32,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	trigA = new GuiTrigger;
 	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     trigHeldA = new GuiTrigger;
-	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A, PAD_BUTTON_A);
 
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 
@@ -140,7 +140,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *cus
 	trigA = new GuiTrigger;
 	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     trigHeldA = new GuiTrigger;
-	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A, PAD_BUTTON_A);
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 
 	if (custombg)
@@ -525,6 +525,26 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
         if(positionbar > 216)
 		positionbar = 216;
 		scrollbarBoxBtn->SetPosition(width/2-18+7, positionbar+8);
+
+
+    if(t->Right())
+	{
+		if(listOffset < lang && lang > PAGESIZE)
+		{
+			listOffset =listOffset+ PAGESIZE;
+			if(listOffset+PAGESIZE >= lang)
+            listOffset = lang-PAGESIZE;
+		}
+	}
+	else if(t->Left())
+	{
+		if(listOffset > 0)
+		{
+			listOffset =listOffset- PAGESIZE;
+			if(listOffset < 0)
+				listOffset = 0;
+		}
+	}
 
     } else {
 
