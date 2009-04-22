@@ -31,8 +31,8 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 
 	trigA = new GuiTrigger;
 	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-	trigB = new GuiTrigger;
-	trigB->SetSimpleTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, 0);
+    trigHeldA = new GuiTrigger;
+	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 
@@ -94,7 +94,10 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	scrollbarBoxBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	scrollbarBoxBtn->SetSelectable(false);
 	scrollbarBoxBtn->SetEffectOnOver(EFFECT_SCALE, 50, 120);
-	scrollbarBoxBtn->SetTrigger(trigB);
+    scrollbarBoxBtn->SetMinY(0);
+	scrollbarBoxBtn->SetMaxY(height);
+	scrollbarBoxBtn->SetHoldable(true);
+	scrollbarBoxBtn->SetTrigger(trigHeldA);
     }
 
 	for(int i=0; i<PAGESIZE; i++)
@@ -136,15 +139,14 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *cus
 
 	trigA = new GuiTrigger;
 	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
-	trigB = new GuiTrigger;
-	trigB->SetSimpleTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, 0);
-
+    trigHeldA = new GuiTrigger;
+	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 
 	if (custombg)
 	{
 		bgOptions = new GuiImageData(custombg);
-	
+
 		if (!bgOptions->GetImage())
 		{
 			delete(bgOptions);
@@ -212,7 +214,10 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *cus
 	scrollbarBoxBtn->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	scrollbarBoxBtn->SetSelectable(false);
 	scrollbarBoxBtn->SetEffectOnOver(EFFECT_SCALE, 50, 120);
-	scrollbarBoxBtn->SetTrigger(trigB);
+    scrollbarBoxBtn->SetMinY(0);
+	scrollbarBoxBtn->SetMaxY(height-30);
+	scrollbarBoxBtn->SetHoldable(true);
+	scrollbarBoxBtn->SetTrigger(trigHeldA);
     }
 
 	for(int i=0; i<PAGESIZE; i++)
@@ -398,14 +403,7 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 	int next, prev, lang = options->length;
     if (scrollbaron == 1) {
 	// update the location of the scroll box based on the position in the option list
-	int position = 237*(listOffset+selectedItem)/lang;
 
-    if(position < 0)
-		position = 0;
-	if(position > 216)
-		position = 216;
-
-	scrollbarBoxBtn->SetPosition(width/2-18+7,position+10);
 
 	arrowUpBtn->Update(t);
 	arrowDownBtn->Update(t);
@@ -455,12 +453,15 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 		return; // skip navigation
 
     if (scrollbaron == 1) {
+
 	if(t->Down() || arrowDownBtn->GetState() == STATE_CLICKED)
 	{
+
 		next = this->FindMenuItem(optionIndex[selectedItem], 1);
 
 		if(next >= 0)
 		{
+
 			if(selectedItem == PAGESIZE-1)
 			{
 				// move list down by 1
@@ -472,8 +473,10 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 				optionBtn[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
 				selectedItem++;
 			}
+
+
 		}
-		arrowDownBtn->ResetState();
+        arrowDownBtn->ResetState();
 	}
 	else if(t->Up() || arrowUpBtn->GetState() == STATE_CLICKED)
 	{
@@ -493,40 +496,36 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 				selectedItem--;
 			}
 		}
-		arrowUpBtn->ResetState();
+        arrowUpBtn->ResetState();
 	}
 
-    if (scrollbarBoxBtn->GetState() == STATE_CLICKED && lang > 8)
+    if(scrollbarBoxBtn->GetState() == STATE_HELD &&
+		scrollbarBoxBtn->GetStateChan() == t->chan &&
+		t->wpad.ir.valid && options->length > PAGESIZE)
     {
-        int positiony = t->wpad.ir.y;
+		scrollbarBoxBtn->SetPosition(width/2-18+7,0);
+		int position = t->wpad.ir.y - 50 - scrollbarBoxBtn->GetTop();
 
-        if (positiony > 0) {
+		listOffset = (position * lang)/180 - selectedItem;
 
-        int nselectedItem = (positiony-40) * lang / (lang*GAMESELECTSIZE+4);
-        if (nselectedItem < 0) {
-            nselectedItem = 0;
-        } else if (nselectedItem > lang-PAGESIZE) {
-            nselectedItem = lang-PAGESIZE;
-        }
-        optionBtn[selectedItem]->ResetState();
-        selectedItem = nselectedItem;
-        optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);
-        listOffset = selectedItem;
+		if(listOffset <= 0)
+		{
+			listOffset = 0;
+			selectedItem = 0;
+		}
+		else if(listOffset+PAGESIZE >= lang)
+		{
+			listOffset = lang-PAGESIZE;
+			selectedItem = PAGESIZE-1;
+		}
 
-        }
+	}
+        int positionbar = 237*(listOffset + selectedItem) / lang;
 
-        WPAD_ScanPads();
-        u8 cnt, buttons = NULL;
-        /* Get pressed buttons */
-        for (cnt = 0; cnt < 4; cnt++)
-            buttons |= WPAD_ButtonsHeld(cnt);
-        if (buttons == WPAD_BUTTON_B) {
+        if(positionbar > 216)
+		positionbar = 216;
+		scrollbarBoxBtn->SetPosition(width/2-18+7, positionbar+8);
 
-        } else {
-            scrollbarBoxBtn->ResetState();
-        }
-
-    }
     } else {
 
 

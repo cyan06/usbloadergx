@@ -817,5 +817,6 @@ class GuiOptionBrowser : public GuiElement
 		GuiSound * btnSoundClick;
 		GuiTrigger * trigA;
 		GuiTrigger * trigB;
+		GuiTrigger * trigHeldA;
 };
 #endif
