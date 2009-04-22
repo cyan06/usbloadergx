@@ -73,8 +73,8 @@ extern u8 shutdown;
 //Wiilight stuff
 static vu32 *_wiilight_reg = (u32*)0xCD0000C0;
 void wiilight(int enable){             // Toggle wiilight (thanks Bool for wiilight source)
-    u32 val = (*_wiilight_reg&~0x20);        
-    if(enable) val |= 0x20;            
+    u32 val = (*_wiilight_reg&~0x20);
+    if(enable) val |= 0x20;
     *_wiilight_reg=val;}
 
 //Prototypes
@@ -90,7 +90,7 @@ int isSdInserted() {    return __io_wiisd.isInserted(); }
 int SDCard_Init()
 {
     __io_wiisd.startup();
-    if (!isSdInserted()){    
+    if (!isSdInserted()){
         printf("No SD card inserted!");
         return -1;
 
@@ -98,7 +98,7 @@ int SDCard_Init()
         printf("Failed to mount front SD card!");
         return -1;
     }
-    
+
     return 1;
 }
 
@@ -125,7 +125,7 @@ int loadimg(char * filenameshort, char * filename)
 		}
 		else exit(0);
 	}*/
-	
+
 	PNGUPROP imgProp;
 	IMGCTX ctx;
 
@@ -148,7 +148,7 @@ int loadimg(char * filenameshort, char * filename)
  if (netcheck)
 			{
 			int choice = WindowPrompt("Download Boxart image ?",0,"Yes","No");
-						
+
 				//download boxart image
 				if (choice == 1)
 				{
@@ -159,28 +159,28 @@ int loadimg(char * filenameshort, char * filename)
 						case 'E':
 						sprintf(region,"ntsc");
 						break;
-			
+
 						case 'J':
 						sprintf(region,"ntscj");
 						break;
-				
+
 						case 'P':
 						sprintf(region,"pal");
 						break;
 					}
-				
+
 					char imgPath[30];
 					char URLFile[50];
 					sprintf(URLFile,"http://www.theotherzone.com/wii/resize/%s/160/224/%s.png",region,filename);
 					sprintf(imgPath,"SD:/images/%s.png",filenameshort);
-					
+
 					struct block file = downloadfile(URLFile);
-					
+
 					if(file.data != NULL)
 					{
-						// save png to sd card 
+						// save png to sd card
 						FILE *pfile;
-						pfile = fopen(imgPath, "wb");	
+						pfile = fopen(imgPath, "wb");
 						fwrite(file.data,1,file.size,pfile);
 						fclose (pfile);
 						free(file.data);
@@ -370,7 +370,7 @@ static void WindowCredits(void * ptr)
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
 	txt[i] = new GuiText("Waninkoko/Kwiirk/dimok/nIxx/hungyip84/giantpune");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	
+
 	txt[i] = new GuiText("Design:");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
 	txt[i] = new GuiText("cyrex");
@@ -382,7 +382,7 @@ static void WindowCredits(void * ptr)
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
 	txt[i] = new GuiText("and releasing the source code ;)");
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	
+
 	for(i=0; i < numEntries; i++)
 		creditsWindowBox.Append(txt[i]);
 
@@ -437,7 +437,7 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
-	
+
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
@@ -537,12 +537,12 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_png);
-	
+
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
-	
+
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
@@ -709,7 +709,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
-	
+
 	GuiImageData dialogBox(dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
@@ -752,7 +752,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btn2.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
 	btn2.SetPosition(0, -20);
 	}
-	
+
 	btn2.SetLabel(&btn2Txt);
 	btn2.SetImage(&btn2Img);
 	btn2.SetSoundOver(&btnSoundOver);
@@ -776,7 +776,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	promptWindow.Append(&sizeTxt);
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
-	
+
 	//check if unlocked
 	if (godmode == 1)
 	{
@@ -791,7 +791,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	ResumeGui();
 
 	float speedup = 1; //speedup increases while disc is selected
-	
+
 	while(choice == -1)
 	{
 		VIDEO_WaitVSync();
@@ -799,14 +799,14 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		angle = (angle+speedup);
 		if (angle >359){ (angle = 0);
 		}
-		//disc speedup and slowdown		
+		//disc speedup and slowdown
 		else if (btn1.GetState() == STATE_SELECTED) {
 				if (speedup < 11) {speedup = (speedup+0.15);}
 				}
 		else 	{
 				if (speedup > 1) {speedup = (speedup-0.15);}
 				}
-				
+
         DiskImg->SetAngle(angle);
 		DiskImg->Draw();
 
@@ -1224,7 +1224,7 @@ s32 __Menu_GetEntries(void)
 	if (CFG.parentalcontrol)
 	{
 		u32 cnt2 = 0;
-		
+
 		for (u32 i = 0; i < cnt; i++)
 		{
 			header = &buffer[i];
@@ -1236,7 +1236,7 @@ s32 __Menu_GetEntries(void)
 					free(buffer);
 					return -1;
 				}
-					
+
 				memcpy((buffer2 + cnt2), (buffer + i), sizeof(struct discHdr));
 				cnt2++;
 			}
@@ -1246,7 +1246,7 @@ s32 __Menu_GetEntries(void)
 		buffer2 = NULL;
 		cnt = cnt2;
 	}
-	
+
 	/* Sort entries */
 	qsort(buffer, cnt, sizeof(struct discHdr), __Menu_EntryCmp);
 
@@ -1364,8 +1364,8 @@ static int MenuInstall()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
     GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
-	GuiImageData btnhome(menu_button_png);
-	GuiImageData btnhomeOver(menu_button_over_png);
+	GuiImageData btnMenu(menu_button_png);
+	GuiImageData btnMenuOver(menu_button_over_png);
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
@@ -1373,7 +1373,18 @@ static int MenuInstall()
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
-	GuiImage poweroffBtnImg(&btnpwroff);
+	GuiImage menuBtnImg(&btnMenu);
+	GuiImage menuBtnImgOver(&btnMenuOver);
+	GuiButton menuBtn(btnMenu.GetWidth(), btnMenu.GetHeight());
+	menuBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	menuBtn.SetPosition(215, 367);
+	menuBtn.SetImage(&menuBtnImg);
+	menuBtn.SetImageOver(&menuBtnImgOver);
+	menuBtn.SetSoundOver(&btnSoundOver);
+	menuBtn.SetTrigger(&trigA);
+	menuBtn.SetEffectGrow();
+
+    GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
@@ -1384,17 +1395,6 @@ static int MenuInstall()
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
 
-
-	GuiImage exitBtnImg(&btnhome);
-	GuiImage exitBtnImgOver(&btnhomeOver);
-	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
-	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(240, 367);
-	exitBtn.SetImage(&exitBtnImg);
-	exitBtn.SetImageOver(&exitBtnImgOver);
-	exitBtn.SetSoundOver(&btnSoundOver);
-	exitBtn.SetTrigger(&trigA);
-	exitBtn.SetEffectGrow();
 
     #ifdef HW_RVL
 	int i = 0, level;
@@ -1441,7 +1441,7 @@ static int MenuInstall()
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
     w.Append(&poweroffBtn);
-	w.Append(&exitBtn);
+	w.Append(&menuBtn);
     #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
 	w.Append(batteryBtn[1]);
@@ -1499,7 +1499,7 @@ static int MenuInstall()
                 ret = Disc_IsWii();
                 if (ret < 0) {
                     choice = WindowPrompt ("Not a Wii Disc","Insert a Wii Disc!","OK","Back");
-					
+
                     if (choice == 1) {
                         menu = MENU_INSTALL;
                         break;
@@ -1532,7 +1532,19 @@ static int MenuInstall()
                     break;
                     }
 
-                ret = ProgressWindow("Installing game:", name);
+                f32 free, used;
+
+                WBFS_DiskSpace(&used, &free);
+                u32 estimation = wbfs_estimate_disc(hdd, __WBFS_ReadDVD, NULL, ONLY_GAME_PARTITION);
+                f32 gamesize = ((f32) estimation)/1073741824;
+                char gametxt[50];
+                sprintf(gametxt, "Installing game %.2fGB:", gamesize);
+                if (gamesize > free) {
+                    char errortxt[50];
+                    sprintf(errortxt, "Game Size: %.2fGB, Free Space: %.2fGB", gamesize, free);
+                    choice = WindowPrompt("Not enough free space!",errortxt,"Go on", "Return");
+                if (choice == 1) {
+                ret = ProgressWindow(gametxt, name);
                 if (ret != 0) {
                     WindowPrompt ("Install error!",0,"Back",0);
                     menu = MENU_DISCLIST;
@@ -1544,9 +1556,29 @@ static int MenuInstall()
 					wiilight(0);
                     break;
                 }
+                } else {
+                    menu = MENU_DISCLIST;
+                    break;
+                }
+
+                } else {
+                ret = ProgressWindow(gametxt, name);
+                if (ret != 0) {
+                    WindowPrompt ("Install error!",0,"Back",0);
+                    menu = MENU_DISCLIST;
+                    break;
+                } else {
+					wiilight(1);
+                    WindowPrompt ("Successfully installed:",name,"OK",0);
+                    menu = MENU_DISCLIST;
+					wiilight(0);
+                    break;
+                }
+                }
+
 		if (shutdown == 1)
 			Sys_Shutdown();
-			
+
         if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
@@ -1558,7 +1590,7 @@ static int MenuInstall()
 				Sys_Shutdown();
 			}
 
-		} else if(exitBtn.GetState() == STATE_CLICKED)
+		} else if(menuBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure ?","Yes","No");
 			if(choice == 1)
@@ -1566,7 +1598,7 @@ static int MenuInstall()
                 SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
                 exit(0); //zum debuggen schneller
 			}
-			
+
 		}
 	}
 
@@ -1604,11 +1636,11 @@ static int MenuDiscList()
             struct discHdr *header = &gameList[cnt];
             static char buffer[MAX_CHARACTERS + 4];
             memset(buffer, 0, sizeof(buffer));
-            if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) 
+            if (strlen(get_title(header)) < (MAX_CHARACTERS + 3))
 			{
                 sprintf(options.name[cnt], "%s", get_title(header));
-            } 
-			else 
+            }
+			else
 			{
                 strncpy(buffer, get_title(header),  MAX_CHARACTERS);
                 strncat(buffer, "...", 3);
@@ -1751,7 +1783,7 @@ static int MenuDiscList()
 
 	char bgPath[100];
 	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
-	
+
 	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
@@ -1763,8 +1795,8 @@ static int MenuDiscList()
 	w.Append(&gamecntTxt);
     w.Append(&poweroffBtn);
     w.Append(&installBtn);
-	
-	
+
+
 	w.Append(&menuBtn);
     w.Append(&settingsBtn);
 	w.Append(CoverImg);
@@ -1832,7 +1864,7 @@ static int MenuDiscList()
 			    optionBrowser.SetFocus(1);
 			}
 
-		} 
+		}
 		else if(menuBtn.GetState() == STATE_CLICKED)
 		{
 
@@ -1841,7 +1873,7 @@ static int MenuDiscList()
 			{
                 SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0); // Back to System Menu
 			}
-			else if (choice == 2) 
+			else if (choice == 2)
 			{
 				if (*(unsigned int*) 0x80001800) exit(0);
 				// Channel Version
@@ -1851,8 +1883,8 @@ static int MenuDiscList()
 			menuBtn.ResetState();
 			optionBrowser.SetFocus(1);
 			}
-					    
-        } 
+
+        }
 		else if(installBtn.GetState() == STATE_CLICKED)
 		{
 				choice = WindowPrompt ("Install a game?",0,"Yes","No");
@@ -1860,13 +1892,13 @@ static int MenuDiscList()
 				{
 					menu = MENU_INSTALL;
 					break;
-				} 
-				else 
+				}
+				else
 				{
 					installBtn.ResetState();
 					optionBrowser.SetFocus(1);
 				}
-		} 
+		}
 		else if(settingsBtn.GetState() == STATE_CLICKED)
 		{
 			    menu = MENU_SETTINGS;
@@ -1892,7 +1924,7 @@ static int MenuDiscList()
 						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						w.Remove(CoverImg);
 						if (THEME.showID)
-						w.Remove(GameIDTxt);						
+						w.Remove(GameIDTxt);
 
 						//load game cover
 						loadimg(ID, IDfull);
@@ -1961,7 +1993,7 @@ static int MenuDiscList()
 								menu = MENU_EXIT;
 							}
                         }
-                    } 
+                    }
 					else if (choice == 2)
 					{
                         choice = WindowPrompt(
@@ -1977,25 +2009,25 @@ static int MenuDiscList()
 								"Can't delete:",
 								text,
 								"OK",0);
-								} 
-							else 
+								}
+							else
 								WindowPrompt(
 								"Successfully deleted:",
 								text,
 								"OK",0);
 								optionBrowser.SetFocus(1);
-							
+
                             menu = MENU_DISCLIST;
                             break;
-							
-                        } 
+
+                        }
 						else
                             optionBrowser.SetFocus(1);
-                        
-                    } 
+
+                    }
 					else if(choice == 0)
                         optionBrowser.SetFocus(1);
-                    
+
                 }
             }
 	}
@@ -2025,7 +2057,7 @@ static int MenuFormat()
 
 	s32 ret2;
     ret2 = Partition_GetEntries(partitions, &sector_size);
-    
+
 	//create the partitionlist
     for (cnt = 0; cnt < MAX_PARTITIONS; cnt++) {
 		partitionEntry *entry = &partitions[cnt];
@@ -2041,7 +2073,7 @@ static int MenuFormat()
             sprintf (options.value[cnt],"(Can't be formated)");
         }
     }
-	
+
     options.length = cnt;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
@@ -2132,7 +2164,7 @@ static int MenuFormat()
 
 	char bgPath[100];
 	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
-	
+
 	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
@@ -2214,7 +2246,7 @@ static int MenuFormat()
             }
 		if (shutdown == 1)
 			Sys_Shutdown();
-			
+
 	    if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
@@ -2298,7 +2330,7 @@ static int MenuSettings()
 	backBtn.SetTrigger(&trigA);
 	backBtn.SetTrigger(&trigB);
 	backBtn.SetEffectGrow();
-	
+
 	GuiText lockBtnTxt("Lock", 22, (GXColor){0, 0, 0, 255});
 	lockBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage lockBtnImg(&btnOutline);
@@ -2310,7 +2342,7 @@ static int MenuSettings()
 	lockBtn.SetSoundOver(&btnSoundOver);
 	lockBtn.SetTrigger(&trigA);
 	lockBtn.SetEffectGrow();
-	
+
 	GuiImageData logo(logo_png);
 	GuiImage logoImg(&logo);
 	GuiImageData logoOver(logo_png);
@@ -2400,13 +2432,13 @@ static int MenuSettings()
 		}
 		if(shutdown == 1)
 			Sys_Shutdown();
-			
+
 		if(backBtn.GetState() == STATE_CLICKED)
 		{
 			menu = MENU_DISCLIST;
 			break;
 		}
-		
+
 		if(lockBtn.GetState() == STATE_CLICKED)
 		{
 			//password check to un/lock Install,Delete and Format
@@ -2414,12 +2446,12 @@ static int MenuSettings()
 			OnScreenKeyboard(entered, 8);
 			if (!strcmp(entered,"AB121B"))
 			{
-			if (godmode == 0) 
+			if (godmode == 0)
 				{
 				WindowPrompt("Correct Password","Install and Delete are unlocked.","OK",0);
 				godmode = 1;
 				}
-				else 
+				else
 				{
 				WindowPrompt("Correct Password","Install and Delete are locked.","OK",0);
 				godmode = 0;
@@ -2427,7 +2459,7 @@ static int MenuSettings()
 			}
 		}
 	}
-	
+
 	HaltGui();
 	mainWindow->Remove(&optionBrowser2);
 	mainWindow->Remove(&w);
@@ -2450,8 +2482,8 @@ static int MenuCheck()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnpwroff(wiimote_poweroff_png);
 	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
-	GuiImageData btnhome(menu_button_png);
-	GuiImageData btnhomeOver(menu_button_over_png);
+	GuiImageData btnMenu(menu_button_png);
+	GuiImageData btnMenuOver(menu_button_over_png);
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
@@ -2461,7 +2493,19 @@ static int MenuCheck()
 	GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
-	GuiImage poweroffBtnImg(&btnpwroff);
+	GuiImage menuBtnImg(&btnMenu);
+	GuiImage menuBtnImgOver(&btnMenuOver);
+	GuiButton menuBtn(btnMenu.GetWidth(), btnMenu.GetHeight());
+	menuBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	menuBtn.SetPosition(215, 367);
+	menuBtn.SetImage(&menuBtnImg);
+	menuBtn.SetImageOver(&menuBtnImgOver);
+	menuBtn.SetSoundOver(&btnSoundOver);
+	menuBtn.SetTrigger(&trigA);
+	menuBtn.SetTrigger(&trigHome);
+	menuBtn.SetEffectGrow();
+
+    GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
@@ -2471,18 +2515,6 @@ static int MenuCheck()
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
-
-	GuiImage exitBtnImg(&btnhome);
-	GuiImage exitBtnImgOver(&btnhomeOver);
-	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
-	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	exitBtn.SetPosition(240, 367);
-	exitBtn.SetImage(&exitBtnImg);
-	exitBtn.SetImageOver(&exitBtnImgOver);
-	exitBtn.SetSoundOver(&btnSoundOver);
-	exitBtn.SetTrigger(&trigA);
-	exitBtn.SetTrigger(&trigHome);
-	exitBtn.SetEffectGrow();
 
     #ifdef HW_RVL
 	int level;
@@ -2528,7 +2560,7 @@ static int MenuCheck()
 
 	char bgPath[100];
 	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
-	
+
 	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
@@ -2537,7 +2569,7 @@ static int MenuCheck()
 	HaltGui();
 	GuiWindow w(screenwidth, screenheight);
 	w.Append(&poweroffBtn);
-	w.Append(&exitBtn);
+	w.Append(&menuBtn);
     #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
 	w.Append(batteryBtn[1]);
@@ -2638,7 +2670,7 @@ static int MenuCheck()
 
 		if(shutdown == 1)
 			Sys_Shutdown();
-			
+
 		if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
@@ -2652,7 +2684,7 @@ static int MenuCheck()
 
 		}
 
-		else if(exitBtn.GetState() == STATE_CLICKED)
+		else if(menuBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
 			if(choice == 1)
@@ -2689,18 +2721,18 @@ int MainMenu(int menu)
 	#endif
 
 	mainWindow = new GuiWindow(screenwidth, screenheight);
-	
+
 	char bgPath[100];
-	
+
 	snprintf(bgPath, sizeof(bgPath), "%sbackground.png", CFG.theme_path);
 	background = new GuiImageData(bgPath);
-	
+
 	if (!background->GetImage())
 	{
 		delete(background);
 		background = new GuiImageData(background_png);
 	}
-	
+
     bgImg = new GuiImage(background);
 	mainWindow->Append(bgImg);
 
@@ -2751,7 +2783,7 @@ int MainMenu(int menu)
 	fatUnmount("SD");
 	__io_wiisd.shutdown();
     ExitApp();
-    
+
 	//boot game
     s32 ret;
 
