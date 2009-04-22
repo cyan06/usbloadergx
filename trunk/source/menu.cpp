@@ -735,7 +735,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btn1.SetSoundOver(&btnSoundOver);
 	btn1.SetTrigger(&trigA);
 	btn1.SetState(STATE_SELECTED);
-	btn1.SetEffectGrow();
+	//btn1.SetEffectGrow(); just commented it out if anybody wants to use it again.
 
 	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn2Img(&btnOutline);
@@ -788,13 +788,23 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	mainWindow->ChangeFocus(&promptWindow);
 	ResumeGui();
 
+	float speedup = 1; //speedup increases while disc is selected
+	
 	while(choice == -1)
 	{
 		VIDEO_WaitVSync();
 		angle++;
+		angle = (angle+speedup);
 		if (angle >359){ (angle = 0);
 		}
-
+		//disc speedup and slowdown		
+		else if (btn1.GetState() == STATE_SELECTED) {
+				if (speedup < 11) {speedup = (speedup+0.15);}
+				}
+		else 	{
+				if (speedup > 1) {speedup = (speedup-0.15);}
+				}
+				
         DiskImg->SetAngle(angle);
 		DiskImg->Draw();
 
