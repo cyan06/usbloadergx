@@ -64,6 +64,8 @@ static GuiImage progressbarImg(&progressbar);
 static double progressDone = 0;
 static double progressTotal = 1;
 int godmode = 0;
+int height = 224;
+int width = 160;
 
 //power button fix
 extern u8 shutdown;
@@ -112,24 +114,24 @@ void SDCARD_deInit()
 int loadimg(char * filenameshort, char * filename)
 {
 	//check if SD Card is inserted
-//	while (!isSdInserted())
-//	{
-//	int choice = WindowPrompt("No SD Card found",0,"Retry","Exit");
-//	if (choice == 1)
-//		{
-//			//restart SD Card
-//			SDCARD_deInit();
-//			SDCard_Init();
-//		}
-//		else exit(0);
-//	}
+	while (!isSdInserted())
+	{
+	int choice = WindowPrompt("No SD Card found",0,"Retry","Exit");
+	if (choice == 1)
+		{
+			//restart SD Card
+			SDCARD_deInit();
+			SDCard_Init();
+		}
+		else exit(0);
+	}
 	
 	PNGUPROP imgProp;
 	IMGCTX ctx;
 
 	s32 res;
-    int width = 0;
-    int height = 0;
+	width = 0;
+    height = 0;
 
 	char filetemp[50];
 	snprintf(filetemp,sizeof(filetemp),"SD:/images/%s.png",filename);
@@ -1890,20 +1892,21 @@ static int MenuDiscList()
 						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						w.Remove(CoverImg);
 						if (THEME.showID)
-							w.Remove(GameIDTxt);						
+						w.Remove(GameIDTxt);						
 
 						//load game cover
 						loadimg(ID, IDfull);
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
+						GameIDTxt->SetPosition(68,305);
+						//GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameIDTxt->SetEffect(EFFECT_FADE, 20);
-						CoverImg = new GuiImage(data,160,224);
+						CoverImg = new GuiImage(data,width,height);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						CoverImg->SetPosition(THEME.cover_x,THEME.cover_y);
 						CoverImg->SetEffect(EFFECT_FADE, 20);
 						if (THEME.showID)
-							w.Append(GameIDTxt);
+						w.Append(GameIDTxt);
 						w.Append(CoverImg);
 						break;
 					}
