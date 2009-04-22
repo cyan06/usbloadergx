@@ -1737,7 +1737,10 @@ static int MenuDiscList()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bg_options_png, 1);
+	char bgPath[100];
+	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
+	
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
@@ -1753,7 +1756,8 @@ static int MenuDiscList()
 	w.Append(&menuBtn);
     w.Append(&settingsBtn);
 	w.Append(CoverImg);
-	w.Append(GameIDTxt);
+	if (THEME.showID)
+		w.Append(GameIDTxt);
 
     #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
@@ -1875,19 +1879,21 @@ static int MenuDiscList()
 						sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						w.Remove(CoverImg);
-						w.Remove(GameIDTxt);						
+						if (THEME.showID)
+							w.Remove(GameIDTxt);						
 
 						//load game cover
 						loadimg(ID, IDfull);
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						GameIDTxt->SetPosition(68,290);
+						GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameIDTxt->SetEffect(EFFECT_FADE, 20);
 						CoverImg = new GuiImage(data,160,224);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						CoverImg->SetPosition(THEME.cover_x,THEME.cover_y);
 						CoverImg->SetEffect(EFFECT_FADE, 20);
-						w.Append(GameIDTxt);
+						if (THEME.showID)
+							w.Append(GameIDTxt);
 						w.Append(CoverImg);
 						break;
 					}
@@ -2111,7 +2117,10 @@ static int MenuFormat()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bg_options_png, 1);
+	char bgPath[100];
+	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
+	
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(130);
@@ -2504,7 +2513,10 @@ static int MenuCheck()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-    GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bg_options_png, 1);
+	char bgPath[100];
+	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
+	
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);

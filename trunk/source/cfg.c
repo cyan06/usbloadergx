@@ -199,6 +199,9 @@ void CFG_Default()
 	THEME.selection_h = 280;
 	THEME.cover_x = 30;
 	THEME.cover_y = 55;
+	THEME.showID = 1;
+	THEME.id_x = 68;
+	THEME.id_y = 290;
 }
 
 
@@ -389,15 +392,7 @@ void theme_set(char *name, char *val)
 			THEME.selection_h = h;
 		}
 	}
-	/*
-	else if (strcmp(cfg_name, "console_color")==0) {
-		int fg,bg;
-		if (sscanf(val, "%d,%d", &fg, &bg) == 2) {
-			CONSOLE_FG_COLOR = fg;
-			CONSOLE_BG_COLOR = bg;
-		}
-	}
-	*/
+
 	else if (strcmp(cfg_name, "covers_coords") == 0) {
 		int x,y;
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
@@ -405,6 +400,17 @@ void theme_set(char *name, char *val)
 			THEME.cover_y = y;
 		}
 	}
+	
+	else if (strcmp(cfg_name, "id_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.id_x = x - (x % 4);
+			THEME.id_y = y;
+		}
+	}
+	
+	cfg_bool("show_id", &THEME.showID);
+	
 	/*
 	else if (strcmp(cfg_name, "entry_lines") == 0) {
 		int x;

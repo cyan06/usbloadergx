@@ -23,16 +23,6 @@ extern int COVER_YCOORD;
 #define CFG_HOME_REBOOT 0
 #define CFG_HOME_EXIT   1
 
-#define CFG_LAYOUT_ORIG      0
-#define CFG_LAYOUT_ORIG_12   1
-#define CFG_LAYOUT_SMALL     2
-#define CFG_LAYOUT_MEDIUM    3
-#define CFG_LAYOUT_LARGE     4 // nixx
-#define CFG_LAYOUT_LARGE_2   5 // usptactical
-#define CFG_LAYOUT_ULTIMATE1 6 // Ultimate1: (WiiShizza)
-#define CFG_LAYOUT_ULTIMATE2 7 // Ultimate2: (jservs7 / hungyip84)
-#define CFG_LAYOUT_ULTIMATE_W 8 // Ultimate widescreen: (jservs7 / hungyip84)
-
 #define CFG_VIDEO_SYS   0  // system default
 #define CFG_VIDEO_DEFAULT  1
 #define CFG_VIDEO_GAME  1  // game default
@@ -61,7 +51,6 @@ extern char *cfg_path;
 struct CFG
 {
 //	char *background;
-//	short layout;
 //	short covers;
 //	short simple;
 //	short video;
@@ -87,6 +76,9 @@ struct THEME
 	int selection_h;
 	int cover_x;
 	int cover_y;
+	short showID;
+	int id_x;
+	int id_y;
 };
 
 extern struct CFG CFG;
