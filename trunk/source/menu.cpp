@@ -1376,8 +1376,10 @@ static int MenuInstall()
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
 	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
-	GuiImageData btnMenu(menu_button_png);
-	GuiImageData btnMenuOver(menu_button_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%smenu_button.png", CFG.theme_path);
+	GuiImageData btnhome(imgPath, menu_button_png);
+	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
+	GuiImageData btnhomeOver(imgPath, menu_button_over_png);
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
@@ -1385,16 +1387,16 @@ static int MenuInstall()
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
-	GuiImage menuBtnImg(&btnMenu);
-	GuiImage menuBtnImgOver(&btnMenuOver);
-	GuiButton menuBtn(btnMenu.GetWidth(), btnMenu.GetHeight());
-	menuBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	menuBtn.SetPosition(215, 367);
-	menuBtn.SetImage(&menuBtnImg);
-	menuBtn.SetImageOver(&menuBtnImgOver);
-	menuBtn.SetSoundOver(&btnSoundOver);
-	menuBtn.SetTrigger(&trigA);
-	menuBtn.SetEffectGrow();
+	GuiImage homeBtnImg(&btnhome);
+	GuiImage homeBtnImgOver(&btnhomeOver);
+	GuiButton homeBtn(btnhome.GetWidth(), btnhome.GetHeight());
+	homeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	homeBtn.SetPosition(THEME.home_x, THEME.home_y);
+	homeBtn.SetImage(&homeBtnImg);
+	homeBtn.SetImageOver(&homeBtnImgOver);
+	homeBtn.SetSoundOver(&btnSoundOver);
+	homeBtn.SetTrigger(&trigA);
+	homeBtn.SetEffectGrow();
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
@@ -1453,7 +1455,7 @@ static int MenuInstall()
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
     w.Append(&poweroffBtn);
-	w.Append(&menuBtn);
+	w.Append(&homeBtn);
     #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
 	w.Append(batteryBtn[1]);
@@ -1602,7 +1604,7 @@ static int MenuInstall()
 				Sys_Shutdown();
 			}
 
-		} else if(menuBtn.GetState() == STATE_CLICKED)
+		} else if(homeBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure ?","Yes","No");
 			if(choice == 1)
@@ -1668,21 +1670,24 @@ static int MenuDiscList()
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 
-	GuiImageData btnInstall(button_install_png);
-	GuiImageData btnInstallOver(button_install_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%sbutton_install.png", CFG.theme_path);
+	GuiImageData btnInstall(imgPath, button_install_png);
+	snprintf(imgPath, sizeof(imgPath), "%sbutton_install_over.png", CFG.theme_path);
+	GuiImageData btnInstallOver(imgPath, button_install_over_png);
 
-	GuiImageData btnMenu(menu_button_png);
-	GuiImageData btnMenuOver(menu_button_over_png);
-
-	GuiImageData btnSettings(settings_button_png);
-	GuiImageData btnSettingsOver(settings_button_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%ssettings_button.png", CFG.theme_path);
+	GuiImageData btnSettings(imgPath, settings_button_png);
+	snprintf(imgPath, sizeof(imgPath), "%ssettings_button_over.png", CFG.theme_path);
+	GuiImageData btnSettingsOver(imgPath, settings_button_over_png);
 
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
 	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
-	GuiImageData btnhome(menu_button_png);
-	GuiImageData btnhomeOver(menu_button_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%smenu_button.png", CFG.theme_path);
+	GuiImageData btnhome(imgPath, menu_button_png);
+	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
+	GuiImageData btnhomeOver(imgPath, menu_button_over_png);
 
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
@@ -1708,8 +1713,8 @@ static int MenuDiscList()
 	GuiImage installBtnImg(&btnInstall);
 	GuiImage installBtnImgOver(&btnInstallOver);
 	GuiButton installBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
-	installBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	installBtn.SetPosition(-280, 355);
+	installBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	installBtn.SetPosition(THEME.install_x, THEME.install_y);
 	installBtn.SetImage(&installBtnImg);
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
@@ -1724,25 +1729,25 @@ static int MenuDiscList()
 	GuiImage settingsBtnImg(&btnSettings);
 	GuiImage settingsBtnImgOver(&btnSettingsOver);
 	GuiButton settingsBtn(btnSettings.GetWidth(), btnSettings.GetHeight());
-	settingsBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	settingsBtn.SetPosition(-210, 367);
+	settingsBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	settingsBtn.SetPosition(THEME.setting_x, THEME.setting_y);
 	settingsBtn.SetImage(&settingsBtnImg);
 	settingsBtn.SetImageOver(&settingsBtnImgOver);
 	settingsBtn.SetSoundOver(&btnSoundOver);
 	settingsBtn.SetTrigger(&trigA);
 	settingsBtn.SetEffectGrow();
 
-	GuiImage menuBtnImg(&btnMenu);
-	GuiImage menuBtnImgOver(&btnMenuOver);
-	GuiButton menuBtn(btnMenu.GetWidth(), btnMenu.GetHeight());
-	menuBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	menuBtn.SetPosition(215, 367);
-	menuBtn.SetImage(&menuBtnImg);
-	menuBtn.SetImageOver(&menuBtnImgOver);
-	menuBtn.SetSoundOver(&btnSoundOver);
-	menuBtn.SetTrigger(&trigA);
-	menuBtn.SetTrigger(&trigHome);
-	menuBtn.SetEffectGrow();
+	GuiImage homeBtnImg(&btnhome);
+	GuiImage homeBtnImgOver(&btnhomeOver);
+	GuiButton homeBtn(btnhome.GetWidth(), btnhome.GetHeight());
+	homeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	homeBtn.SetPosition(THEME.home_x, THEME.home_y);
+	homeBtn.SetImage(&homeBtnImg);
+	homeBtn.SetImageOver(&homeBtnImgOver);
+	homeBtn.SetSoundOver(&btnSoundOver);
+	homeBtn.SetTrigger(&trigA);
+	homeBtn.SetTrigger(&trigHome);
+	homeBtn.SetEffectGrow();
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
@@ -1812,7 +1817,7 @@ static int MenuDiscList()
     w.Append(&installBtn);
 
 
-	w.Append(&menuBtn);
+	w.Append(&homeBtn);
     w.Append(&settingsBtn);
 	w.Append(CoverImg);
 	if (THEME.showID)
@@ -1880,7 +1885,7 @@ static int MenuDiscList()
 			}
 
 		}
-		else if(menuBtn.GetState() == STATE_CLICKED)
+		else if(homeBtn.GetState() == STATE_CLICKED)
 		{
 
 			choice = WiiMenuWindowPrompt ("Exit USB ISO Loader ?","Wii Menu","Back to Loader","Back");
@@ -1895,7 +1900,7 @@ static int MenuDiscList()
 				SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
 				//exit(0); //Back to HBC
 			} else {
-			menuBtn.ResetState();
+			homeBtn.ResetState();
 			optionBrowser.SetFocus(1);
 			}
 
@@ -2106,8 +2111,10 @@ static int MenuFormat()
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
 	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
-	GuiImageData btnhome(menu_button_png);
-	GuiImageData btnhomeOver(menu_button_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%smenu_button.png", CFG.theme_path);
+	GuiImageData btnhome(imgPath, menu_button_png);
+	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
+	GuiImageData btnhomeOver(imgPath, menu_button_over_png);
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
@@ -2327,8 +2334,8 @@ static int MenuSettings()
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
 	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
-	GuiImageData btnhome(menu_button_png);
-	GuiImageData btnhomeOver(menu_button_over_png);
+//	GuiImageData btnhome(menu_button_png);
+//	GuiImageData btnhomeOver(menu_button_over_png);
 	GuiImageData settingsbg(settings_background_png);
 
     GuiTrigger trigA;
@@ -2515,8 +2522,10 @@ static int MenuCheck()
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
 	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
-	GuiImageData btnMenu(menu_button_png);
-	GuiImageData btnMenuOver(menu_button_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%smenu_button.png", CFG.theme_path);
+	GuiImageData btnhome(imgPath, menu_button_png);
+	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
+	GuiImageData btnhomeOver(imgPath, menu_button_over_png);
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
@@ -2526,17 +2535,17 @@ static int MenuCheck()
 	GuiTrigger trigHome;
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
-	GuiImage menuBtnImg(&btnMenu);
-	GuiImage menuBtnImgOver(&btnMenuOver);
-	GuiButton menuBtn(btnMenu.GetWidth(), btnMenu.GetHeight());
-	menuBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	menuBtn.SetPosition(215, 367);
-	menuBtn.SetImage(&menuBtnImg);
-	menuBtn.SetImageOver(&menuBtnImgOver);
-	menuBtn.SetSoundOver(&btnSoundOver);
-	menuBtn.SetTrigger(&trigA);
-	menuBtn.SetTrigger(&trigHome);
-	menuBtn.SetEffectGrow();
+	GuiImage homeBtnImg(&btnhome);
+	GuiImage homeBtnImgOver(&btnhomeOver);
+	GuiButton homeBtn(btnhome.GetWidth(), btnhome.GetHeight());
+	homeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	homeBtn.SetPosition(THEME.home_x, THEME.home_y);
+	homeBtn.SetImage(&homeBtnImg);
+	homeBtn.SetImageOver(&homeBtnImgOver);
+	homeBtn.SetSoundOver(&btnSoundOver);
+	homeBtn.SetTrigger(&trigA);
+	homeBtn.SetTrigger(&trigHome);
+	homeBtn.SetEffectGrow();
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
@@ -2602,7 +2611,7 @@ static int MenuCheck()
 	HaltGui();
 	GuiWindow w(screenwidth, screenheight);
 	w.Append(&poweroffBtn);
-	w.Append(&menuBtn);
+	w.Append(&homeBtn);
     #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
 	w.Append(batteryBtn[1]);
@@ -2719,7 +2728,7 @@ static int MenuCheck()
 
 		}
 
-		else if(menuBtn.GetState() == STATE_CLICKED)
+		else if(homeBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Return to Wii Menu","Are you sure?","Yes","No");
 			if(choice == 1)

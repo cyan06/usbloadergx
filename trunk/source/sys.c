@@ -8,7 +8,7 @@
 
 /* Variables */
 static const char certs_fs[] ATTRIBUTE_ALIGN(32) = "/sys/cert.sys";
-extern u8 shutdown = 0;
+u8 shutdown = 0;
 
 void __Sys_ResetCallback(void)
 {

@@ -204,7 +204,15 @@ void CFG_Default()
 	THEME.id_x = 68;
 	THEME.id_y = 305;
 	THEME.power_x = 576;
-	THEME.power_y = 355; 
+	THEME.power_y = 355;
+	THEME.home_x = 485;//215;
+	THEME.home_y = 367;
+	THEME.setting_x = 60;//-210
+	THEME.setting_y = 367;
+	THEME.showHDD = 1;
+	THEME.showGameCnt = 1;
+	THEME.install_x = 16;//-280
+	THEME.install_y = 355;
 }
 
 
@@ -310,19 +318,13 @@ void widescreen_set(char *name, char *val)
 	if (cfg_bool("widescreen", &CFG.widescreen)) //reset default
 	{
 		if (CFG.widescreen) {
-//			snprintf(bg_path, sizeof(bg_path), "SD:/wimages/wbg.png");
-//			CFG.layout = CFG_LAYOUT_ULTIMATE_W;
 			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/wimages/");
 			snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
-//			cfg_layout();
 		}
 		else
 		{
-//			snprintf(bg_path, sizeof(bg_path), "SD:/images/bg.png");
-//			CFG.layout = CFG_LAYOUT_ULTIMATE2;
 			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
 			snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/theme/");
-//			cfg_layout();
 		}
 	}
 }
@@ -368,13 +370,11 @@ void cfg_set(char *name, char *val)
 */
 	if (!CFG.widescreen &&(strcmp(name, "theme_path") == 0)) {
 		strcopy(CFG.theme_path, val, sizeof(CFG.theme_path));
-//		snprintf(bg_path, sizeof(bg_path), "%sbackground.png", CFG.theme_path); //reset path
 		return;
 	}
 
 	if (CFG.widescreen && strcmp(name, "wtheme_path") == 0) {
 		strcopy(CFG.theme_path, val, sizeof(CFG.theme_path));
-//		snprintf(bg_path, sizeof(bg_path), "%sbackground.png", CFG.theme_path); //reset path
 		return;
 	}
 	
@@ -420,7 +420,33 @@ void theme_set(char *name, char *val)
 		}
 	}
 	
+	else if (strcmp(cfg_name, "home_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.home_x = x - (x % 4);
+			THEME.home_y = y;
+		}
+	}
+	
+	else if (strcmp(cfg_name, "setting_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.setting_x = x - (x % 4);
+			THEME.setting_y = y;
+		}
+	}
+
+	else if (strcmp(cfg_name, "install_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.install_x = x - (x % 4);
+			THEME.install_y = y;
+		}
+	}
+	
 	cfg_bool("show_id", &THEME.showID);
+	cfg_bool("show_hdd", &THEME.showHDD);
+	cfg_bool("show_gamecount", &THEME.showGameCnt);
 	
 	/*
 	else if (strcmp(cfg_name, "entry_lines") == 0) {
