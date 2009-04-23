@@ -67,7 +67,7 @@ static double progressTotal = 1;
 int godmode = 0;
 int height = 224;
 int width = 160;
-static char gameregion[5];
+static char gameregion[7];
 //power button fix
 extern u8 shutdown;
 
@@ -201,22 +201,8 @@ int loadimg(char * filenameshort, char * filename)
 			ctx = PNGU_SelectImageFromBuffer(nocover_png);
 			res = PNGU_GetImageProperties(ctx, &imgProp);
 			}
-		}			HaltGui();
-		         char gameregion1[6] = "Pal";
-					switch(filename[3])
-						{
-						case 'E':
-						sprintf(gameregion,"NTSC U");
-						break;
-
-						case 'J':
-						sprintf(gameregion,"NTSC J");
-						break;
-
-						case 'P':
-						sprintf(gameregion,"  PAL ");
-						break;
-					}
+		}			
+		        
 	}
 
 	free(data);
@@ -1967,6 +1953,20 @@ static int MenuDiscList()
 						w.Remove(GameRegionTxt);
 						//load game cover
 						loadimg(ID, IDfull);
+					switch(header->id[3])
+						{
+						case 'E':
+						sprintf(gameregion,"NTSC U");
+						break;
+
+						case 'J':
+						sprintf(gameregion,"NTSC J");
+						break;
+
+						case 'P':
+						sprintf(gameregion,"  PAL ");
+						break;
+						}
 						if ((Settings.sinfo == GameID) || (Settings.sinfo == Both)){
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
