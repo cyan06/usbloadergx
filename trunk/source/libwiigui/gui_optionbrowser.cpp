@@ -11,10 +11,12 @@
 #include "gui.h"
 #include "../wpad.h"
 
+#include <unistd.h>
+
+
 #define GAMESELECTSIZE      30
 
 static int scrollbaron = 0;
-
 /**
  * Constructor for the GuiOptionBrowser class.
  */
@@ -387,8 +389,13 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 {
 	if(state == STATE_DISABLED || !t)
 		return;
-
+												
 	int next, prev, lang = options->length;
+	// scrolldelay affects how fast the list scrolls
+	// when the arrows are clicked
+	float scrolldelay = 3.5;
+	
+	
     if (scrollbaron == 1) {
 	// update the location of the scroll box based on the position in the option list
 
@@ -441,15 +448,16 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 		return; // skip navigation
 
     if (scrollbaron == 1) {
-
-	if(t->Down() || arrowDownBtn->GetState() == STATE_CLICKED)
+		
+	if (t->Down() || 
+	arrowDownBtn->GetState() == STATE_CLICKED || ////////////////////////////////////////////down
+	arrowDownBtn->GetState() == STATE_HELD) 
 	{
 
 		next = this->FindMenuItem(optionIndex[selectedItem], 1);
-
+		
 		if(next >= 0)
-		{
-
+		{	
 			if(selectedItem == PAGESIZE-1)
 			{
 				// move list down by 1
@@ -461,12 +469,26 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 				optionBtn[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
 				selectedItem++;
 			}
+			scrollbarBoxBtn->Draw();
+			usleep(10000 * scrolldelay);
 
 
-		}
-        arrowDownBtn->ResetState();
+		}WPAD_ScanPads();
+        u8 cnt, buttons = NULL;
+        /* Get pressed buttons */
+        for (cnt = 0; cnt < 4; cnt++)
+            buttons |= WPAD_ButtonsHeld(cnt);
+        if (buttons == WPAD_BUTTON_A) {
+
+        } else {
+            arrowDownBtn->ResetState();
+			
+        }
+        
 	}
-	else if(t->Up() || arrowUpBtn->GetState() == STATE_CLICKED)
+	else if(t->Up() || 
+	arrowUpBtn->GetState() == STATE_CLICKED || ////////////////////////////////////////////up
+	arrowUpBtn->GetState() == STATE_HELD)
 	{
 		prev = this->FindMenuItem(optionIndex[selectedItem], -1);
 
@@ -483,8 +505,21 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 				optionBtn[selectedItem-1]->SetState(STATE_SELECTED, t->chan);
 				selectedItem--;
 			}
-		}
-        arrowUpBtn->ResetState();
+			scrollbarBoxBtn->Draw();
+			usleep(10000 * scrolldelay);
+
+
+		}WPAD_ScanPads();
+        u8 cnt, buttons = NULL;
+        /* Get pressed buttons */
+        for (cnt = 0; cnt < 4; cnt++)
+            buttons |= WPAD_ButtonsHeld(cnt);
+        if (buttons == WPAD_BUTTON_A) {
+
+        } else {
+            arrowUpBtn->ResetState();
+			
+        }  
 	}
 
     if(scrollbarBoxBtn->GetState() == STATE_HELD &&

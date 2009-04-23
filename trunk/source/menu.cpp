@@ -800,7 +800,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	while(choice == -1)
 	{
 		VIDEO_WaitVSync();
-		angle++;
+		//angle++;
 		angle = (angle+speedup);
 		if (angle >359){ (angle = 0);
 		}
@@ -809,9 +809,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 				if (speedup < 11) {speedup = (speedup+0.20);}
 				}
 		else 	{
-				if (speedup > 1) {speedup = (speedup-0.20);}
+				if (speedup > 1) {speedup = (speedup-0.05);}
 				}
-
+		if (speedup < 1){speedup=1;}
         DiskImg->SetAngle(angle);
 		DiskImg->Draw();
 
