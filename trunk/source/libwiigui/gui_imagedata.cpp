@@ -59,7 +59,7 @@ GuiImageData::GuiImageData(const u8 * img)
 /**
  * Constructor for the GuiImageData class.
  */
-GuiImageData::GuiImageData(const char * imgPath)
+GuiImageData::GuiImageData(const char * imgPath, const u8 * buffer)
 {
 	data = NULL;
 	width = 0;
@@ -70,35 +70,76 @@ GuiImageData::GuiImageData(const char * imgPath)
 		PNGUPROP imgProp;
 		IMGCTX ctx = PNGU_SelectImageFromDevice(imgPath);
 
-		if(!ctx)
-			return;
-
-		int res = PNGU_GetImageProperties(ctx, &imgProp);
-
-		if(res == PNGU_OK)
+		if(ctx)
 		{
-			int len = imgProp.imgWidth * imgProp.imgHeight * 4;
-			if(len%32) len += (32-len%32);
-			data = (u8 *)memalign (32, len);
+			int res = PNGU_GetImageProperties(ctx, &imgProp);
 
-			if(data)
+			if(res == PNGU_OK)
 			{
-				res = PNGU_DecodeTo4x4RGBA8 (ctx, imgProp.imgWidth, imgProp.imgHeight, data, 255);
+				int len = imgProp.imgWidth * imgProp.imgHeight * 4;
+				if(len%32) len += (32-len%32);
+				data = (u8 *)memalign (32, len);
 
-				if(res == PNGU_OK)
+				if(data)
 				{
-					width = imgProp.imgWidth;
-					height = imgProp.imgHeight;
-					DCFlushRange(data, len);
-				}
-				else
-				{
-					free(data);
-					data = NULL;
+					res = PNGU_DecodeTo4x4RGBA8 (ctx, imgProp.imgWidth, imgProp.imgHeight, data, 255);
+
+					if(res == PNGU_OK)
+					{
+						width = imgProp.imgWidth;
+						height = imgProp.imgHeight;
+						DCFlushRange(data, len);
+					}
+					else
+					{
+						free(data);
+						data = NULL;
+					}
 				}
 			}
+			PNGU_ReleaseImageContext (ctx);
 		}
-		PNGU_ReleaseImageContext (ctx);
+	}
+	
+	if (!data) //use buffer data instead
+	{
+		width = 0;
+		height = 0;
+		if(buffer)
+		{
+			PNGUPROP imgProp;
+			IMGCTX ctx = PNGU_SelectImageFromBuffer(buffer);
+
+			if(!ctx)
+				return;
+
+			int res = PNGU_GetImageProperties(ctx, &imgProp);
+
+			if(res == PNGU_OK)
+			{
+				int len = imgProp.imgWidth * imgProp.imgHeight * 4;
+				if(len%32) len += (32-len%32);
+				data = (u8 *)memalign (32, len);
+
+				if(data)
+				{
+					res = PNGU_DecodeTo4x4RGBA8 (ctx, imgProp.imgWidth, imgProp.imgHeight, data, 255);
+
+					if(res == PNGU_OK)
+					{
+						width = imgProp.imgWidth;
+						height = imgProp.imgHeight;
+						DCFlushRange(data, len);
+					}
+					else
+					{
+						free(data);
+						data = NULL;
+					}
+				}
+			}
+			PNGU_ReleaseImageContext (ctx);
+		}
 	}
 }
 

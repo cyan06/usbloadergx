@@ -486,7 +486,7 @@ class GuiImageData
 		//!Converts the image data to RGBA8 - expects PNG format
 		//!\param i Image data
 		GuiImageData(const u8 * i);
-		GuiImageData(const char * imgPath);
+		GuiImageData(const char * imgPath, const u8 * buffer);
 		//!Destructor
 		~GuiImageData();
 		//!Gets a pointer to the image data

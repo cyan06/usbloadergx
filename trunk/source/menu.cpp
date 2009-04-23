@@ -1368,10 +1368,14 @@ static int MenuInstall()
     int ret, choice = 0;
 	char *name;
 	static char buffer[MAX_CHARACTERS + 4];
-
+	char imgPath[100];
+	
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-    GuiImageData btnpwroff(wiimote_poweroff_png);
-	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
+    
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
+	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
+	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
 	GuiImageData btnMenu(menu_button_png);
 	GuiImageData btnMenuOver(menu_button_over_png);
     GuiImageData battery(battery_png);
@@ -1395,8 +1399,8 @@ static int MenuInstall()
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
-	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(280, 355);
+	poweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	poweroffBtn.SetPosition(THEME.power_x, THEME.power_y);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -1623,7 +1627,8 @@ static int MenuInstall()
 static int MenuDiscList()
 {
 	int menu = MENU_NONE;
-
+	char imgPath[100];
+	
     //Spieleliste laden
     WBFS_Open();
     __Menu_GetEntries();
@@ -1672,8 +1677,10 @@ static int MenuDiscList()
 	GuiImageData btnSettings(settings_button_png);
 	GuiImageData btnSettingsOver(settings_button_over_png);
 
-    GuiImageData btnpwroff(wiimote_poweroff_png);
-	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
+	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
+	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
 	GuiImageData btnhomeOver(menu_button_over_png);
 
@@ -1740,8 +1747,8 @@ static int MenuDiscList()
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
-	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(280, 355);
+	poweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	poweroffBtn.SetPosition(THEME.power_x, THEME.power_y);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -2064,6 +2071,7 @@ static int MenuDiscList()
 static int MenuFormat()
 {
 	int menu = MENU_NONE;
+	char imgPath[100];
 
 	OptionList options;
     partitionEntry partitions[MAX_PARTITIONS];
@@ -2094,8 +2102,10 @@ static int MenuFormat()
     options.length = cnt;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-    GuiImageData btnpwroff(wiimote_poweroff_png);
-	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
+	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
+	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
 	GuiImageData btnhomeOver(menu_button_over_png);
     GuiImageData battery(battery_png);
@@ -2118,8 +2128,8 @@ static int MenuFormat()
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
-	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(280, 355);
+	poweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	poweroffBtn.SetPosition(THEME.power_x, THEME.power_y);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -2302,6 +2312,7 @@ static int MenuSettings()
 {
 	int menu = MENU_NONE;
 	int ret;
+	char imgPath[100];
 
 	OptionList options2;
 	sprintf(options2.name[0], "Video Mode");
@@ -2312,8 +2323,10 @@ static int MenuSettings()
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(settings_menu_button_png);
-    GuiImageData btnpwroff(wiimote_poweroff_png);
-	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
+	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
+	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
 	GuiImageData btnhome(menu_button_png);
 	GuiImageData btnhomeOver(menu_button_over_png);
 	GuiImageData settingsbg(settings_background_png);
@@ -2495,10 +2508,13 @@ static int MenuCheck()
 	OptionList options;
 	options.length = i;
 	partitionEntry partitions[MAX_PARTITIONS];
+	char imgPath[100];
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-	GuiImageData btnpwroff(wiimote_poweroff_png);
-	GuiImageData btnpwroffOver(wiimote_poweroff_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
+	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
+	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
+	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
 	GuiImageData btnMenu(menu_button_png);
 	GuiImageData btnMenuOver(menu_button_over_png);
     GuiImageData battery(battery_png);
@@ -2525,8 +2541,8 @@ static int MenuCheck()
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
-	poweroffBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	poweroffBtn.SetPosition(280, 355);
+	poweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	poweroffBtn.SetPosition(THEME.power_x, THEME.power_y);
 	poweroffBtn.SetImage(&poweroffBtnImg);
 	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
@@ -2744,13 +2760,7 @@ int MainMenu(int menu)
 	char bgPath[100];
 
 	snprintf(bgPath, sizeof(bgPath), "%sbackground.png", CFG.theme_path);
-	background = new GuiImageData(bgPath);
-
-	if (!background->GetImage())
-	{
-		delete(background);
-		background = new GuiImageData(background_png);
-	}
+	background = new GuiImageData(bgPath, background_png);
 
     bgImg = new GuiImage(background);
 	mainWindow->Append(bgImg);

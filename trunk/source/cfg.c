@@ -193,6 +193,7 @@ void CFG_Default()
 //	CFG.hidesettingmenu = 0;
 //	cfg_layout();
 
+	//all alignments are left top here
 	THEME.selection_x = 200;
 	THEME.selection_y = 40;
 	THEME.selection_w = 396;
@@ -202,8 +203,8 @@ void CFG_Default()
 	THEME.showID = 1;
 	THEME.id_x = 68;
 	THEME.id_y = 305;
-	THEME.power_x = 280;
-	THEME.power_y = 355;
+	THEME.power_x = 600;
+	THEME.power_y = 355; 
 }
 
 
@@ -408,6 +409,14 @@ void theme_set(char *name, char *val)
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
 			THEME.id_x = x - (x % 4);
 			THEME.id_y = y;
+		}
+	}
+	
+	else if (strcmp(cfg_name, "power_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.power_x = x - (x % 4);
+			THEME.power_y = y;
 		}
 	}
 	

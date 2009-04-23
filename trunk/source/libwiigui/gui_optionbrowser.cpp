@@ -143,20 +143,8 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *cus
 	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A, PAD_BUTTON_A);
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 
-	if (custombg)
-	{
-		bgOptions = new GuiImageData(custombg);
+	bgOptions = new GuiImageData(custombg, imagebg);
 
-		if (!bgOptions->GetImage())
-		{
-			delete(bgOptions);
-			bgOptions = new GuiImageData(imagebg);
-		}
-	}
-	else
-	{
-		bgOptions = new GuiImageData(imagebg);
-	}
 	bgOptionsImg = new GuiImage(bgOptions);
 	bgOptionsImg->SetParent(this);
 	bgOptionsImg->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
