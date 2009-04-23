@@ -48,13 +48,13 @@ bool netcheck = false;
 
 /*Networking - Forsaekn*/
 int Net_Init(char *ip){
-	
+
 	s32 res;
     while ((res = net_init()) == -EAGAIN)
 	{
 		usleep(100 * 1000); //100ms
 	}
-	
+
     if (if_config(ip, NULL, NULL, true) < 0) {
 		printf("      Error reading IP address, exiting");
 		usleep(1000 * 1000 * 1); //1 sec
@@ -87,6 +87,7 @@ DefaultSettings()
 int
 main(int argc, char *argv[])
 {
+    __Disc_SetLowMem();
     s32 ret2;
     /* Load Custom IOS */
 	ret2 = IOS_ReloadIOS(249);
@@ -102,19 +103,19 @@ main(int argc, char *argv[])
 
 	__io_wiisd.startup();
 	fatMountSimple("SD", &__io_wiisd);
-	
+
 	//load config file
 	CFG_Load(argc, argv);
 
-	//Init Network 
+	//Init Network
 /*	char myIP[16];
 	if( !Net_Init(myIP) ){
 		printf("Net_Init error");
 		sleep(1);
 		netcheck = false;
-	}	
+	}
 	else netcheck = true;*/
-	
+
     PAD_Init();
 	InitVideo(); // Initialise video
 	InitAudio(); // Initialize audio

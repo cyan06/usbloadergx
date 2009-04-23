@@ -201,8 +201,8 @@ int loadimg(char * filenameshort, char * filename)
 			ctx = PNGU_SelectImageFromBuffer(nocover_png);
 			res = PNGU_GetImageProperties(ctx, &imgProp);
 			}
-		}			
-		        
+		}
+
 	}
 
 	free(data);
@@ -235,6 +235,7 @@ int loadimg(char * filenameshort, char * filename)
 	}
 	/* Free image context */
 	PNGU_ReleaseImageContext(ctx);
+	__Disc_SetLowMem();
 
 return 1;
 }
@@ -296,6 +297,7 @@ int loaddiskimg(char * filenameshort, char * filename)
 	}
 	/* Free image context */
 	PNGU_ReleaseImageContext(ctx);
+	__Disc_SetLowMem();
 
 return 1;
 }
@@ -724,7 +726,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	nameBtn.SetSoundOver(&btnSoundOver);
 	nameBtn.SetTrigger(&trigA);
 	nameBtn.SetEffectGrow();
-	
+
     GuiText sizeTxt(size, 22, (GXColor){50, 50, 50, 255});
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
 	sizeTxt.SetPosition(-60,70);
@@ -1371,9 +1373,9 @@ static int MenuInstall()
 	char *name;
 	static char buffer[MAX_CHARACTERS + 4];
 	char imgPath[100];
-	
+
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-    
+
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
@@ -1632,7 +1634,7 @@ static int MenuDiscList()
 {
 	int menu = MENU_NONE;
 	char imgPath[100];
-	
+
     //Spieleliste laden
     WBFS_Open();
     __Menu_GetEntries();
@@ -1974,7 +1976,7 @@ static int MenuDiscList()
 						GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameIDTxt->SetEffect(EFFECT_FADE, 20);
 						w.Append(GameIDTxt);}
-						
+
 						if ((Settings.sinfo == GameRegion) || (Settings.sinfo == Both)){
 						GameRegionTxt = new GuiText(gameregion, 22, (GXColor){63, 154, 192, 255});
 						GameRegionTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
@@ -1982,14 +1984,14 @@ static int MenuDiscList()
 						//GameRegionTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameRegionTxt->SetEffect(EFFECT_FADE, 20);
 						w.Append(GameRegionTxt);}
-						
-						
+
+
 						CoverImg = new GuiImage(data,width,height);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						CoverImg->SetPosition(THEME.cover_x,THEME.cover_y);
 						CoverImg->SetEffect(EFFECT_FADE, 20);
 						if (THEME.showID)
-						
+
 						w.Append(CoverImg);
 						break;
 					}
@@ -2348,6 +2350,7 @@ static int MenuFormat()
 
 static int MenuSettings()
 {
+    __Disc_SetLowMem();
 	int menu = MENU_NONE;
 	int ret;
 	char imgPath[100];
@@ -2482,7 +2485,7 @@ static int MenuSettings()
 
         if (Settings.ocarina == on) sprintf (options2.value[3],"ON");
 		else if (Settings.ocarina == off) sprintf (options2.value[3],"OFF");
-		
+
 		if (Settings.sinfo == GameID) sprintf (options2.value[4],"Game ID");
 		else if (Settings.sinfo == GameRegion) sprintf (options2.value[4],"Game Region");
 		else if (Settings.sinfo == Both) sprintf (options2.value[4],"Both");
@@ -2508,9 +2511,9 @@ static int MenuSettings()
 			case 4:
 				Settings.sinfo++;
 				break;
-		
+
 		}
-		
+
 		if(shutdown == 1)
 			Sys_Shutdown();
 
@@ -2980,7 +2983,7 @@ int MainMenu(int menu)
                                 videopatch = 0;
                         break;
     }
-	
+
 	u8 showinfo = 0;
     switch(Settings.sinfo)
     {
@@ -2991,11 +2994,11 @@ int MainMenu(int menu)
                         case GameRegion:
                                 showinfo = 1;
                         break;
-						
+
 						case Both:
                                 showinfo = 2;
                         break;
-						
+
 						case Neither:
                                 showinfo = 3;
                         break;
