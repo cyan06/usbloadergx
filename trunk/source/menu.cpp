@@ -34,7 +34,7 @@
 #include "wpad.h"
 #include "cfg.h"
 
-#define MAX_CHARACTERS		34
+#define MAX_CHARACTERS		38
 
 //for sd image data
 u8 * data = NULL;
@@ -714,7 +714,6 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiImage dialogBoxImg(&dialogBox);
 
 	GuiText msgTxt(msg, 22, (GXColor){50, 50, 50, 255});
-	//msgTxt.SetMaxWidth(430);
 	GuiButton nameBtn(120,50);
 	nameBtn.SetLabel(&msgTxt);
 	nameBtn.SetLabelOver(&msgTxt);
@@ -778,7 +777,6 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btn3.SetEffectGrow();
 
 	promptWindow.Append(&dialogBoxImg);
-	//promptWindow.Append(&msgTxt);
 	promptWindow.Append(&nameBtn);
 	promptWindow.Append(&sizeTxt);
 	promptWindow.Append(&btn1);
@@ -808,10 +806,10 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		}
 		//disc speedup and slowdown
 		else if (btn1.GetState() == STATE_SELECTED) {
-				if (speedup < 11) {speedup = (speedup+0.15);}
+				if (speedup < 11) {speedup = (speedup+0.20);}
 				}
 		else 	{
-				if (speedup > 1) {speedup = (speedup-0.15);}
+				if (speedup > 1) {speedup = (speedup-0.20);}
 				}
 
         DiskImg->SetAngle(angle);
@@ -2037,7 +2035,7 @@ static int MenuDiscList()
                     }
 					else if (choice == 3)
 					{
-						//password check to un/lock Install,Delete and Format
+						//enter new game title
 						char entered[40];
 						sprintf(entered,"%s",text);
 						OnScreenKeyboard(entered, 40);
