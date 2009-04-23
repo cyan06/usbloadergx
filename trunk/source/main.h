@@ -37,12 +37,20 @@ enum {
 	off,
 };
 
+enum {
+    GameID,
+	GameRegion,
+	Both,
+	Neither,
+};
+
 
 struct SSettings {
     int		video;
     int		language;
     int     ocarina;
     int     vpatch;
+	int		sinfo;
 };
 extern struct SSettings Settings;
 

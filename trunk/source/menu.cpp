@@ -52,6 +52,7 @@ static char timet[50] = " ";
 static GuiText prTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static GuiText timeTxt(prozent, 26, (GXColor){0, 0, 0, 255});
 static GuiText *GameIDTxt = NULL;
+static GuiText *GameRegionTxt = NULL;
 static GuiSound * bgMusic = NULL;
 static wbfs_t *hdd = NULL;
 static u32 gameCnt = 0;
@@ -66,7 +67,7 @@ static double progressTotal = 1;
 int godmode = 0;
 int height = 224;
 int width = 160;
-
+static char gameregion[5];
 //power button fix
 extern u8 shutdown;
 
@@ -200,7 +201,22 @@ int loadimg(char * filenameshort, char * filename)
 			ctx = PNGU_SelectImageFromBuffer(nocover_png);
 			res = PNGU_GetImageProperties(ctx, &imgProp);
 			}
-		}
+		}			HaltGui();
+		         char gameregion1[6] = "Pal";
+					switch(filename[3])
+						{
+						case 'E':
+						sprintf(gameregion,"NTSC U");
+						break;
+
+						case 'J':
+						sprintf(gameregion,"NTSC J");
+						break;
+
+						case 'P':
+						sprintf(gameregion,"  PAL ");
+						break;
+					}
 	}
 
 	free(data);
@@ -1943,22 +1959,37 @@ static int MenuDiscList()
 						sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						w.Remove(CoverImg);
-						if (THEME.showID)
+						if ((THEME.showID) && ((Settings.sinfo == GameID) || (Settings.sinfo == Both)))
 						w.Remove(GameIDTxt);
-
+						if (GameIDTxt)
+						w.Remove(GameIDTxt);
+						if(GameRegionTxt)
+						w.Remove(GameRegionTxt);
 						//load game cover
 						loadimg(ID, IDfull);
+						if ((Settings.sinfo == GameID) || (Settings.sinfo == Both)){
 						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						//GameIDTxt->SetPosition(68,305);
 						GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameIDTxt->SetEffect(EFFECT_FADE, 20);
+						w.Append(GameIDTxt);}
+						
+						if ((Settings.sinfo == GameRegion) || (Settings.sinfo == Both)){
+						GameRegionTxt = new GuiText(gameregion, 22, (GXColor){63, 154, 192, 255});
+						GameRegionTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+						GameRegionTxt->SetPosition(68,30);
+						//GameRegionTxt->SetPosition(THEME.id_x,THEME.id_y);
+						GameRegionTxt->SetEffect(EFFECT_FADE, 20);
+						w.Append(GameRegionTxt);}
+						
+						
 						CoverImg = new GuiImage(data,width,height);
 						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 						CoverImg->SetPosition(THEME.cover_x,THEME.cover_y);
 						CoverImg->SetEffect(EFFECT_FADE, 20);
 						if (THEME.showID)
-						w.Append(GameIDTxt);
+						
 						w.Append(CoverImg);
 						break;
 					}
@@ -2326,7 +2357,8 @@ static int MenuSettings()
 	sprintf(options2.name[1], "Video Patch");
 	sprintf(options2.name[2], "Language");
 	sprintf(options2.name[3], "Ocarina");
-	options2.length = 4;
+	sprintf(options2.name[4], "Display");
+	options2.length = 5;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(settings_menu_button_png);
@@ -2424,6 +2456,8 @@ static int MenuSettings()
 			Settings.ocarina = 0;
         if(Settings.vpatch  > 1)
 			Settings.vpatch = 0;
+		if(Settings.sinfo  > 3)
+			Settings.sinfo = 0;
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
@@ -2448,6 +2482,11 @@ static int MenuSettings()
 
         if (Settings.ocarina == on) sprintf (options2.value[3],"ON");
 		else if (Settings.ocarina == off) sprintf (options2.value[3],"OFF");
+		
+		if (Settings.sinfo == GameID) sprintf (options2.value[4],"Game ID");
+		else if (Settings.sinfo == GameRegion) sprintf (options2.value[4],"Game Region");
+		else if (Settings.sinfo == Both) sprintf (options2.value[4],"Both");
+		else if (Settings.sinfo == Neither) sprintf (options2.value[4],"Neither");
 
 		ret = optionBrowser2.GetClickedOption();
 
@@ -2466,7 +2505,12 @@ static int MenuSettings()
             case 3:
 				Settings.ocarina++;
 				break;
+			case 4:
+				Settings.sinfo++;
+				break;
+		
 		}
+		
 		if(shutdown == 1)
 			Sys_Shutdown();
 
@@ -2934,6 +2978,30 @@ int MainMenu(int menu)
 
                         default:
                                 videopatch = 0;
+                        break;
+    }
+	
+	u8 showinfo = 0;
+    switch(Settings.sinfo)
+    {
+                        case GameID:
+                                showinfo = 0;
+                        break;
+
+                        case GameRegion:
+                                showinfo = 1;
+                        break;
+						
+						case Both:
+                                showinfo = 2;
+                        break;
+						
+						case Neither:
+                                showinfo = 3;
+                        break;
+
+                        default:
+                                showinfo = 0;
                         break;
     }
 
