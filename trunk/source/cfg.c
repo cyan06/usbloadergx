@@ -203,7 +203,7 @@ void CFG_Default()
 	THEME.showID = 1;
 	THEME.id_x = 68;
 	THEME.id_y = 305;
-	THEME.power_x = 600;
+	THEME.power_x = 576;
 	THEME.power_y = 355; 
 }
 
