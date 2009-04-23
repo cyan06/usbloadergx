@@ -714,10 +714,16 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiImage dialogBoxImg(&dialogBox);
 
 	GuiText msgTxt(msg, 22, (GXColor){50, 50, 50, 255});
-	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	msgTxt.SetPosition(0,-122);
-	msgTxt.SetMaxWidth(430);
-
+	//msgTxt.SetMaxWidth(430);
+	GuiButton nameBtn(120,50);
+	nameBtn.SetLabel(&msgTxt);
+	nameBtn.SetLabelOver(&msgTxt);
+	nameBtn.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	nameBtn.SetPosition(0,-122);
+	nameBtn.SetSoundOver(&btnSoundOver);
+	nameBtn.SetTrigger(&trigA);
+	nameBtn.SetEffectGrow();
+	
     GuiText sizeTxt(size, 22, (GXColor){50, 50, 50, 255});
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
 	sizeTxt.SetPosition(-60,70);
@@ -772,7 +778,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btn3.SetEffectGrow();
 
 	promptWindow.Append(&dialogBoxImg);
-	promptWindow.Append(&msgTxt);
+	//promptWindow.Append(&msgTxt);
+	promptWindow.Append(&nameBtn);
 	promptWindow.Append(&sizeTxt);
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
@@ -824,6 +831,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		}
         else if(btn3.GetState() == STATE_CLICKED) {
             choice = 2;
+        }
+		else if(nameBtn.GetState() == STATE_CLICKED) {
+            choice = 3;
         }
 	}
 
@@ -2025,6 +2035,15 @@ static int MenuDiscList()
                             optionBrowser.SetFocus(1);
 
                     }
+					else if (choice == 3)
+					{
+						//password check to un/lock Install,Delete and Format
+						char entered[40];
+						sprintf(entered,"%s",text);
+						OnScreenKeyboard(entered, 40);
+						WBFS_RenameGame(header->id,entered);
+						menu = MENU_DISCLIST;
+					}
 					else if(choice == 0)
                         optionBrowser.SetFocus(1);
 
