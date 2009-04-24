@@ -36,11 +36,10 @@
 
 #define MAX_CHARACTERS		38
 
-//for sd image data
-u8 * data = NULL;
-u8 * datadisc = NULL;
-
 static GuiImage * CoverImg = NULL;
+static GuiImageData * Cover = NULL;
+static GuiImage * DiskImg = NULL;
+static GuiImageData * DiskCover = NULL;
 
 static struct discHdr *gameList = NULL;
 static GuiImageData * pointer[4];
@@ -109,197 +108,6 @@ void SDCARD_deInit()
     fatUnmount ("SD");
     //...and then shutdown em!
     __io_wiisd.shutdown();
-}
-
-//loads image file from sd card
-int loadimg(char * filenameshort, char * filename)
-{
-	//check if SD Card is inserted
-/*	while (!isSdInserted())
-	{
-	int choice = WindowPrompt("No SD Card found",0,"Retry","Exit");
-	if (choice == 1)
-		{
-			//restart SD Card
-			SDCARD_deInit();
-			SDCard_Init();
-		}
-		else exit(0);
-	}*/
-
-	PNGUPROP imgProp;
-	IMGCTX ctx;
-
-	s32 res;
-	width = 0;
-    height = 0;
-
-	char filetemp[50];
-	snprintf(filetemp,sizeof(filetemp),"SD:/images/%s.png",filename);
-    ctx = PNGU_SelectImageFromDevice(filetemp);
-    res = PNGU_GetImageProperties(ctx, &imgProp);
-	if (res != PNGU_OK)
-    {
-        snprintf(filetemp,sizeof(filetemp),"SD:/images/%s.png",filenameshort);
-        ctx = PNGU_SelectImageFromDevice(filetemp);
-        res = PNGU_GetImageProperties(ctx, &imgProp);
-
-        if (res != PNGU_OK)
-        {
- if (netcheck)
-			{
-			int choice = WindowPrompt("Download Boxart image ?",0,"Yes","No");
-
-				//download boxart image
-				if (choice == 1)
-				{
-					HaltGui();
-					char region[6] = "ntscj";
-					switch(filename[3])
-						{
-						case 'E':
-						sprintf(region,"ntsc");
-						break;
-
-						case 'J':
-						sprintf(region,"ntscj");
-						break;
-
-						case 'P':
-						sprintf(region,"pal");
-						break;
-					}
-
-					char imgPath[30];
-					char URLFile[50];
-					sprintf(URLFile,"http://www.theotherzone.com/wii/resize/%s/160/224/%s.png",region,filename);
-					sprintf(imgPath,"SD:/images/%s.png",filenameshort);
-
-					struct block file = downloadfile(URLFile);
-
-					if(file.data != NULL)
-					{
-						// save png to sd card
-						FILE *pfile;
-						pfile = fopen(imgPath, "wb");
-						fwrite(file.data,1,file.size,pfile);
-						fclose (pfile);
-						free(file.data);
-						WindowPrompt("Finished download",filename,"Back",0);
-						ResumeGui();
-						return loadimg(filenameshort,filename);
-					}
-				}
-				else
-				{
-				ctx = PNGU_SelectImageFromBuffer(nocover_png);
-				res = PNGU_GetImageProperties(ctx, &imgProp);
-				}
-			}
-			else
-			{
-			ctx = PNGU_SelectImageFromBuffer(nocover_png);
-			res = PNGU_GetImageProperties(ctx, &imgProp);
-			}
-		}
-
-	}
-
-	free(data);
-	data = NULL;
-
-	if(res == PNGU_OK)
-	{
-			int len = imgProp.imgWidth * imgProp.imgHeight * 4;
-			if(len%32) len += (32-len%32);
-			data = (u8 *)memalign (32, len);
-
-			if(data)
-			{
-					res = PNGU_DecodeTo4x4RGBA8 (ctx, imgProp.imgWidth, imgProp.imgHeight, data, 255);
-
-					if(res == PNGU_OK)
-					{
-							width = imgProp.imgWidth;
-							height = imgProp.imgHeight;
-							DCFlushRange(data, len);
-					}
-					else
-					{
-							free(data);
-							data = NULL;
-					}
-			}
-	} else {
-    return 0;
-	}
-	/* Free image context */
-	PNGU_ReleaseImageContext(ctx);
-	__Disc_SetLowMem();
-
-return 1;
-}
-
-//loads disk image file from sd card
-int loaddiskimg(char * filenameshort, char * filename)
-{
-	PNGUPROP imgProp;
-	IMGCTX ctx;
-
-
-    int width = 0;
-    int height = 0;
-	s32 res;
-
-	char filetemp[50];
-	snprintf(filetemp,sizeof(filetemp),"SD:/images/disc/%s.png",filename);
-    ctx = PNGU_SelectImageFromDevice(filetemp);
-    res = PNGU_GetImageProperties(ctx, &imgProp);
-	if (res != PNGU_OK)
-    {
-        snprintf(filetemp,sizeof(filetemp),"SD:/images/disc/%s.png",filenameshort);
-        ctx = PNGU_SelectImageFromDevice(filetemp);
-        res = PNGU_GetImageProperties(ctx, &imgProp);
-        if (res != PNGU_OK)
-        {
-       	ctx = PNGU_SelectImageFromBuffer(nodisc_png);
-        res = PNGU_GetImageProperties(ctx, &imgProp);
-        }
-	}
-
-	free(datadisc);
-	datadisc = NULL;
-
-	if(res == PNGU_OK)
-	{
-			int len = imgProp.imgWidth * imgProp.imgHeight * 4;
-			if(len%32) len += (32-len%32);
-			datadisc = (u8 *)memalign (32, len);
-
-			if(datadisc)
-			{
-					res = PNGU_DecodeTo4x4RGBA8 (ctx, imgProp.imgWidth, imgProp.imgHeight, datadisc, 255);
-
-					if(res == PNGU_OK)
-					{
-							width = imgProp.imgWidth;
-							height = imgProp.imgHeight;
-							DCFlushRange(datadisc, len);
-					}
-					else
-					{
-							free(datadisc);
-							datadisc = NULL;
-					}
-			}
-	} else {
-    return 0;
-	}
-	/* Free image context */
-	PNGU_ReleaseImageContext(ctx);
-	__Disc_SetLowMem();
-
-return 1;
 }
 
 /****************************************************************************
@@ -732,12 +540,14 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	sizeTxt.SetPosition(-60,70);
 
 	//disk image load
-    loaddiskimg(ID, IDfull);
-    GuiImage * DiskImg = NULL;
-    DiskImg = new GuiImage(datadisc,160,160);
+	char imgPath[60];
+	snprintf(imgPath,sizeof(imgPath),"SD:/images/disc/%s.png",ID);
+    DiskCover = new GuiImageData(imgPath,0);
+	DiskImg = new GuiImage(DiskCover);
+	DiskImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
     DiskImg->SetAngle(angle);
     DiskImg->Draw();
-
+				
 	GuiButton btn1(160, 160);
     btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
     btn1.SetPosition(0, -20);
@@ -1823,7 +1633,7 @@ static int MenuDiscList()
 
 	w.Append(&homeBtn);
     w.Append(&settingsBtn);
-	w.Append(CoverImg);
+	//w.Append(CoverImg);
 	if (THEME.showID)
 		w.Append(GameIDTxt);
 
@@ -1932,8 +1742,9 @@ static int MenuDiscList()
 
 		//Get selected game under cursor
 		int selectimg;
-		char ID[3];
-		char IDfull[6];
+
+		char ID[50];
+		char IDfull[50];
 		selectimg = optionBrowser.GetSelectedOption();
 	    gameSelected = optionBrowser.GetClickedOption();
 
@@ -1944,8 +1755,8 @@ static int MenuDiscList()
 					{
 						selectedold = selectimg;
 						struct discHdr *header = &gameList[selectimg];
-						sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
-						sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+						snprintf (ID,sizeof(ID),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+						snprintf (IDfull,sizeof(IDfull),"SD:/images/%c%c%c%c%c%c.png", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 						w.Remove(CoverImg);
 						if ((THEME.showID) && ((Settings.sinfo == GameID) || (Settings.sinfo == Both)))
 						w.Remove(GameIDTxt);
@@ -1953,8 +1764,7 @@ static int MenuDiscList()
 						w.Remove(GameIDTxt);
 						if(GameRegionTxt)
 						w.Remove(GameRegionTxt);
-						//load game cover
-						loadimg(ID, IDfull);
+						
 					switch(header->id[3])
 						{
 						case 'E':
@@ -1969,10 +1779,19 @@ static int MenuDiscList()
 						sprintf(gameregion,"  PAL ");
 						break;
 						}
+						
+						//load game cover
+						Cover = new GuiImageData(IDfull,0);
+						CoverImg = new GuiImage(Cover);
+						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+						CoverImg->SetPosition(26,60);
+						CoverImg->SetPosition(THEME.cover_x,THEME.cover_y);
+						CoverImg->SetEffect(EFFECT_FADE, 20);
+						w.Append(CoverImg);
+						
 						if ((Settings.sinfo == GameID) || (Settings.sinfo == Both)){
-						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
+						GameIDTxt = new GuiText(ID, 22, (GXColor){63, 154, 192, 255});
 						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						//GameIDTxt->SetPosition(68,305);
 						GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameIDTxt->SetEffect(EFFECT_FADE, 20);
 						w.Append(GameIDTxt);}
@@ -1984,15 +1803,8 @@ static int MenuDiscList()
 						//GameRegionTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameRegionTxt->SetEffect(EFFECT_FADE, 20);
 						w.Append(GameRegionTxt);}
-
-
-						CoverImg = new GuiImage(data,width,height);
-						CoverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						CoverImg->SetPosition(THEME.cover_x,THEME.cover_y);
-						CoverImg->SetEffect(EFFECT_FADE, 20);
-						if (THEME.showID)
-
-						w.Append(CoverImg);
+						
+						
 						break;
 					}
 				}
