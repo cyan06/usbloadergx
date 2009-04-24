@@ -2,7 +2,7 @@
 
 = Introduction =
 
-In order to be able to use your theme, you need to have a config.txt in your SD card root to point to the theme folder.
+In order to be able to use your theme, you need to have a config.txt in SD:/config/ to point to the theme folder.
 
 If your wii is using 16:9 settings, in config.txt, put the following line:
 wtheme_path = SD:/mytheme/ (or the theme folder you use)
