@@ -148,6 +148,8 @@ HaltGui()
  ***************************************************************************/
 static void WindowCredits(void * ptr)
 {
+	int angle = 0;
+	
 	if(btnLogo->GetState() != STATE_CLICKED)
 		return;
 
@@ -158,52 +160,86 @@ static void WindowCredits(void * ptr)
 	int y = 95;
 
 	GuiWindow creditsWindow(screenwidth,screenheight);
-	GuiWindow creditsWindowBox(580,448);
-	creditsWindowBox.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 
-	GuiImageData creditsBox(credits_box_png);
-	GuiImage creditsBoxImg(&creditsBox);
-	creditsBoxImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	creditsWindowBox.Append(&creditsBoxImg);
+	GuiImageData star(little_star_png);
+	GuiImage starImg(&star);
+	starImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	starImg.SetPosition(500,335);
+	starImg.SetAngle(angle);
 
-	int numEntries = 9;
+	GuiImageData creditsBg(credits_bg_png);
+	GuiImage creditsBgImg(&creditsBg);
+	creditsBgImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	creditsWindow.Append(&creditsBgImg);
+
+	starImg.Draw();
+
+	int numEntries = 15;
 	GuiText * txt[numEntries];
 
-	txt[i] = new GuiText("Credits", 24, (GXColor){255, 255, 255, 255});
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-
 	txt[i] = new GuiText("Official Site: http://code.google.com/p/usbloader-gui/", 20, (GXColor){255, 255, 255, 255});
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=30;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=26;
 
 	txt[i]->SetPresets(22, (GXColor){255, 255, 255,  255}, 0,
 			FTGX_JUSTIFY_LEFT | FTGX_ALIGN_TOP, ALIGN_LEFT, ALIGN_TOP);
-
+	
 	txt[i] = new GuiText("Coding:");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("Waninkoko/Kwiirk/dimok/nIxx/hungyip84/giantpune");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y); i++;
+	
+	txt[i] = new GuiText("Waninkoko");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	
+	txt[i] = new GuiText("Kwiirk");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;	
+	
+	txt[i] = new GuiText("dimok");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	
+	txt[i] = new GuiText("nIxx");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	
+	txt[i] = new GuiText("hungyip84");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	
+	txt[i] = new GuiText("giantpune");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=24;
+	
 	txt[i] = new GuiText("Design:");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
-	txt[i] = new GuiText("cyrex/NeoRame");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=30;
-
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y); i++;
+	
+	txt[i] = new GuiText("cyrex");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	
+	txt[i] = new GuiText("NeoRame");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	
+	txt[i] = new GuiText("WiiShizza");
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=26;
+	
 	txt[i] = new GuiText("Special thanks to Tantric for libwiigui");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=22;
+	
 	txt[i] = new GuiText("and to Waninkoko & Kwiirk for the USB Loader ");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=22;
+	
 	txt[i] = new GuiText("and releasing the source code ;)");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=24;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=22;
 
 	for(i=0; i < numEntries; i++)
-		creditsWindowBox.Append(txt[i]);
-
-	creditsWindow.Append(&creditsWindowBox);
+		creditsWindow.Append(txt[i]);
 
 	while(!exit)
 	{
 		creditsWindow.Draw();
-
+		
+		angle++;
+	
+		if (angle >359){ (angle = 0);
+		}
+		
+		starImg.SetAngle(angle);
+		starImg.Draw();
+		
 		for(i=3; i >= 0; i--)
 		{
 			#ifdef HW_RVL
