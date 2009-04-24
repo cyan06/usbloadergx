@@ -3159,7 +3159,7 @@ int MainMenu(int menu)
                                 videopatch = 0;
                         break;
     }
-
+/*
 	u8 showinfo = 0;
     switch(Settings.sinfo)
     {
@@ -3182,7 +3182,7 @@ int MainMenu(int menu)
                         default:
                                 showinfo = 0;
                         break;
-    }
+    }*/
 ///////////////////////////////////Game specific settings///////////////////////////////////////////////
 	switch(Settings2.language)
     {
@@ -3295,22 +3295,7 @@ int MainMenu(int menu)
                                 videopatch = 0;
                         break;
     }
-/*
-	u8 ios = 0;
-    switch(Settings2.ios)
-    {
-                        case i249:
-                                showinfo = 0;
-                        break;
 
-                        case i222:
-                                showinfo = 1;
-                        break;
-
-						default:
-                                showinfo = 0;
-                        break;
-    }*/
     ret = Disc_WiiBoot(videoselected, cheat, videopatch);
     if (ret < 0) {
         printf("    ERROR: BOOT ERROR! (ret = %d)\n", ret);

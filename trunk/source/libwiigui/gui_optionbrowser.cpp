@@ -398,12 +398,22 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 {	int next, prev, lang = options->length;
 
 	//go to the last game selected
-	if (loaded == 0)
+	if ((loaded == 0) && (startat>0))
 	{
 			
-			if (startat > (lang-9)){listOffset= (lang-9);selectedItem=startat;}
-			else if (startat < 9){selectedItem=startat;}
-			else {listOffset = (startat-4);selectedItem=startat;}
+			if (startat > (lang-9)){
+				listOffset= (lang-9);
+				selectedItem=startat;
+				optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);
+				}
+			else if (startat < 9){
+				selectedItem=startat;
+				optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);
+				}
+			else {
+				listOffset = (startat-4);selectedItem=startat;
+				optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);}
+			this->SetFocus(1);
 		}
 	loaded++;
 	
