@@ -165,21 +165,15 @@ void CFG_Default()
 	
 	if (CFG.widescreen)
 	{
-//		snprintf(bg_path, sizeof(bg_path), "SD:/wimages/wbg.png");
-//		CFG.layout = CFG_LAYOUT_ULTIMATE_W;
 		snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/wimages/");
 		snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
 	}
 	else
 	{
-//		snprintf(bg_path, sizeof(bg_path), "SD:/images/bg.png");
-//		CFG.layout = CFG_LAYOUT_ULTIMATE2;
 		snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
 		snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/theme/");
 	}
 
-//	CFG.background = bg_path;
-//	CFG.covers  = 1;
 //	CFG.simple  = 0;
 //	CFG.video	= CFG_VIDEO_DEFAULT;
 //	CFG.home	= CFG_HOME_REBOOT;
@@ -191,7 +185,6 @@ void CFG_Default()
 	CFG.parentalcontrol = 0;
 //	CFG.installdownload = 0;
 //	CFG.hidesettingmenu = 0;
-//	cfg_layout();
 
 	//all alignments are left top here
 	THEME.selection_x = 200;
@@ -203,6 +196,8 @@ void CFG_Default()
 	THEME.showID = 1;
 	THEME.id_x = 68;
 	THEME.id_y = 305;
+	THEME.region_x = 68;
+	THEME.region_y = 30;
 	THEME.power_x = 576;
 	THEME.power_y = 355;
 	THEME.home_x = 485;//215;
@@ -213,6 +208,8 @@ void CFG_Default()
 	THEME.showGameCnt = 1;
 	THEME.install_x = 16;//-280
 	THEME.install_y = 355;
+	THEME.showBattery = 1;
+	THEME.showRegion = 1;
 }
 
 
@@ -447,6 +444,8 @@ void theme_set(char *name, char *val)
 	cfg_bool("show_id", &THEME.showID);
 	cfg_bool("show_hdd", &THEME.showHDD);
 	cfg_bool("show_gamecount", &THEME.showGameCnt);
+	cfg_bool("show_region", &THEME.showRegion);
+	cfg_bool("show_battery", &THEME.showBattery);
 	
 	/*
 	else if (strcmp(cfg_name, "entry_lines") == 0) {
