@@ -1192,10 +1192,10 @@ static int MenuInstall()
     int ret, choice = 0;
 	char *name;
 	static char buffer[MAX_CHARACTERS + 4];
-	char imgPath[100];
+//	char imgPath[100];
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
-
+/*
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
@@ -1203,11 +1203,11 @@ static int MenuInstall()
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button.png", CFG.theme_path);
 	GuiImageData btnhome(imgPath, menu_button_png);
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
-	GuiImageData btnhomeOver(imgPath, menu_button_over_png);
+	GuiImageData btnhomeOver(imgPath, menu_button_over_png);*/
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
-
+/*
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 
@@ -1232,7 +1232,7 @@ static int MenuInstall()
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
-
+*/
 
     #ifdef HW_RVL
 	int i = 0, level;
@@ -1278,8 +1278,8 @@ static int MenuInstall()
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
-    w.Append(&poweroffBtn);
-	w.Append(&homeBtn);
+ //   w.Append(&poweroffBtn);
+//	w.Append(&homeBtn);
     #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
 	w.Append(batteryBtn[1]);
@@ -1321,102 +1321,105 @@ static int MenuInstall()
 		#endif
 
 
-                ret = DiscWait("Insert Disk","Waiting...","Cancel",0);
-                if (ret < 0) {
-                    WindowPrompt ("Error reading Disc",0,"Back",0);
-                    menu = MENU_DISCLIST;
-                    break;
-                }
-                ret = Disc_Open();
-                if (ret < 0) {
-                    WindowPrompt ("Could not open Disc",0,"Back",0);
-                    menu = MENU_DISCLIST;
-                    break;
-                }
+		ret = DiscWait("Insert Disk","Waiting...","Cancel",0);
+		if (ret < 0) {
+			WindowPrompt ("Error reading Disc",0,"Back",0);
+			menu = MENU_DISCLIST;
+			break;
+		}
+		ret = Disc_Open();
+		if (ret < 0) {
+			WindowPrompt ("Could not open Disc",0,"Back",0);
+			menu = MENU_DISCLIST;
+			break;
+		}
 
-                ret = Disc_IsWii();
-                if (ret < 0) {
-                    choice = WindowPrompt ("Not a Wii Disc","Insert a Wii Disc!","OK","Back");
+		ret = Disc_IsWii();
+		if (ret < 0) {
+			choice = WindowPrompt ("Not a Wii Disc","Insert a Wii Disc!","OK","Back");
 
-                    if (choice == 1) {
-                        menu = MENU_INSTALL;
-                        break;
-                    } else
-                        menu = MENU_DISCLIST;
-                        break;
-                    }
+			if (choice == 1) {
+				menu = MENU_INSTALL;
+				break;
+			} else
+				menu = MENU_DISCLIST;
+				break;
+			}
 
-                Disc_ReadHeader(&headerdisc);
-                name = headerdisc.title;
-                if (strlen(name) < (22 + 3)) {
-					memset(buffer, 0, sizeof(buffer));
-                    sprintf(name, "%s", name);
-                    } else {
-                    strncpy(buffer, name,  MAX_CHARACTERS);
-                    strncat(buffer, "...", 3);
-                    sprintf(name, "%s", buffer);
-                }
+		Disc_ReadHeader(&headerdisc);
+		name = headerdisc.title;
+		if (strlen(name) < (22 + 3)) {
+			memset(buffer, 0, sizeof(buffer));
+			sprintf(name, "%s", name);
+			} else {
+			strncpy(buffer, name,  MAX_CHARACTERS);
+			strncat(buffer, "...", 3);
+			sprintf(name, "%s", buffer);
+		}
 
-                ret = WBFS_CheckGame(headerdisc.id);
-                if (ret) {
-                    WindowPrompt ("Game is already installed:",name,"Back",0);
-                    menu = MENU_DISCLIST;
-                    break;
-                }
-                hdd = GetHddInfo();
-                if (!hdd) {
-                    WindowPrompt ("No HDD found!","Error!!","Back",0);
-                    menu = MENU_DISCLIST;
-                    break;
-                    }
+		ret = WBFS_CheckGame(headerdisc.id);
+		if (ret) {
+			WindowPrompt ("Game is already installed:",name,"Back",0);
+			menu = MENU_DISCLIST;
+			break;
+		}
+		hdd = GetHddInfo();
+		if (!hdd) {
+			WindowPrompt ("No HDD found!","Error!!","Back",0);
+			menu = MENU_DISCLIST;
+			break;
+			}
 
-                f32 free, used;
+		f32 free, used;
 
-                WBFS_DiskSpace(&used, &free);
-                u32 estimation = wbfs_estimate_disc(hdd, __WBFS_ReadDVD, NULL, ONLY_GAME_PARTITION);
-                f32 gamesize = ((f32) estimation)/1073741824;
-                char gametxt[50];
-                sprintf(gametxt, "Installing game %.2fGB:", gamesize);
-                if (gamesize > free) {
-                    char errortxt[50];
-                    sprintf(errortxt, "Game Size: %.2fGB, Free Space: %.2fGB", gamesize, free);
-                    choice = WindowPrompt("Not enough free space!",errortxt,"Go on", "Return");
-                if (choice == 1) {
-                ret = ProgressWindow(gametxt, name);
-                if (ret != 0) {
-                    WindowPrompt ("Install error!",0,"Back",0);
-                    menu = MENU_DISCLIST;
-                    break;
-                } else {
+		WBFS_DiskSpace(&used, &free);
+		u32 estimation = wbfs_estimate_disc(hdd, __WBFS_ReadDVD, NULL, ONLY_GAME_PARTITION);
+		f32 gamesize = ((f32) estimation)/1073741824;
+		char gametxt[50];
+		sprintf(gametxt, "Installing game %.2fGB:", gamesize);
+		if (gamesize > free) {
+			char errortxt[50];
+			sprintf(errortxt, "Game Size: %.2fGB, Free Space: %.2fGB", gamesize, free);
+			choice = WindowPrompt("Not enough free space!",errortxt,"Go on", "Return");
+			if (choice == 1) {
+				ret = ProgressWindow(gametxt, name);
+				if (ret != 0) {
+					WindowPrompt ("Install error!",0,"Back",0);
+					menu = MENU_DISCLIST;
+					break;
+				} 
+				else {
+					__Menu_GetEntries(); //get the entries again
 					wiilight(1);
-                    WindowPrompt ("Successfully installed:",name,"OK",0);
-                    menu = MENU_DISCLIST;
+					WindowPrompt ("Successfully installed:",name,"OK",0);
+					menu = MENU_DISCLIST;
 					wiilight(0);
-                    break;
-                }
-                } else {
-                    menu = MENU_DISCLIST;
-                    break;
-                }
+					break;
+				}
+			} else {
+				menu = MENU_DISCLIST;
+				break;
+			}
 
-                } else {
-                ret = ProgressWindow(gametxt, name);
-                if (ret != 0) {
-                    WindowPrompt ("Install error!",0,"Back",0);
-                    menu = MENU_DISCLIST;
-                    break;
-                } else {
-					wiilight(1);
-                    WindowPrompt ("Successfully installed:",name,"OK",0);
-                    menu = MENU_DISCLIST;
-					wiilight(0);
-                    break;
-                }
-                }
+		} 
+		else {
+			ret = ProgressWindow(gametxt, name);
+			if (ret != 0) {
+				WindowPrompt ("Install error!",0,"Back",0);
+				menu = MENU_DISCLIST;
+					break;
+			} else {
+				wiilight(1);
+				WindowPrompt ("Successfully installed:",name,"OK",0);
+				menu = MENU_DISCLIST;
+				wiilight(0);
+				break;
+			}
+		}
 
 		if (shutdown == 1)
 			Sys_Shutdown();
-
+/*
         if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
@@ -1438,11 +1441,21 @@ static int MenuInstall()
 			}
 
 		}
-	}
+*/	}
 
 
 	HaltGui();
+	#ifdef HW_RVL
+	for(i=0; i < 4; i++)
+	{
+		delete batteryTxt[i];
+		delete batteryImg[i];
+		delete batteryBarImg[i];
+		delete batteryBtn[i];
+	}
+	#endif
 	mainWindow->Remove(&w);
+	ResumeGui();
 	return menu;
 }
 
@@ -1454,10 +1467,6 @@ static int MenuDiscList()
 {
 	int menu = MENU_NONE;
 	char imgPath[100];
-
-    //Spieleliste laden
-    WBFS_Open();
-    __Menu_GetEntries();
 
 	OptionList options;
 	f32 free, used, size = 0.0;
@@ -1525,14 +1534,14 @@ static int MenuDiscList()
     char spaceinfo[30];
 	sprintf(spaceinfo,"%.2fGB of %.2fGB free",free,(free+used));
 	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){63, 154, 192, 255});
-	usedSpaceTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	usedSpaceTxt.SetPosition(0,330);
+	usedSpaceTxt.SetAlignment(THEME.hddInfoAlign, ALIGN_TOP);
+	usedSpaceTxt.SetPosition(THEME.hddInfo_x, THEME.hddInfo_y);
 
-	char GamesCnt[30];
+	char GamesCnt[15];
 	sprintf(GamesCnt,"Games: %i",gameCnt);
 	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
-	gamecntTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	gamecntTxt.SetPosition(0,350);
+	gamecntTxt.SetAlignment(THEME.gameCntAlign, ALIGN_TOP);
+	gamecntTxt.SetPosition(THEME.gameCnt_x,THEME.gameCnt_y);
 
 	GuiImage installBtnImg(&btnInstall);
 	GuiImage installBtnImgOver(&btnInstallOver);
@@ -1635,8 +1644,10 @@ static int MenuDiscList()
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
-    w.Append(&usedSpaceTxt);
-	w.Append(&gamecntTxt);
+	if (THEME.showHDD)
+		w.Append(&usedSpaceTxt);
+	if (THEME.showGameCnt)
+		w.Append(&gamecntTxt);
     w.Append(&poweroffBtn);
     w.Append(&installBtn);
 
@@ -1644,8 +1655,8 @@ static int MenuDiscList()
 	w.Append(&homeBtn);
     w.Append(&settingsBtn);
 	//w.Append(CoverImg);
-	if (THEME.showID)
-		w.Append(GameIDTxt);
+	//if (THEME.showID)
+		//w.Append(GameIDTxt);
 
     #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
@@ -1919,6 +1930,7 @@ static int MenuDiscList()
 							"OK",0);
 						}
 						else {
+							__Menu_GetEntries();
 							WindowPrompt(
 							"Successfully deleted:",
 							text,
@@ -1951,9 +1963,18 @@ static int MenuDiscList()
 
 
 	HaltGui();
-
+	#ifdef HW_RVL
+	for(i=0; i < 4; i++)
+	{
+		delete batteryTxt[i];
+		delete batteryImg[i];
+		delete batteryBarImg[i];
+		delete batteryBtn[i];
+	}
+	#endif
 	mainWindow->Remove(&optionBrowser);
 	mainWindow->Remove(&w);
+	ResumeGui();
 	return menu;
 }
 
@@ -2194,8 +2215,19 @@ static int MenuFormat()
 
 	HaltGui();
 
+	#ifdef HW_RVL
+	for(i=0; i < 4; i++)
+	{
+		delete batteryTxt[i];
+		delete batteryImg[i];
+		delete batteryBarImg[i];
+		delete batteryBtn[i];
+	}
+	#endif
+	
 	mainWindow->Remove(&optionBrowser);
 	mainWindow->Remove(&w);
+	ResumeGui();
 	return menu;
 }
 
@@ -2205,10 +2237,9 @@ static int MenuFormat()
 
 static int MenuSettings()
 {
-    __Disc_SetLowMem();
 	int menu = MENU_NONE;
 	int ret;
-	char imgPath[100];
+//	char imgPath[100];
 
 	OptionList options2;
 	sprintf(options2.name[0], "Video Mode");
@@ -2220,12 +2251,6 @@ static int MenuSettings()
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(settings_menu_button_png);
-	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
-	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
-	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
-	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
-//	GuiImageData btnhome(menu_button_png);
-//	GuiImageData btnhomeOver(menu_button_over_png);
 	GuiImageData settingsbg(settings_background_png);
 
     GuiTrigger trigA;
@@ -2400,8 +2425,11 @@ static int MenuSettings()
 	}
 
 	HaltGui();
+	delete btnLogo;
+	btnLogo = NULL;
 	mainWindow->Remove(&optionBrowser2);
 	mainWindow->Remove(&w);
+	ResumeGui();
 	return menu;
 }
 
@@ -2417,8 +2445,8 @@ static int MenuCheck()
 	OptionList options;
 	options.length = i;
 	partitionEntry partitions[MAX_PARTITIONS];
-	char imgPath[100];
-
+//	char imgPath[100];
+/*
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
@@ -2501,7 +2529,7 @@ static int MenuCheck()
 	batteryBtn[2]->SetPosition(-55, 425);
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
-
+*/
 	char bgPath[100];
 	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
 
@@ -2512,15 +2540,15 @@ static int MenuCheck()
 
 	HaltGui();
 	GuiWindow w(screenwidth, screenheight);
-	w.Append(&poweroffBtn);
-	w.Append(&homeBtn);
-    #ifdef HW_RVL
+//	w.Append(&poweroffBtn);
+//	w.Append(&homeBtn);
+/*    #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
 	w.Append(batteryBtn[1]);
 	w.Append(batteryBtn[2]);
 	w.Append(batteryBtn[3]);
 	#endif
-
+*/
     mainWindow->Append(&w);
 	mainWindow->Append(&optionBrowser);
 
@@ -2530,7 +2558,7 @@ static int MenuCheck()
 	{
 		VIDEO_WaitVSync ();
 
-	    #ifdef HW_RVL
+/*	    #ifdef HW_RVL
 		for(i=0; i < 4; i++)
 		{
 			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
@@ -2554,7 +2582,7 @@ static int MenuCheck()
 			}
 		}
 		#endif
-
+*/
         ret2 = WBFS_Init(WBFS_DEVICE_USB);
         if (ret2 < 0)
         {
@@ -2616,7 +2644,7 @@ static int MenuCheck()
 
 		if(shutdown == 1)
 			Sys_Shutdown();
-
+/*
 		if(poweroffBtn.GetState() == STATE_CLICKED)
 		{
 		    choice = WindowPrompt ("Shutdown System","Are you sure?","Yes","No");
@@ -2639,7 +2667,11 @@ static int MenuCheck()
                 //exit(0); //zum debuggen schneller
 			}
 		}
-
+*/
+		//Spieleliste laden
+		WBFS_Open();
+		__Menu_GetEntries();
+	
 		if (menu == MENU_NONE)
 		menu = MENU_DISCLIST;
 
@@ -2648,6 +2680,7 @@ static int MenuCheck()
 	HaltGui();
 	mainWindow->Remove(&optionBrowser);
 	mainWindow->Remove(&w);
+	ResumeGui();
 	return menu;
 }
 

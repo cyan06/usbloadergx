@@ -9,17 +9,6 @@ extern "C"
 {
 #endif
 
-extern int ENTRIES_PER_PAGE;
-extern int MAX_CHARACTERS;
-extern int CONSOLE_XCOORD;
-extern int CONSOLE_YCOORD;
-extern int CONSOLE_WIDTH;
-extern int CONSOLE_HEIGHT;
-extern int CONSOLE_BG_COLOR;
-extern int CONSOLE_FG_COLOR;
-extern int COVER_XCOORD;
-extern int COVER_YCOORD;
-
 #define CFG_HOME_REBOOT 0
 #define CFG_HOME_EXIT   1
 
@@ -44,6 +33,13 @@ extern int COVER_YCOORD;
 #define CFG_LANG_T_CHINESE 9
 #define CFG_LANG_KOREAN   10
 #define CFG_LANG_COUNT    11
+
+#define CFG_ALIGN_LEFT 0
+#define CFG_ALIGN_RIGHT 1
+#define CFG_ALIGN_CENTRE 2
+#define CFG_ALIGN_TOP 3
+#define CFG_ALIGN_BOTTOM 4
+#define CFG_ALIGN_MIDDLE 5
 
 extern char *cfg_path;
 //extern char *cfg_images_path;
@@ -92,7 +88,13 @@ struct THEME
 	int install_x;
 	int install_y;
 	short showHDD;
+	short hddInfoAlign;
+	int hddInfo_x;
+	int hddInfo_y;
 	short showGameCnt;
+	short gameCntAlign;
+	int gameCnt_x;
+	int gameCnt_y;
 	short showRegion;
 	short showBattery;
 };

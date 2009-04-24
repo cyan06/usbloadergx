@@ -81,13 +81,17 @@ DefaultSettings()
 	Settings.vpatch = off;
 	Settings.language = ConsoleLangDefault;
 	Settings.ocarina = off;
-	Settings.sinfo = GameID;
+	Settings.sinfo = ((THEME.showID) ? GameID : Neither);
+	if (THEME.showRegion)
+	{
+		Settings.sinfo = ((Settings.sinfo == GameID) ? Both : GameRegion);
+	}
 }
 
 int
 main(int argc, char *argv[])
 {
-    __Disc_SetLowMem();
+ //   __Disc_SetLowMem();
     s32 ret2;
     /* Load Custom IOS */
 	ret2 = IOS_ReloadIOS(249);

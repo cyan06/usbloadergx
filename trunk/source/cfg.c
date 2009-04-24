@@ -89,6 +89,17 @@ struct TextMap map_language[] =
 };
 
 */
+struct TextMap map_alignment[] =
+{
+	{ "left",   CFG_ALIGN_LEFT },
+	{ "right",  CFG_ALIGN_RIGHT },
+	{ "center",   CFG_ALIGN_CENTRE },
+	{ "top",    CFG_ALIGN_TOP },
+	{ "bottom",    CFG_ALIGN_BOTTOM },
+	{ "middle",   CFG_ALIGN_MIDDLE },
+	{ NULL, -1 }
+};
+
 int map_get_id(struct TextMap *map, char *name)
 {
 	int i;
@@ -210,6 +221,12 @@ void CFG_Default()
 	THEME.install_y = 355;
 	THEME.showBattery = 1;
 	THEME.showRegion = 1;
+	THEME.hddInfo_x = 0;
+	THEME.hddInfo_y = 330;
+	THEME.hddInfoAlign = CFG_ALIGN_CENTRE;
+	THEME.gameCnt_x = 0;
+	THEME.gameCnt_y = 350;
+	THEME.gameCntAlign = CFG_ALIGN_CENTRE;
 }
 
 
@@ -408,6 +425,22 @@ void theme_set(char *name, char *val)
 			THEME.id_y = y;
 		}
 	}
+
+	else if (strcmp(cfg_name, "hddinfo_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.hddInfo_x = x - (x % 4);
+			THEME.hddInfo_y = y;
+		}
+	}
+	
+	else if (strcmp(cfg_name, "gamecount_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.gameCnt_x = x - (x % 4);
+			THEME.gameCnt_y = y;
+		}
+	}
 	
 	else if (strcmp(cfg_name, "power_coords") == 0) {
 		int x,y;
@@ -442,10 +475,12 @@ void theme_set(char *name, char *val)
 	}
 	
 	cfg_bool("show_id", &THEME.showID);
-	cfg_bool("show_hdd", &THEME.showHDD);
+	cfg_bool("show_hddinfo", &THEME.showHDD);
 	cfg_bool("show_gamecount", &THEME.showGameCnt);
 	cfg_bool("show_region", &THEME.showRegion);
 	cfg_bool("show_battery", &THEME.showBattery);
+	cfg_map_auto("hddinfo_align", map_alignment, &THEME.hddInfoAlign);
+	cfg_map_auto("gamecount_align", map_alignment, &THEME.gameCntAlign);
 	
 	/*
 	else if (strcmp(cfg_name, "entry_lines") == 0) {
@@ -754,7 +789,7 @@ void CFG_Load(int argc, char **argv)
 	
 	CFG_Default();
 	
-	snprintf(pathname, sizeof(pathname), "SD:/config.txt");
+	snprintf(pathname, sizeof(pathname), "SD:/config/config.txt");
 	
 	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
 	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
@@ -769,7 +804,7 @@ void CFG_Load(int argc, char **argv)
 //		cfg_parsefile("SD:/config.txt", &console_set);
 //	}
 	
-	snprintf(pathname, sizeof(pathname), "SD:/titles.txt");
+	snprintf(pathname, sizeof(pathname), "SD:/config/titles.txt");
 	cfg_parsetitlefile(pathname, &title_set);
 	
 	// load per-game settings
