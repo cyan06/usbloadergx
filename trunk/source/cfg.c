@@ -441,6 +441,14 @@ void theme_set(char *name, char *val)
 			THEME.gameCnt_y = y;
 		}
 	}
+
+	else if (strcmp(cfg_name, "region_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.region_x = x - (x % 4);
+			THEME.region_y = y;
+		}
+	}
 	
 	else if (strcmp(cfg_name, "power_coords") == 0) {
 		int x,y;

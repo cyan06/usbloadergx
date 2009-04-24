@@ -1634,10 +1634,7 @@ static int MenuDiscList()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	char bgPath[100];
-	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
-
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
@@ -1850,7 +1847,7 @@ static int MenuDiscList()
 					if ((Settings.sinfo == GameRegion) || (Settings.sinfo == Both)){
 						GameRegionTxt = new GuiText(gameregion, 22, (GXColor){63, 154, 192, 255});
 						GameRegionTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						GameRegionTxt->SetPosition(68,30);
+						GameRegionTxt->SetPosition(THEME.region_x, THEME.region_y);
 						//GameRegionTxt->SetPosition(THEME.id_x,THEME.id_y);
 						GameRegionTxt->SetEffect(EFFECT_FADE, 20);
 						w.Append(GameRegionTxt);
@@ -2105,10 +2102,7 @@ static int MenuFormat()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	char bgPath[100];
-	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
-
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(130);
@@ -2530,10 +2524,8 @@ static int MenuCheck()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 */
-	char bgPath[100];
-	snprintf(bgPath, sizeof(bgPath), "%sbg_options.png", CFG.theme_path);
 
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, bgPath, bg_options_png, 1);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);

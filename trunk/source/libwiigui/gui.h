@@ -769,7 +769,7 @@ class GuiOptionBrowser : public GuiElement
 {
 	public:
 		GuiOptionBrowser(int w, int h, OptionList * l, const u8 *imagebg, int scrollbar);
-		GuiOptionBrowser(int w, int h, OptionList * l, const char * custombg, const u8 *imagebg, int scrollbar);
+		GuiOptionBrowser(int w, int h, OptionList * l, const char * themePath, const u8 *imagebg, int scrollbar);
 		~GuiOptionBrowser();
 		void SetCol2Position(int x);
 		int FindMenuItem(int c, int d);
