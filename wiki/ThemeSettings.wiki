@@ -16,26 +16,59 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * Currently, you can put the following files in your theme folder:
 
   * *background.png* is the loader's main background
+
   * *bg_options.png* is the background of selection game list
+
   * *button_install.png* is the install button
+
   * *button_install_over.png* is the install button when you point over it
+
   * *menu_button.png* is the home button
+
   * *menu_button_over.png* is the home button when you point over it
+
   * *settings_button.png* is the settings button
+
   * *settings_button_over.png* is the settings button when you point over it
+
   * *wiimote_poweroff.png* is the power button
+
   * *wiimote_poweroff_over.png* is the power button when you point over it
+
   * *theme.txt* is the place you put the settings of the theme
+
   * more to add later
 
 = Options of theme.txt =
 
   * *show_id = 0 1* (0 means don't show game id, 1 means show game id)
+
   * *id_coords = x, y* (x, y is the coordinate of game id you want to put)
+
   * *gamelist_coords = x, y, w, h* (x, y is the coordinate of your game list. w, h is the width and height of your game list)
+
   * *covers_coords = x, y* (x, y is the coordinate of your cover art)
+
   * *power_coords = x, y* (x, y is the coordinate of your power buttons)
+
   * *setting_coords = x, y* (x, y is the coordinate of your setting buttons)
+
   * *install_coords = x, y* (x, y is the coordinate of your install buttons)
+
   * *home_coords = x, y* (x, y is the coordinate of your home buttons)
+
+  * *show_hddinfo = 0 1* (0 means don't show, 1 otherwise)
+
+  * *show_region = 0 1* (0 means don't show, 1 otherwise)
+
+  * *show_gamecount = 0 1* (0 means don't show, 1 otherwise)
+
+  * *hddinfo_coords = x, y* (x, y is the coordinate of hdd info text *(See hddinfo_align for more information)*
+
+  * *gamecount_coords = x, y* (x, y is the coordinate of game count text *(See gamecount_align for more information)*
+
+  * *hddinfo_align = left center right* (set the x-axis alignment of hdd info text. The text is default to center aligned)
+
+  * *gamecount_align = left center right* (set the x-axis alignment of game count text. The text is default to center aligned)
+
   * more to add later
