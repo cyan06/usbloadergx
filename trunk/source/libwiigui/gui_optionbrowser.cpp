@@ -16,7 +16,7 @@
 
 #define GAMESELECTSIZE      30
 
-static int scrollbaron = 0;
+static int scrollbaron = 0, startat, loaded = 0;
 /**
  * Constructor for the GuiOptionBrowser class.
  */
@@ -108,11 +108,11 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 		optionTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		optionTxt[i]->SetPosition(24,0);
 
+		optionBg[i] = new GuiImage(bgOptionsEntry);
+		
 		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
 		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		optionVal[i]->SetPosition(250,0);
-
-		optionBg[i] = new GuiImage(bgOptionsEntry);
 
 		optionBtn[i] = new GuiButton(width-28,GAMESELECTSIZE);
 		optionBtn[i]->SetParent(this);
@@ -128,11 +128,13 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 /**
  * Constructor for the GuiOptionBrowser class.
  */
-GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *themePath, const u8 *imagebg, int scrollon)
+GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *themePath, const u8 *imagebg, int scrollon, int start)
 {
 	width = w;
 	height = h;
 	options = l;
+	startat  = start;
+	loaded = 0;
 	scrollbaron = scrollon;
 	selectable = true;
 	listOffset = this->FindMenuItem(-1, 1);
@@ -223,11 +225,11 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *the
 		optionTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		optionTxt[i]->SetPosition(24,0);
 
+		optionBg[i] = new GuiImage(bgOptionsEntry);
+		
 		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
 		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		optionVal[i]->SetPosition(250,0);
-
-		optionBg[i] = new GuiImage(bgOptionsEntry);
 
 		optionBtn[i] = new GuiButton(width-28,GAMESELECTSIZE);
 		optionBtn[i]->SetParent(this);
@@ -393,11 +395,22 @@ void GuiOptionBrowser::Draw()
 }
 
 void GuiOptionBrowser::Update(GuiTrigger * t)
-{
+{	int next, prev, lang = options->length;
+
+	//go to the last game selected
+	if (loaded == 0)
+	{
+			
+			if (startat > (lang-9)){listOffset= (lang-9);selectedItem=startat;}
+			else if (startat < 9){selectedItem=startat;}
+			else {listOffset = (startat-4);selectedItem=startat;}
+		}
+	loaded++;
+	
 	if(state == STATE_DISABLED || !t)
 		return;
 												
-	int next, prev, lang = options->length;
+	
 	// scrolldelay affects how fast the list scrolls
 	// when the arrows are clicked
 	float scrolldelay = 3.5;

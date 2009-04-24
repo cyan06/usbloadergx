@@ -67,6 +67,8 @@ static double progressTotal = 1;
 int godmode = 0;
 int height = 224;
 int width = 160;
+static int startat;
+
 static char gameregion[7];
 //power button fix
 extern u8 shutdown;
@@ -1694,7 +1696,7 @@ static int MenuDiscList()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, startat);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
@@ -1812,8 +1814,8 @@ static int MenuDiscList()
 				}
 		}
 		else if(settingsBtn.GetState() == STATE_CLICKED)
-		{
-			    menu = MENU_SETTINGS;
+		{		startat = optionBrowser.GetSelectedOption();
+				menu = MENU_SETTINGS;
 			    break;
 
 		}
@@ -1825,7 +1827,7 @@ static int MenuDiscList()
 		char IDfull[7];
 		selectimg = optionBrowser.GetSelectedOption();
 	    gameSelected = optionBrowser.GetClickedOption();
-
+		//startat = selectimg;
 		for (cnt = 0; cnt < gameCnt; cnt++) {
 			if ((s32) (cnt) == selectimg) {
 				if (selectimg != selectedold)
@@ -1939,7 +1941,7 @@ static int MenuDiscList()
 				text,
 				"Boot",
 				"Back",
-				"Delete",
+				"Settings",
 				ID,
 				IDfull);
 				wiilight(0);
@@ -1972,35 +1974,10 @@ static int MenuDiscList()
 				}
 				else if (choice == 2)
 				{
-					choice = WindowPrompt(
-					"Do you really want to delete:",
-					text,
-					"Yes","Cancel");
-
-					if (choice == 1) {
-						ret = WBFS_RemoveGame(header->id);
-						if (ret < 0) {
-							sprintf(text, "Error: %i", ret);
-							WindowPrompt(
-							"Can't delete:",
-							text,
-							"OK",0);
-						}
-						else {
-							__Menu_GetEntries();
-							WindowPrompt(
-							"Successfully deleted:",
-							text,
-							"OK",0);
-							optionBrowser.SetFocus(1);
-						}
-						menu = MENU_DISCLIST;
+					//menu = MENU_GAME_SETTINGS;
 						break;
 
-					}
-					else
-						optionBrowser.SetFocus(1);
-
+					
 				}
 				else if (choice == 3)
 				{
@@ -2165,7 +2142,7 @@ static int MenuFormat()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, startat);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(130);
@@ -2497,6 +2474,245 @@ static int MenuSettings()
 	return menu;
 }
 
+
+/********************************************************************************
+*Game specific settings
+*********************************************************************************/
+
+
+
+static int MenuGameSettings()
+{
+	int menu = MENU_NONE;
+	int ret;
+//	char imgPath[100];
+
+	OptionList options3;
+	sprintf(options3.name[0], "Video Mode");
+	sprintf(options3.name[1], "Video Patch");
+	sprintf(options3.name[2], "Language");
+	sprintf(options3.name[3], "Ocarina");
+	sprintf(options3.name[4], "IOS");
+	options3.length = 5;
+
+	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	GuiImageData btnOutline(settings_menu_button_png);
+	GuiImageData settingsbg(settings_background_png);
+
+    GuiTrigger trigA;
+	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+    GuiTrigger trigHome;
+	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
+	GuiTrigger trigB;
+	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+
+    GuiText titleTxt("Settings for BLABLABLA Game", 28, (GXColor){0, 0, 0, 255});
+	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	titleTxt.SetPosition(0,40);
+
+    GuiImage settingsbackground(&settingsbg);
+	GuiButton settingsbackgroundbtn(settingsbackground.GetWidth(), settingsbackground.GetHeight());
+	settingsbackgroundbtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	settingsbackgroundbtn.SetPosition(0, 0);
+	settingsbackgroundbtn.SetImage(&settingsbackground);
+
+    GuiText saveBtnTxt("Save and Exit", 22, (GXColor){0, 0, 0, 255});
+	saveBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
+	GuiImage saveBtnImg(&btnOutline);
+	GuiButton saveBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	saveBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	saveBtn.SetPosition(0, 400);
+	saveBtn.SetLabel(&saveBtnTxt);
+	saveBtn.SetImage(&saveBtnImg);
+	saveBtn.SetSoundOver(&btnSoundOver);
+	saveBtn.SetTrigger(&trigA);
+	saveBtn.SetTrigger(&trigB);
+	saveBtn.SetEffectGrow();
+	
+	GuiText playBtnTxt("Play Game", 22, (GXColor){0, 0, 0, 255});
+	playBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
+	GuiImage playBtnImg(&btnOutline);
+	GuiButton playBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	playBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	playBtn.SetPosition(-180, 400);
+	playBtn.SetLabel(&playBtnTxt);
+	playBtn.SetImage(&playBtnImg);
+	playBtn.SetSoundOver(&btnSoundOver);
+	playBtn.SetTrigger(&trigA);
+	playBtn.SetTrigger(&trigB);
+	playBtn.SetEffectGrow();
+
+	GuiText deleteBtnTxt("Delete", 22, (GXColor){0, 0, 0, 255});
+	deleteBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
+	GuiImage deleteBtnImg(&btnOutline);
+	GuiButton deleteBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	deleteBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	deleteBtn.SetPosition(180, 400);
+	deleteBtn.SetLabel(&deleteBtnTxt);
+	deleteBtn.SetImage(&deleteBtnImg);
+	deleteBtn.SetSoundOver(&btnSoundOver);
+	deleteBtn.SetTrigger(&trigA);
+	deleteBtn.SetEffectGrow();
+
+	GuiOptionBrowser optionBrowser3(396, 280, &options3, bg_options_settings_png, 0);
+	optionBrowser3.SetPosition(0, 90);
+	optionBrowser3.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	optionBrowser3.SetCol2Position(150);
+
+    HaltGui();
+	GuiWindow w(screenwidth, screenheight);
+	w.Append(&settingsbackgroundbtn);
+    w.Append(&titleTxt);
+    w.Append(&playBtn);
+	w.Append(&deleteBtn);
+	w.Append(&saveBtn);
+
+    mainWindow->Append(&w);
+    mainWindow->Append(&optionBrowser3);
+
+	ResumeGui();
+
+	while(menu == MENU_NONE)
+	{
+
+		VIDEO_WaitVSync ();
+		if(Settings2.video > 3)
+			Settings2.video = 0;
+		if(Settings2.language  > 10)
+			Settings2.language = 0;
+        if(Settings2.ocarina > 1)
+			Settings2.ocarina =0;
+        if(Settings2.vpatch  > 1)
+			Settings2.vpatch = 0;
+		if(Settings2.ios  > 1)
+			Settings2.ios = 0;
+
+		if (Settings2.video == discdefault) sprintf (options3.value[0],"Disc Default");
+		else if (Settings2.video == systemdefault) sprintf (options3.value[0],"System Default");
+		else if (Settings2.video == pal50) sprintf (options3.value[0],"Force PAL50");
+		else if (Settings2.video == pal60) sprintf (options3.value[0],"Force PAL60");
+		else if (Settings2.video == ntsc) sprintf (options3.value[0],"Force NTSC");
+
+        if (Settings2.vpatch == on) sprintf (options3.value[1],"ON");
+		else if (Settings2.vpatch == off) sprintf (options3.value[1],"OFF");
+
+		if (Settings2.language == ConsoleLangDefault) sprintf (options3.value[2],"Console Default");
+		else if (Settings2.language == jap) sprintf (options3.value[2],"Japanese");
+		else if (Settings2.language == ger) sprintf (options3.value[2],"German");
+		else if (Settings2.language == eng) sprintf (options3.value[2],"English");
+		else if (Settings2.language == fren) sprintf (options3.value[2],"French");
+		else if (Settings2.language == esp) sprintf (options3.value[2],"Spanish");
+        else if (Settings2.language == it) sprintf (options3.value[2],"Italian");
+		else if (Settings2.language == dut) sprintf (options3.value[2],"Dutch");
+		else if (Settings2.language == schin) sprintf (options3.value[2],"S. Chinese");
+		else if (Settings2.language == tchin) sprintf (options3.value[2],"T. Chinese");
+		else if (Settings2.language == kor) sprintf (options3.value[2],"Korean");
+
+        if (Settings2.ocarina == on) sprintf (options3.value[3],"ON");
+		else if (Settings2.ocarina == off) sprintf (options3.value[3],"OFF");
+
+		if (Settings2.ios == i249) sprintf (options3.value[4],"249");
+		else if (Settings2.ios == i222) sprintf (options3.value[4],"222");
+		ret = optionBrowser3.GetClickedOption();
+
+		switch (ret)
+		{
+			case 0:
+				Settings2.video++;
+				break;
+
+			case 1:
+				Settings2.vpatch++;
+				break;
+            case 2:
+				Settings2.language++;
+				break;
+            case 3:
+				Settings2.ocarina++;
+				break;
+			case 4:
+				Settings2.ios++;
+				break;
+
+		}
+
+		if(shutdown == 1)
+			Sys_Shutdown();
+
+		if(playBtn.GetState() == STATE_CLICKED)
+		
+			{menu = MENU_DISCLIST;
+						break;
+			
+			/*
+					// Set USB mode 
+					ret = Disc_SetUSB(header->id);
+					if (ret < 0) {
+						sprintf(text, "Error: %i", ret);
+						WindowPrompt(
+						"Failed to set USB:",
+						text,
+						"OK",0);
+					} 
+					else {
+						// Open disc 
+						ret = Disc_Open();
+						if (ret < 0) {
+							sprintf(text, "Error: %i", ret);
+							WindowPrompt(
+							"Failed to boot:",
+							text,
+							"OK",0);
+						} 
+						else {
+							menu = MENU_EXIT;
+						}
+					}*/
+				}
+		if(saveBtn.GetState() == STATE_CLICKED)
+		
+			{menu = MENU_DISCLIST;
+						break;}
+		if (deleteBtn.GetState() == STATE_CLICKED)
+				{menu = MENU_DISCLIST;
+						break;
+					/*choice = WindowPrompt(
+					"Do you really want to delete:",
+					text,
+					"Yes","Cancel");
+
+					if (choice == 1) {
+						ret = WBFS_RemoveGame(header->id);
+						if (ret < 0) {
+							sprintf(text, "Error: %i", ret);
+							WindowPrompt(
+							"Can't delete:",
+							text,
+							"OK",0);
+						}
+						else {
+							__Menu_GetEntries();
+							WindowPrompt(
+							"Successfully deleted:",
+							text,
+							"OK",0);
+							optionBrowser.SetFocus(1);
+						}
+						menu = MENU_DISCLIST;
+						break;
+					}*/
+				}
+
+		
+	}
+
+	HaltGui();
+	mainWindow->Remove(&optionBrowser3);
+	mainWindow->Remove(&w);
+	ResumeGui();
+	return menu;
+}
+
 /****************************************************************************
  * MenuCheck
  ***************************************************************************/
@@ -2595,7 +2811,7 @@ static int MenuCheck()
 	#endif
 */
 
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, startat);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 	optionBrowser.SetCol2Position(80);
@@ -2797,6 +3013,9 @@ int MainMenu(int menu)
             case MENU_SETTINGS:
 				currentMenu = MenuSettings();
 				break;
+			case MENU_GAME_SETTINGS:
+				currentMenu = MenuGameSettings();
+				break;
             case MENU_DISCLIST:
 				currentMenu = MenuDiscList();
 				break;
@@ -2964,8 +3183,134 @@ int MainMenu(int menu)
                                 showinfo = 0;
                         break;
     }
+///////////////////////////////////Game specific settings///////////////////////////////////////////////
+	switch(Settings2.language)
+    {
+                        case ConsoleLangDefault:
+                                configbytes[0] = 0xCD;
+                        break;
 
+                        case jap:
+                                configbytes[0] = 0x00;
+                        break;
 
+                        case eng:
+                                configbytes[0] = 0x01;
+                        break;
+
+                        case ger:
+                                configbytes[0] = 0x02;
+                        break;
+
+                        case fren:
+                                configbytes[0] = 0x03;
+                        break;
+
+                        case esp:
+                                configbytes[0] = 0x04;
+                        break;
+
+                        case it:
+                                configbytes[0] = 0x05;
+                        break;
+
+                        case dut:
+                                configbytes[0] = 0x06;
+                        break;
+
+                        case schin:
+                                configbytes[0] = 0x07;
+                        break;
+
+                        case tchin:
+                                configbytes[0] = 0x08;
+                        break;
+
+                        case kor:
+                                configbytes[0] = 0x09;
+                        break;
+                        //wenn nicht genau klar ist welches
+                        default:
+                                configbytes[0] = 0xCD;
+                        break;
+    }
+
+    u32 videoselected1 = 0;
+
+    switch(Settings2.video)
+    {
+                        case discdefault:
+                                videoselected = 0;
+                        break;
+
+                        case pal50:
+                                videoselected = 1;
+                        break;
+
+                        case pal60:
+                                videoselected = 2;
+                        break;
+
+                        case ntsc:
+                                videoselected = 3;
+
+                        case systemdefault:
+
+                                videoselected = 4;
+                        break;
+
+                        default:
+                                videoselected = 0;
+                        break;
+    }
+
+    u32 cheat1 = 0;
+    switch(Settings2.ocarina)
+    {
+                        case on:
+                                cheat = 1;
+                        break;
+
+                        case off:
+                                cheat = 0;
+                        break;
+
+                        default:
+                                cheat = 1;
+                        break;
+    }
+
+    u8 videopatch1 = 0;
+    switch(Settings2.vpatch)
+    {
+                        case on:
+                                videopatch = 1;
+                        break;
+
+                        case off:
+                                videopatch = 0;
+                        break;
+
+                        default:
+                                videopatch = 0;
+                        break;
+    }
+/*
+	u8 ios = 0;
+    switch(Settings2.ios)
+    {
+                        case i249:
+                                showinfo = 0;
+                        break;
+
+                        case i222:
+                                showinfo = 1;
+                        break;
+
+						default:
+                                showinfo = 0;
+                        break;
+    }*/
     ret = Disc_WiiBoot(videoselected, cheat, videopatch);
     if (ret < 0) {
         printf("    ERROR: BOOT ERROR! (ret = %d)\n", ret);

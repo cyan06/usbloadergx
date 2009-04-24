@@ -44,6 +44,11 @@ enum {
 	Neither,
 };
 
+enum {
+	i249,
+	i222,
+};
+
 
 struct SSettings {
     int		video;
@@ -53,6 +58,15 @@ struct SSettings {
 	int		sinfo;
 };
 extern struct SSettings Settings;
+
+struct SSettings2 {
+    int		video;
+    int		language;
+    int     ocarina;
+    int     vpatch;
+	int		ios;
+};
+extern struct SSettings2 Settings2;
 
 void ExitApp();
 extern int ExitRequested;
