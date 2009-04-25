@@ -33,6 +33,7 @@
 #include "patchcode.h"
 #include "wpad.h"
 #include "cfg.h"
+#include "libwiigui/gui_customoptionbrowser.h"
 
 #define MAX_CHARACTERS		38
 
@@ -1934,66 +1935,67 @@ static int MenuDiscList()
 				while (returnHere)
 				{
 					returnHere = false;
-				wiilight(1);
-				sprintf(text2, "%.2fGB", size);
-				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
-				sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-				choice = GameWindowPrompt(
-				text2,
-				text,
-				"Boot",
-				"Back",
-				"Settings",
-				ID,
-				IDfull);
-				wiilight(0);
+					wiilight(1);
+					sprintf(text2, "%.2fGB", size);
+					sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
+					sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+					choice = GameWindowPrompt(
+					text2,
+					text,
+					"Boot",
+					"Back",
+					"Settings",
+					ID,
+					IDfull);
+					wiilight(0);
 
-				if(choice == 1)
-				{
-					/* Set USB mode */
-					ret = Disc_SetUSB(header->id);
-					if (ret < 0) {
-						sprintf(text, "Error: %i", ret);
-						WindowPrompt(
-						"Failed to set USB:",
-						text,
-						"OK",0);
-					}
-					else {
-						/* Open disc */
-						ret = Disc_Open();
+					if(choice == 1)
+					{
+						/* Set USB mode */
+						ret = Disc_SetUSB(header->id);
 						if (ret < 0) {
 							sprintf(text, "Error: %i", ret);
 							WindowPrompt(
-							"Failed to boot:",
+							"Failed to set USB:",
 							text,
 							"OK",0);
 						}
 						else {
-							menu = MENU_EXIT;
+							/* Open disc */
+							ret = Disc_Open();
+							if (ret < 0) {
+								sprintf(text, "Error: %i", ret);
+								WindowPrompt(
+								"Failed to boot:",
+								text,
+								"OK",0);
+							}
+							else {
+								menu = MENU_EXIT;
+							}
 						}
 					}
-				}
-				else if (choice == 2)
-				{
-//					GameSettings();
-					returnHere = true;
-					
-				}
-				else if (choice == 3)
-				{
-					//enter new game title
-					char entered[40];
-					sprintf(entered,"%s",text);
-					OnScreenKeyboard(entered, 40);
-					WBFS_RenameGame(header->id,entered);
-					menu = MENU_DISCLIST;
-				}
-				else if(choice == 0)
-					optionBrowser.SetFocus(1);
+					else if (choice == 2)
+					{
+//						GameSettings();
+						returnHere = true;
+						
+					}
+					else if (choice == 3)
+					{
+						//enter new game title
+						char entered[40];
+						sprintf(entered,"%s",text);
+						OnScreenKeyboard(entered, 40);
+						WBFS_RenameGame(header->id,entered);
+						menu = MENU_DISCLIST;
+					}
+					else if(choice == 0)
+						optionBrowser.SetFocus(1);
 
+				}
 			}
-		}	}
+		}
 	}
 
 
@@ -2276,14 +2278,13 @@ static int MenuSettings()
 	int ret;
 //	char imgPath[100];
 
-	OptionList options2;
+	customOptionList options2(6);
 	sprintf(options2.name[0], "Video Mode");
 	sprintf(options2.name[1], "Video Patch");
 	sprintf(options2.name[2], "Language");
 	sprintf(options2.name[3], "Ocarina");
 	sprintf(options2.name[4], "Display");
 	sprintf(options2.name[5], "IOS");
-	options2.length = 6;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
@@ -2348,7 +2349,7 @@ static int MenuSettings()
 	btnLogo->SetSoundClick(&btnClick);
 	btnLogo->SetTrigger(&trigA);
 
-	GuiOptionBrowser optionBrowser2(396, 280, &options2, bg_options_settings_png, 0);
+	GuiCustomOptionBrowser optionBrowser2(396, 280, &options2, 0, bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(0, 90);
 	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	optionBrowser2.SetCol2Position(150);
@@ -2493,14 +2494,13 @@ void GameSettings()
 	int ret;
 //	char imgPath[100];
 
-	OptionList options3;
+	customOptionList options3(6);
 	sprintf(options3.name[0], "Video Mode");
 	sprintf(options3.name[1], "Video Patch");
 	sprintf(options3.name[2], "Language");
 	sprintf(options3.name[3], "Ocarina");
 	sprintf(options3.name[4], "Display");
 	sprintf(options3.name[5], "IOS");
-	options3.length = 6;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(settings_menu_button_png);
@@ -2548,7 +2548,7 @@ void GameSettings()
 	deleteBtn.SetTrigger(&trigA);
 	deleteBtn.SetEffectGrow();
 
-	GuiOptionBrowser optionBrowser3(396, 280, &options3, bg_options_settings_png, 0);
+	GuiCustomOptionBrowser optionBrowser3(396, 280, &options3, 0, bg_options_settings_png, 0);
 	optionBrowser3.SetPosition(0, 90);
 	optionBrowser3.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	optionBrowser3.SetCol2Position(150);
@@ -2985,9 +2985,6 @@ int MainMenu(int menu)
 				break;
             case MENU_SETTINGS:
 				currentMenu = MenuSettings();
-				break;
-//			case MENU_GAME_SETTINGS:
-//				currentMenu = MenuGameSettings();
 				break;
             case MENU_DISCLIST:
 				currentMenu = MenuDiscList();
