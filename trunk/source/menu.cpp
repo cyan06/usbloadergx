@@ -192,46 +192,72 @@ static void WindowCredits(void)
 			FTGX_JUSTIFY_LEFT | FTGX_ALIGN_TOP, ALIGN_LEFT, ALIGN_TOP);
 
 	txt[i] = new GuiText("Coding:");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y); i++;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y); 
+	i++;
 
 	txt[i] = new GuiText("Waninkoko");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("Kwiirk");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("dimok");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("nIxx");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("hungyip84");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("giantpune");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=24;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=24;
 
 	txt[i] = new GuiText("Design:");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y); i++;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y); 
+	i++;
 
 	txt[i] = new GuiText("cyrex");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("NeoRame");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("WiiShizza");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); i++; y+=26;
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
+	i++; 
+	y+=26;
 
 	txt[i] = new GuiText("Special thanks to Tantric for libwiigui");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("and to Waninkoko & Kwiirk for the USB Loader ");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); 
+	i++; 
+	y+=22;
 
 	txt[i] = new GuiText("and releasing the source code ;)");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); i++; y+=22;
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); 
+	i++; 
+	y+=22;
 
 	for(i=0; i < numEntries; i++)
 		creditsWindow.Append(txt[i]);
@@ -269,6 +295,10 @@ static void WindowCredits(void)
 	mainWindow->Remove(&creditsWindow);
 	ResumeGui();
 	creditsMusic->Stop();
+	for (i = 0; i < numEntries; i++)
+	{
+		delete txt[i];
+	}
 	delete creditsMusic;
 	bgMusic->SetLoop(1);
 	bgMusic->Play();
@@ -1467,6 +1497,7 @@ static int MenuInstall()
 				menu = MENU_DISCLIST;
 					break;
 			} else {
+				__Menu_GetEntries(); //get the entries again
 				wiilight(1);
 				WindowPrompt ("Successfully installed:",name,"OK",0);
 				menu = MENU_DISCLIST;
@@ -1867,7 +1898,7 @@ static int MenuDiscList()
 					//load game cover
 					if (cover)
 					{
-						delete(cover);
+						delete cover;
 						cover = NULL;
 					}
 
@@ -1875,19 +1906,19 @@ static int MenuDiscList()
 					cover = new GuiImageData(imgPath,0); //load short id
 					if (!cover->GetImage()) //if could not load the short id image
 					{
-						delete(cover);
+						delete cover;
 						snprintf(imgPath, sizeof(imgPath), "SD:/images/%s.png", IDfull);
 						cover = new GuiImageData(imgPath, 0); //load full id image
 						if (!cover->GetImage())
 						{
-							delete(cover);
+							delete cover;
 							cover = new GuiImageData("SD:/images/noimage.png", nocover_png); //load no image
 						}
 					}
 
 					if (coverImg)
 					{
-						delete(coverImg);
+						delete coverImg;
 						coverImg = NULL;
 					}
 					coverImg = new GuiImage(cover);
@@ -1920,15 +1951,12 @@ static int MenuDiscList()
 				struct discHdr *header = &gameList[gameSelected];
 				WBFS_GameSize(header->id, &size);
 
-				static char buffer[36 + 4];
-				memset(buffer, 0, sizeof(buffer));
-				if (strlen(get_title(header)) < (36 + 3)) {
+				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
 					sprintf(text, "%s", get_title(header));
 				}
 				else {
-					strncpy(buffer, get_title(header),  36);
-					strncat(buffer, "...", 3);
-					sprintf(text, "%s", buffer);
+					strncpy(text, get_title(header),  MAX_CHARACTERS);
+					strncat(text, "...", 3);
 				}
 				
 				bool returnHere = true;
@@ -2783,7 +2811,7 @@ static int MenuCheck()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 */
-
+/*
 	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, startat);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
@@ -2793,18 +2821,18 @@ static int MenuCheck()
 	GuiWindow w(screenwidth, screenheight);
 //	w.Append(&poweroffBtn);
 //	w.Append(&homeBtn);
-/*    #ifdef HW_RVL
+    #ifdef HW_RVL
 	w.Append(batteryBtn[0]);
 	w.Append(batteryBtn[1]);
 	w.Append(batteryBtn[2]);
 	w.Append(batteryBtn[3]);
 	#endif
-*/
+
     mainWindow->Append(&w);
 	mainWindow->Append(&optionBrowser);
 
 	ResumeGui();
-
+*/
 	while(menu == MENU_NONE)
 	{
 		VIDEO_WaitVSync ();
@@ -2927,11 +2955,11 @@ static int MenuCheck()
 		menu = MENU_DISCLIST;
 
 		}
-
+/*
 	HaltGui();
 	mainWindow->Remove(&optionBrowser);
 	mainWindow->Remove(&w);
-	ResumeGui();
+	ResumeGui();*/
 	return menu;
 }
 
