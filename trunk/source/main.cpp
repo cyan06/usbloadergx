@@ -43,7 +43,7 @@
 
 FreeTypeGX *fontSystem;
 struct SSettings Settings;
-struct SSettings2 Settings2;
+//struct SSettings2 Settings2;
 int ExitRequested = 0;
 bool netcheck = false;
 
@@ -89,15 +89,6 @@ DefaultSettings()
 	}
 }
 
-void
-DefaultSettings2()
-{
-	Settings2.video = discdefault;
-	Settings2.vpatch = off;
-	Settings2.language = ConsoleLangDefault;
-	Settings2.ocarina = off;
-	Settings2.ios = i249;
-}
 
 int
 main(int argc, char *argv[])
@@ -146,7 +137,6 @@ main(int argc, char *argv[])
 
 	InitGUIThreads();
 	DefaultSettings();
-	DefaultSettings2();
 	MainMenu(MENU_CHECK);
 	return 0;
 }

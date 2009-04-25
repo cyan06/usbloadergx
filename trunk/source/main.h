@@ -27,14 +27,15 @@ enum {
 enum {
     discdefault,
     systemdefault,
+	patch,
 	pal50,
 	pal60,
 	ntsc
 };
 
 enum {
-    on,
-	off,
+    off,
+	on,
 };
 
 enum {
@@ -59,15 +60,6 @@ struct SSettings {
 	int		ios;
 };
 extern struct SSettings Settings;
-
-struct SSettings2 {
-    int		video;
-    int		language;
-    int     ocarina;
-    int     vpatch;
-	int		ios;
-};
-extern struct SSettings2 Settings2;
 
 void ExitApp();
 extern int ExitRequested;

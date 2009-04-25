@@ -101,10 +101,11 @@ struct THEME
 
 extern struct CFG CFG;
 extern struct THEME THEME;
-//extern u8 ocarinaChoice;
-//extern u8 videoChoice;
-//extern u8 languageChoice;
-//extern u8 viChoice;
+extern u8 ocarinaChoice;
+extern u8 videoChoice;
+extern u8 languageChoice;
+extern u8 viChoice;
+extern u8 iosChoice;
 
 struct Game_CFG
 {
@@ -113,13 +114,14 @@ struct Game_CFG
 	u8 language;
 	u8 ocarina;
 	u8 vipatch;
+	u8 iosChoice;
 };
 
 
 void CFG_Default();
 void CFG_Load(int argc, char **argv);
 struct Game_CFG* CFG_get_game_opt(u8 *id);
-bool CFG_save_game_opt(u8 *id, u8 video, u8 language, u8 ocarina, u8 vipatch);
+bool CFG_save_game_opt(u8 *id);
 bool CFG_forget_game_opt(u8 *id);
 
 char *get_title(struct discHdr *header);

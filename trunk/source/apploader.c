@@ -217,7 +217,7 @@ bool Search_and_patch_Video_Modes(void *Address, u32 Size, GXRModeObj* Table[])
 	return found;
 }
 
-s32 Apploader_Run(entry_point *entry, u32 cheat, u8 videopatch)
+s32 Apploader_Run(entry_point *entry, u8 cheat, u8 videoSelected, u8 vipatch)
 {
 	app_entry appldr_entry;
 	app_init  appldr_init;
@@ -274,7 +274,7 @@ s32 Apploader_Run(entry_point *entry, u32 cheat, u8 videopatch)
 		WDVD_Read(dst, len, (u64)(offset << 2));
 
 
-		if (videopatch == 1) // patch
+		if (videoSelected == 5) // patch
 
 		{
 			switch(CONF_GetVideo())
@@ -307,7 +307,9 @@ s32 Apploader_Run(entry_point *entry, u32 cheat, u8 videopatch)
 
 	    /*GAME HOOK - FISHEARS*/
 		dogamehooks(dst,len);
-		vidolpatcher(dst,len);
+		
+		if (vipatch)
+			vidolpatcher(dst,len);
 
 
 		/*LANGUAGE PATCH - FISHEARS*/

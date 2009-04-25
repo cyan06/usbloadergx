@@ -40,13 +40,11 @@ void __Disc_SetLowMem(void)
 	DCFlushRange((void *)0x80000000, 0x3F00);
 }
 
-void __Disc_SetVMode(u32 videoselected, u8 videopatch)
+void __Disc_SetVMode(u8 videoselected)
 {
 	GXRModeObj *vmode = NULL;
 
 	u32 progressive, tvmode, vmode_reg = 0;
-
-
 
 	/* Get video mode configuration */
 	progressive = (CONF_GetProgressiveScan() > 0) && VIDEO_HaveComponentCable();
@@ -67,7 +65,6 @@ void __Disc_SetVMode(u32 videoselected, u8 videopatch)
 		break;
 	}
 
-	if (videopatch == 0) {
     switch (videoselected) {
     case 0:
 
@@ -114,25 +111,10 @@ void __Disc_SetVMode(u32 videoselected, u8 videopatch)
         vmode     = (progressive) ? &TVNtsc480Prog : &TVNtsc480IntDf;
         break;
     case 4:
-        	tvmode      =  CONF_GetVideo();
-            switch (tvmode) {
-                case CONF_VIDEO_PAL:
-                vmode_reg = (CONF_GetEuRGB60() > 0) ? 5 : 1;
-                break;
-
-                case CONF_VIDEO_MPAL:
-                vmode_reg = 4;
-                break;
-
-                case CONF_VIDEO_NTSC:
-                vmode_reg = 0;
-                break;
-            }
-
-            vmode     = VIDEO_GetPreferredMode(NULL);
-            break;
-            }
-	}
+ //       vmode     = VIDEO_GetPreferredMode(NULL);
+        break;
+    }
+			
 	/* Set video mode register */
 	*(vu32 *)0x800000CC = vmode_reg;
 
@@ -266,7 +248,7 @@ s32 Disc_IsWii(void)
 	return 0;
 }
 
-s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat, u8 videopatch)
+s32 Disc_BootPartition(u64 offset, u8 videoselected, u8 cheat, u8 vipatch)
 {
 	entry_point p_entry;
 
@@ -278,7 +260,7 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat, u8 videopatch)
 		return ret;
 
 	/* Run apploader */
-	ret = Apploader_Run(&p_entry, cheat, videopatch);
+	ret = Apploader_Run(&p_entry, cheat, videoselected, vipatch);
 	if (ret < 0)
 		return ret;
 
@@ -286,7 +268,7 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat, u8 videopatch)
 	__Disc_SetLowMem();
 
 	/* Set an appropiate video mode */
-	__Disc_SetVMode(videoselected, videopatch);
+	__Disc_SetVMode(videoselected);
 
 	/* Set time */
 	__Disc_SetTime();
@@ -313,7 +295,7 @@ s32 Disc_BootPartition(u64 offset, u32 videoselected, u32 cheat, u8 videopatch)
 	return 0;
 }
 
-s32 Disc_WiiBoot(u32 videoselected, u32 cheat, u8 videopatch)
+s32 Disc_WiiBoot(u8 videoselected, u8 cheat, u8 vipatch)
 {
 	u64 offset;
 	s32 ret;
@@ -324,5 +306,5 @@ s32 Disc_WiiBoot(u32 videoselected, u32 cheat, u8 videopatch)
 		return ret;
 
 	/* Boot partition */
-	return Disc_BootPartition(offset, videoselected, cheat, videopatch);
+	return Disc_BootPartition(offset, videoselected, cheat, vipatch);
 }

@@ -2010,7 +2010,7 @@ static int MenuDiscList()
 					}
 					else if (choice == 2)
 					{
-//						GameSettings();
+						//GameSettings();
 						returnHere = true;
 
 					}
@@ -2314,7 +2314,7 @@ static int MenuSettings()
 
 	customOptionList options2(6);
 	sprintf(options2.name[0], "Video Mode");
-	sprintf(options2.name[1], "Video Patch");
+	sprintf(options2.name[1], "VIDTV Patch");
 	sprintf(options2.name[2], "Language");
 	sprintf(options2.name[3], "Ocarina");
 	sprintf(options2.name[4], "Display");
@@ -2405,7 +2405,7 @@ static int MenuSettings()
 	{
 
 		VIDEO_WaitVSync ();
-		if(Settings.video > 4)
+		if(Settings.video > 5)
 			Settings.video = 0;
 		if(Settings.language  > 10)
 			Settings.language = 0;
@@ -2420,6 +2420,7 @@ static int MenuSettings()
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
+		else if (Settings.video == patch) sprintf (options2.value[0],"Auto Patch");
 		else if (Settings.video == pal50) sprintf (options2.value[0],"Force PAL50");
 		else if (Settings.video == pal60) sprintf (options2.value[0],"Force PAL60");
 		else if (Settings.video == ntsc) sprintf (options2.value[0],"Force NTSC");
@@ -2530,7 +2531,7 @@ void GameSettings()
 
 	customOptionList options3(6);
 	sprintf(options3.name[0], "Video Mode");
-	sprintf(options3.name[1], "Video Patch");
+	sprintf(options3.name[1], "VIDTV Patch");
 	sprintf(options3.name[2], "Language");
 	sprintf(options3.name[3], "Ocarina");
 	sprintf(options3.name[4], "Display");
@@ -2603,7 +2604,7 @@ void GameSettings()
 	{
 
 		VIDEO_WaitVSync ();
-		if(Settings.video > 4)
+		if(Settings.video > 5)
 			Settings.video = 0;
 		if(Settings.language  > 10)
 			Settings.language = 0;
@@ -2618,6 +2619,7 @@ void GameSettings()
 
 		if (Settings.video == discdefault) sprintf (options3.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options3.value[0],"System Default");
+		else if (Settings.video == patch) sprintf (options3.value[0],"Auto Patch");
 		else if (Settings.video == pal50) sprintf (options3.value[0],"Force PAL50");
 		else if (Settings.video == pal60) sprintf (options3.value[0],"Force PAL60");
 		else if (Settings.video == ntsc) sprintf (options3.value[0],"Force NTSC");
@@ -3126,7 +3128,10 @@ int MainMenu(int menu)
 
                                 videoselected = 4;
                         break;
+                        case patch:
 
+                                videoselected = 4;
+                        break;
                         default:
                                 videoselected = 0;
                         break;
@@ -3148,19 +3153,19 @@ int MainMenu(int menu)
                         break;
     }
 
-    u8 videopatch = 0;
+    u8 vipatch = 0;
     switch(Settings.vpatch)
     {
                         case on:
-                                videopatch = 1;
+                                vipatch = 1;
                         break;
 
                         case off:
-                                videopatch = 0;
+                                vipatch = 0;
                         break;
 
                         default:
-                                videopatch = 0;
+                                vipatch = 0;
                         break;
     }
 
@@ -3202,136 +3207,8 @@ int MainMenu(int menu)
                                 showinfo = 0;
                         break;
     }
-///////////////////////////////////Game specific settings///////////////////////////////////////////////
-	//should be not needed anyway i will leave out commented
-	/*switch(Settings2.language)
-    {
-                        case ConsoleLangDefault:
-                                configbytes[0] = 0xCD;
-                        break;
 
-                        case jap:
-                                configbytes[0] = 0x00;
-                        break;
-
-                        case eng:
-                                configbytes[0] = 0x01;
-                        break;
-
-                        case ger:
-                                configbytes[0] = 0x02;
-                        break;
-
-                        case fren:
-                                configbytes[0] = 0x03;
-                        break;
-
-                        case esp:
-                                configbytes[0] = 0x04;
-                        break;
-
-                        case it:
-                                configbytes[0] = 0x05;
-                        break;
-
-                        case dut:
-                                configbytes[0] = 0x06;
-                        break;
-
-                        case schin:
-                                configbytes[0] = 0x07;
-                        break;
-
-                        case tchin:
-                                configbytes[0] = 0x08;
-                        break;
-
-                        case kor:
-                                configbytes[0] = 0x09;
-                        break;
-                        //wenn nicht genau klar ist welches
-                        default:
-                                configbytes[0] = 0xCD;
-                        break;
-    }
-
-    u32 videoselected1 = 0;
-
-    switch(Settings2.video)
-    {
-                        case discdefault:
-                                videoselected = 0;
-                        break;
-
-                        case pal50:
-                                videoselected = 1;
-                        break;
-
-                        case pal60:
-                                videoselected = 2;
-                        break;
-
-                        case ntsc:
-                                videoselected = 3;
-
-                        case systemdefault:
-
-                                videoselected = 4;
-                        break;
-
-                        default:
-                                videoselected = 0;
-                        break;
-    }
-
-    u32 cheat1 = 0;
-    switch(Settings2.ocarina)
-    {
-                        case on:
-                                cheat = 1;
-                        break;
-
-                        case off:
-                                cheat = 0;
-                        break;
-
-                        default:
-                                cheat = 1;
-                        break;
-    }
-
-    u8 videopatch1 = 0;
-    switch(Settings2.vpatch)
-    {
-                        case on:
-                                videopatch = 1;
-                        break;
-
-                        case off:
-                                videopatch = 0;
-                        break;
-
-                        default:
-                                videopatch = 0;
-                        break;
-    }
-
-	u8 ios = 0;
-    switch(Settings2.ios)
-    {
-                        case i249:
-                                showinfo = 0;
-                        break;
-
-                        case i222:
-                                showinfo = 1;
-                        break;
-
-						default:
-                                showinfo = 0;
-                        break;
-    }*/
-    ret = Disc_WiiBoot(videoselected, cheat, videopatch);
+    ret = Disc_WiiBoot(videoselected, cheat, vipatch);
     if (ret < 0) {
         printf("    ERROR: BOOT ERROR! (ret = %d)\n", ret);
         SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);

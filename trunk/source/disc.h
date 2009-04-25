@@ -48,8 +48,8 @@ void __Disc_SetLowMem(void);
 s32  Disc_SetUSB(u8 *);
 s32  Disc_ReadHeader(void *);
 s32  Disc_IsWii(void);
-s32  Disc_BootPartition(u64, u32, u32, u8);
-s32  Disc_WiiBoot(u32, u32, u8);
+s32  Disc_BootPartition(u64, u8, u8, u8);
+s32  Disc_WiiBoot(u8, u8, u8);
 
 #ifdef __cplusplus
 }

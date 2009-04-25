@@ -27,10 +27,11 @@ char current_path[100];
 
 struct CFG CFG;
 struct THEME THEME;
-//u8 ocarinaChoice;
-//u8 videoChoice;
-//u8 languageChoice;
-//u8 viChoice;
+u8 ocarinaChoice;
+u8 videoChoice;
+u8 languageChoice;
+u8 viChoice;
+u8 iosChoice;
 
 #define TITLE_MAX 65
 
@@ -59,12 +60,11 @@ struct TextMap
 	char *name;
 	int id;
 };
-/*
+
 struct TextMap map_video[] =
 {
 	{ "system", CFG_VIDEO_SYS },
 	{ "game",   CFG_VIDEO_GAME },
-	{ "auto",   CFG_VIDEO_DEFAULT },
 	{ "patch",  CFG_VIDEO_PATCH },
 	{ "pal50", CFG_VIDEO_PAL50 },
 	{ "pal60", CFG_VIDEO_PAL60 },
@@ -88,7 +88,7 @@ struct TextMap map_language[] =
 	{ NULL, -1 }
 };
 
-*/
+
 struct TextMap map_alignment[] =
 {
 	{ "left",   CFG_ALIGN_LEFT },
@@ -616,10 +616,10 @@ void cfg_parsearg(int argc, char **argv)
 	}
 }
 */
-/*
+
 // PER-GAME SETTINGS
 
-
+/*
 // return existing or new
 struct Game_CFG* cfg_get_game(u8 *id)
 {
@@ -698,7 +698,7 @@ void game_set(char *name, char *val)
 
 bool cfg_load_games()
 {
-	return cfg_parsefile("settings.cfg", &game_set);
+	return cfg_parsefile("SD:/config/settings.cfg", &game_set);
 }
 
 bool cfg_save_games()
@@ -706,7 +706,7 @@ bool cfg_save_games()
 	FILE *f;
 	int i;
 
-	f = fopen("settings.cfg", "wb");
+	f = fopen("SD:/config/settings.cfg", "wb");
 	if (!f) {
 		printf("Error saving %s\n", "settings.cfg");
 		sleep(1);
@@ -741,13 +741,8 @@ struct Game_CFG* CFG_get_game_opt(u8 *id)
 	return NULL;
 }
 
-bool CFG_save_game_opt(u8 *id, u8 video, u8 language, u8 ocarina, u8 vipatch)
+bool CFG_save_game_opt(u8 *id)
 {
-	ocarinaChoice = ocarina;
-	videoChoice = video;
-	languageChoice = language;
-	viChoice = vipatch;
-	
 	struct Game_CFG *game = cfg_get_game(id);
 	if (!game) return false;
 	cfg_set_game_opt(game, id);
@@ -768,25 +763,6 @@ bool CFG_forget_game_opt(u8 *id)
 	return cfg_save_games();
 }
 */
-void chdir_app(char *arg)
-{
-	char appdir[100] = "SD:";
-	char dir[100], *pos1, *pos2;
-
-	pos1 = strchr(arg, ':');
-	// trim file name
-	pos2 = strrchr(arg, '/');
-	if (pos1 && pos2) {
-		pos1++;
-		pos2++;
-		strncpy(dir, pos1, pos2 - pos1);
-		dir[pos2 - pos1] = 0;
-		strcat(appdir,dir);
-		chdir(appdir);
-		strncpy(current_path, appdir, sizeof(current_path));
-	}
-}   
-
 void CFG_Load(int argc, char **argv)
 {
 	char pathname[200];
