@@ -102,6 +102,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 	scrollbarBoxBtn->SetTrigger(trigHeldA);
     }
 
+//	optionBg = new GuiImage(bgOptionsEntry);
 	for(int i=0; i<PAGESIZE; i++)
 	{
 		optionTxt[i] = new GuiText(options->name[i], 20, (GXColor){0, 0, 0, 0xff});
@@ -219,6 +220,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *the
 	scrollbarBoxBtn->SetTrigger(trigHeldA);
     }
 
+//	optionBg = new GuiImage(bgOptionsEntry);
 	for(int i=0; i<PAGESIZE; i++)
 	{
 		optionTxt[i] = new GuiText(options->name[i], 20, (GXColor){0, 0, 0, 0xff});
@@ -273,6 +275,7 @@ GuiOptionBrowser::~GuiOptionBrowser()
 	delete trigA;
 	delete btnSoundClick;
 
+//	delete optionBg;
 	for(int i=0; i<PAGESIZE; i++)
 	{
 		delete optionTxt[i];
@@ -414,8 +417,8 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 				listOffset = (startat-4);selectedItem=startat;
 				optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);}
 			this->SetFocus(1);
+			loaded = 1;
 		}
-	loaded++;
 	
 	if(state == STATE_DISABLED || !t)
 		return;

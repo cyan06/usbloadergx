@@ -1528,7 +1528,7 @@ static int MenuDiscList()
 	OptionList options;
 	f32 free, used, size = 0.0;
 	u32 cnt = 0, nolist;
-	char text[ISFS_MAXPATH], text2[20];
+	char text[MAX_CHARACTERS + 4], text2[20];
 	int choice = 0, selectedold = 100;
 	s32 ret;
 
@@ -1539,20 +1539,17 @@ static int MenuDiscList()
     } else {
         for (cnt = 0; cnt < gameCnt; cnt++) {
             struct discHdr *header = &gameList[cnt];
-            static char buffer[MAX_CHARACTERS + 4];
-            memset(buffer, 0, sizeof(buffer));
+
             if (strlen(get_title(header)) < (MAX_CHARACTERS + 3))
 			{
                 sprintf(options.name[cnt], "%s", get_title(header));
             }
 			else
 			{
-                strncpy(buffer, get_title(header),  MAX_CHARACTERS);
-                strncat(buffer, "...", 3);
-
-                sprintf(options.name[cnt], "%s", buffer);
+                sprintf(options.name[cnt], get_title(header),  MAX_CHARACTERS);
+                strncat(options.name[cnt], "...", 3);
             }
-            sprintf (options.value[cnt],0);
+            *options.value[cnt] = '\0';
         }
     }
 
@@ -1932,6 +1929,11 @@ static int MenuDiscList()
 					strncat(buffer, "...", 3);
 					sprintf(text, "%s", buffer);
 				}
+				
+				bool returnHere = true;
+				while (returnHere)
+				{
+					returnHere = false;
 				wiilight(1);
 				sprintf(text2, "%.2fGB", size);
 				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
@@ -1974,9 +1976,8 @@ static int MenuDiscList()
 				}
 				else if (choice == 2)
 				{
-					//menu = MENU_GAME_SETTINGS;
-						break;
-
+//					GameSettings();
+					returnHere = true;
 					
 				}
 				else if (choice == 3)
@@ -1992,7 +1993,7 @@ static int MenuDiscList()
 					optionBrowser.SetFocus(1);
 
 			}
-		}
+		}	}
 	}
 
 
@@ -2486,7 +2487,7 @@ static int MenuSettings()
 /********************************************************************************
 *Game specific settings
 *********************************************************************************/
-static int MenuGameSettings()
+void GameSettings()
 {
 	int menu = MENU_NONE;
 	int ret;
@@ -2682,7 +2683,7 @@ static int MenuGameSettings()
 	mainWindow->Remove(&optionBrowser3);
 	mainWindow->Remove(&w);
 	ResumeGui();
-	return menu;
+	return;
 }
 
 /****************************************************************************
@@ -2985,8 +2986,8 @@ int MainMenu(int menu)
             case MENU_SETTINGS:
 				currentMenu = MenuSettings();
 				break;
-			case MENU_GAME_SETTINGS:
-				currentMenu = MenuGameSettings();
+//			case MENU_GAME_SETTINGS:
+//				currentMenu = MenuGameSettings();
 				break;
             case MENU_DISCLIST:
 				currentMenu = MenuDiscList();

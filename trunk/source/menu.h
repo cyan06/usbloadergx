@@ -14,6 +14,7 @@
 void InitGUIThreads();
 int MainMenu (int menuitem);
 void wiilight(int enable);
+void GameSettings();
 enum
 {
 	MENU_EXIT = -1,
