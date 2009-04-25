@@ -1988,7 +1988,7 @@ static int MenuDiscList()
 						sprintf(entered,"%s",text);
 						OnScreenKeyboard(entered, 40);
 						WBFS_RenameGame(header->id,entered);
-						menu = MENU_DISCLIST;
+						menu = MENU_CHECK;
 					}
 					else if(choice == 0)
 						optionBrowser.SetFocus(1);
