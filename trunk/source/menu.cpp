@@ -74,6 +74,7 @@ static char gameregion[7];
 //power button fix
 extern u8 shutdown;
 
+
 //Wiilight stuff
 static vu32 *_wiilight_reg = (u32*)0xCD0000C0;
 void wiilight(int enable){             // Toggle wiilight (thanks Bool for wiilight source)
@@ -1556,6 +1557,7 @@ static int MenuDiscList()
 {
 	int menu = MENU_NONE;
 	char imgPath[100];
+	__Disc_SetLowMem();
 
 	OptionList options;
 	f32 free, used, size = 0.0;
@@ -1921,6 +1923,7 @@ static int MenuDiscList()
 						delete coverImg;
 						coverImg = NULL;
 					}
+					__Disc_SetLowMem();
 					coverImg = new GuiImage(cover);
 					coverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 					coverImg->SetPosition(THEME.cover_x,THEME.cover_y);
@@ -1946,11 +1949,12 @@ static int MenuDiscList()
 				}
 				break;
 			}
+			__Disc_SetLowMem();
 
 			if ((s32) (cnt) == gameSelected) {
 				struct discHdr *header = &gameList[gameSelected];
 				WBFS_GameSize(header->id, &size);
-
+                __Disc_SetLowMem();
 				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
 					sprintf(text, "%s", get_title(header));
 				}
@@ -1958,12 +1962,13 @@ static int MenuDiscList()
 					strncpy(text, get_title(header),  MAX_CHARACTERS);
 					strncat(text, "...", 3);
 				}
-				
+
 				bool returnHere = true;
 				while (returnHere)
 				{
 					returnHere = false;
 					wiilight(1);
+					 __Disc_SetLowMem();
 					sprintf(text2, "%.2fGB", size);
 					sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 					sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
@@ -2007,7 +2012,7 @@ static int MenuDiscList()
 					{
 //						GameSettings();
 						returnHere = true;
-						
+
 					}
 					else if (choice == 3)
 					{
@@ -2302,6 +2307,7 @@ static int MenuFormat()
 
 static int MenuSettings()
 {
+    __Disc_SetLowMem();
 	int menu = MENU_NONE;
 	int ret;
 //	char imgPath[100];
@@ -2411,7 +2417,7 @@ static int MenuSettings()
 			Settings.sinfo = 0;
 		if(Settings.ios  > 1)
 			Settings.ios = 0;
-			
+
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
 		else if (Settings.video == pal50) sprintf (options2.value[0],"Force PAL50");
@@ -2443,7 +2449,7 @@ static int MenuSettings()
 
 		if (Settings.ios == i249) sprintf (options2.value[5],"249");
 		else if (Settings.ios == i222) sprintf (options2.value[5],"222");
-				
+
 		ret = optionBrowser2.GetClickedOption();
 
 		switch (ret)
@@ -2563,7 +2569,7 @@ void GameSettings()
 	saveBtn.SetTrigger(&trigA);
 	saveBtn.SetTrigger(&trigB);
 	saveBtn.SetEffectGrow();
-	
+
 	GuiText deleteBtnTxt("Delete", 22, (GXColor){0, 0, 0, 255});
 	deleteBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage deleteBtnImg(&btnOutline);
@@ -2609,7 +2615,7 @@ void GameSettings()
 			Settings.sinfo = 0;
 		if(Settings.ios  > 1)
 			Settings.ios = 0;
-		
+
 		if (Settings.video == discdefault) sprintf (options3.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options3.value[0],"System Default");
 		else if (Settings.video == pal50) sprintf (options3.value[0],"Force PAL50");
@@ -2641,7 +2647,7 @@ void GameSettings()
 
 		if (Settings.ios == i249) sprintf (options3.value[5],"249");
 		else if (Settings.ios == i222) sprintf (options3.value[5],"222");
-		
+
 		ret = optionBrowser3.GetClickedOption();
 
 		switch (ret)
@@ -2674,16 +2680,16 @@ void GameSettings()
 			}
 		if (deleteBtn.GetState() == STATE_CLICKED)
 			{
-			
+
 /*			int choice = WindowPrompt(
 					"Do you really want to delete:",
 					"Game",
 					"Yes","Cancel");
 
-					if (choice == 1) 
+					if (choice == 1)
 						{
 						ret = WBFS_RemoveGame(header->id);
-						if (ret < 0) 
+						if (ret < 0)
 							{
 							sprintf(text, "Error: %i", ret);
 							WindowPrompt(
@@ -2699,11 +2705,11 @@ void GameSettings()
 							"OK",0);
 							optionBrowser.SetFocus(1);
 							}
-							
+
 						menu = MENU_DISCLIST;
 						break;
 						}*/
-						
+
 			}
 	}
 

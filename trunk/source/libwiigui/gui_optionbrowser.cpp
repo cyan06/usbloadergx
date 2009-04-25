@@ -110,7 +110,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const u8 *image
 		optionTxt[i]->SetPosition(24,0);
 
 		optionBg[i] = new GuiImage(bgOptionsEntry);
-		
+
 		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
 		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		optionVal[i]->SetPosition(250,0);
@@ -228,7 +228,7 @@ GuiOptionBrowser::GuiOptionBrowser(int w, int h, OptionList * l, const char *the
 		optionTxt[i]->SetPosition(24,0);
 
 		optionBg[i] = new GuiImage(bgOptionsEntry);
-		
+
 		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
 		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		optionVal[i]->SetPosition(250,0);
@@ -271,6 +271,7 @@ GuiOptionBrowser::~GuiOptionBrowser()
     delete bgOptionsImg;
 	delete bgOptions;
 	delete bgOptionsEntry;
+	loaded = 0;
 
 	delete trigA;
 	delete btnSoundClick;
@@ -403,7 +404,7 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 	//go to the last game selected
 	if ((loaded == 0) && (startat>0))
 	{
-			
+
 			if (startat > (lang-9)){
 				listOffset= (lang-9);
 				selectedItem=startat;
@@ -414,21 +415,22 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 				optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);
 				}
 			else {
-				listOffset = (startat-4);selectedItem=startat;
+				listOffset = (startat-4);
+				selectedItem=startat;
 				optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);}
 			this->SetFocus(1);
 			loaded = 1;
 		}
-	
+
 	if(state == STATE_DISABLED || !t)
 		return;
-												
-	
+
+
 	// scrolldelay affects how fast the list scrolls
 	// when the arrows are clicked
 	float scrolldelay = 3.5;
-	
-	
+
+
     if (scrollbaron == 1) {
 	// update the location of the scroll box based on the position in the option list
 
@@ -481,16 +483,16 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 		return; // skip navigation
 
     if (scrollbaron == 1) {
-		
-	if (t->Down() || 
+
+	if (t->Down() ||
 	arrowDownBtn->GetState() == STATE_CLICKED || ////////////////////////////////////////////down
-	arrowDownBtn->GetState() == STATE_HELD) 
+	arrowDownBtn->GetState() == STATE_HELD)
 	{
 
 		next = this->FindMenuItem(optionIndex[selectedItem], 1);
-		
+
 		if(next >= 0)
-		{	
+		{
 			if(selectedItem == PAGESIZE-1)
 			{
 				// move list down by 1
@@ -515,11 +517,11 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 
         } else {
             arrowDownBtn->ResetState();
-			
+
         }
-        
+
 	}
-	else if(t->Up() || 
+	else if(t->Up() ||
 	arrowUpBtn->GetState() == STATE_CLICKED || ////////////////////////////////////////////up
 	arrowUpBtn->GetState() == STATE_HELD)
 	{
@@ -551,8 +553,8 @@ void GuiOptionBrowser::Update(GuiTrigger * t)
 
         } else {
             arrowUpBtn->ResetState();
-			
-        }  
+
+        }
 	}
 
     if(scrollbarBoxBtn->GetState() == STATE_HELD &&

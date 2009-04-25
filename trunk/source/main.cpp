@@ -102,7 +102,7 @@ DefaultSettings2()
 int
 main(int argc, char *argv[])
 {
- //   __Disc_SetLowMem();
+    __Disc_SetLowMem();
     s32 ret2;
     /* Load Custom IOS */
 	ret2 = IOS_ReloadIOS(249);
