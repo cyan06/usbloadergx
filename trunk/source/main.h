@@ -56,6 +56,7 @@ struct SSettings {
     int     ocarina;
     int     vpatch;
 	int		sinfo;
+	int		ios;
 };
 extern struct SSettings Settings;
 

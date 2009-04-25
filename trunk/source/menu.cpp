@@ -2281,7 +2281,8 @@ static int MenuSettings()
 	sprintf(options2.name[2], "Language");
 	sprintf(options2.name[3], "Ocarina");
 	sprintf(options2.name[4], "Display");
-	options2.length = 5;
+	sprintf(options2.name[5], "IOS");
+	options2.length = 6;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
@@ -2378,7 +2379,9 @@ static int MenuSettings()
 			Settings.vpatch = 0;
 		if(Settings.sinfo  > 3)
 			Settings.sinfo = 0;
-
+		if(Settings.ios  > 1)
+			Settings.ios = 0;
+			
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
 		else if (Settings.video == pal50) sprintf (options2.value[0],"Force PAL50");
@@ -2408,6 +2411,9 @@ static int MenuSettings()
 		else if (Settings.sinfo == Both) sprintf (options2.value[4],"Both");
 		else if (Settings.sinfo == Neither) sprintf (options2.value[4],"Neither");
 
+		if (Settings.ios == i249) sprintf (options2.value[5],"249");
+		else if (Settings.ios == i222) sprintf (options2.value[5],"222");
+				
 		ret = optionBrowser2.GetClickedOption();
 
 		switch (ret)
@@ -2428,7 +2434,9 @@ static int MenuSettings()
 			case 4:
 				Settings.sinfo++;
 				break;
-
+			case 5:
+				Settings.ios++;
+				break;
 		}
 
 		if(shutdown == 1)
@@ -2449,7 +2457,7 @@ static int MenuSettings()
 			//password check to un/lock Install,Delete and Format
 			char entered[8] = "";
 			OnScreenKeyboard(entered, 8);
-			if (!strcmp(entered,"AB121B"))
+			if (!strcmp(entered,"ab121b"))
 			{
 			if (godmode == 0)
 				{
@@ -2478,9 +2486,6 @@ static int MenuSettings()
 /********************************************************************************
 *Game specific settings
 *********************************************************************************/
-
-
-
 static int MenuGameSettings()
 {
 	int menu = MENU_NONE;
@@ -2492,8 +2497,9 @@ static int MenuGameSettings()
 	sprintf(options3.name[1], "Video Patch");
 	sprintf(options3.name[2], "Language");
 	sprintf(options3.name[3], "Ocarina");
-	sprintf(options3.name[4], "IOS");
-	options3.length = 5;
+	sprintf(options3.name[4], "Display");
+	sprintf(options3.name[5], "IOS");
+	options3.length = 6;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(settings_menu_button_png);
@@ -2521,7 +2527,7 @@ static int MenuGameSettings()
 	GuiImage saveBtnImg(&btnOutline);
 	GuiButton saveBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
 	saveBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	saveBtn.SetPosition(0, 400);
+	saveBtn.SetPosition(-180, 400);
 	saveBtn.SetLabel(&saveBtnTxt);
 	saveBtn.SetImage(&saveBtnImg);
 	saveBtn.SetSoundOver(&btnSoundOver);
@@ -2529,19 +2535,6 @@ static int MenuGameSettings()
 	saveBtn.SetTrigger(&trigB);
 	saveBtn.SetEffectGrow();
 	
-	GuiText playBtnTxt("Play Game", 22, (GXColor){0, 0, 0, 255});
-	playBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
-	GuiImage playBtnImg(&btnOutline);
-	GuiButton playBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
-	playBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	playBtn.SetPosition(-180, 400);
-	playBtn.SetLabel(&playBtnTxt);
-	playBtn.SetImage(&playBtnImg);
-	playBtn.SetSoundOver(&btnSoundOver);
-	playBtn.SetTrigger(&trigA);
-	playBtn.SetTrigger(&trigB);
-	playBtn.SetEffectGrow();
-
 	GuiText deleteBtnTxt("Delete", 22, (GXColor){0, 0, 0, 255});
 	deleteBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage deleteBtnImg(&btnOutline);
@@ -2563,7 +2556,6 @@ static int MenuGameSettings()
 	GuiWindow w(screenwidth, screenheight);
 	w.Append(&settingsbackgroundbtn);
     w.Append(&titleTxt);
-    w.Append(&playBtn);
 	w.Append(&deleteBtn);
 	w.Append(&saveBtn);
 
@@ -2576,134 +2568,114 @@ static int MenuGameSettings()
 	{
 
 		VIDEO_WaitVSync ();
-		if(Settings2.video > 3)
-			Settings2.video = 0;
-		if(Settings2.language  > 10)
-			Settings2.language = 0;
-        if(Settings2.ocarina > 1)
-			Settings2.ocarina =0;
-        if(Settings2.vpatch  > 1)
-			Settings2.vpatch = 0;
-		if(Settings2.ios  > 1)
-			Settings2.ios = 0;
+		if(Settings.video > 4)
+			Settings.video = 0;
+		if(Settings.language  > 10)
+			Settings.language = 0;
+        if(Settings.ocarina  > 1)
+			Settings.ocarina = 0;
+        if(Settings.vpatch  > 1)
+			Settings.vpatch = 0;
+		if(Settings.sinfo  > 3)
+			Settings.sinfo = 0;
+		if(Settings.ios  > 1)
+			Settings.ios = 0;
+		
+		if (Settings.video == discdefault) sprintf (options3.value[0],"Disc Default");
+		else if (Settings.video == systemdefault) sprintf (options3.value[0],"System Default");
+		else if (Settings.video == pal50) sprintf (options3.value[0],"Force PAL50");
+		else if (Settings.video == pal60) sprintf (options3.value[0],"Force PAL60");
+		else if (Settings.video == ntsc) sprintf (options3.value[0],"Force NTSC");
 
-		if (Settings2.video == discdefault) sprintf (options3.value[0],"Disc Default");
-		else if (Settings2.video == systemdefault) sprintf (options3.value[0],"System Default");
-		else if (Settings2.video == pal50) sprintf (options3.value[0],"Force PAL50");
-		else if (Settings2.video == pal60) sprintf (options3.value[0],"Force PAL60");
-		else if (Settings2.video == ntsc) sprintf (options3.value[0],"Force NTSC");
+        if (Settings.vpatch == on) sprintf (options3.value[1],"ON");
+		else if (Settings.vpatch == off) sprintf (options3.value[1],"OFF");
 
-        if (Settings2.vpatch == on) sprintf (options3.value[1],"ON");
-		else if (Settings2.vpatch == off) sprintf (options3.value[1],"OFF");
+		if (Settings.language == ConsoleLangDefault) sprintf (options3.value[2],"Console Default");
+		else if (Settings.language == jap) sprintf (options3.value[2],"Japanese");
+		else if (Settings.language == ger) sprintf (options3.value[2],"German");
+		else if (Settings.language == eng) sprintf (options3.value[2],"English");
+		else if (Settings.language == fren) sprintf (options3.value[2],"French");
+		else if (Settings.language == esp) sprintf (options3.value[2],"Spanish");
+        else if (Settings.language == it) sprintf (options3.value[2],"Italian");
+		else if (Settings.language == dut) sprintf (options3.value[2],"Dutch");
+		else if (Settings.language == schin) sprintf (options3.value[2],"S. Chinese");
+		else if (Settings.language == tchin) sprintf (options3.value[2],"T. Chinese");
+		else if (Settings.language == kor) sprintf (options3.value[2],"Korean");
 
-		if (Settings2.language == ConsoleLangDefault) sprintf (options3.value[2],"Console Default");
-		else if (Settings2.language == jap) sprintf (options3.value[2],"Japanese");
-		else if (Settings2.language == ger) sprintf (options3.value[2],"German");
-		else if (Settings2.language == eng) sprintf (options3.value[2],"English");
-		else if (Settings2.language == fren) sprintf (options3.value[2],"French");
-		else if (Settings2.language == esp) sprintf (options3.value[2],"Spanish");
-        else if (Settings2.language == it) sprintf (options3.value[2],"Italian");
-		else if (Settings2.language == dut) sprintf (options3.value[2],"Dutch");
-		else if (Settings2.language == schin) sprintf (options3.value[2],"S. Chinese");
-		else if (Settings2.language == tchin) sprintf (options3.value[2],"T. Chinese");
-		else if (Settings2.language == kor) sprintf (options3.value[2],"Korean");
+        if (Settings.ocarina == on) sprintf (options3.value[3],"ON");
+		else if (Settings.ocarina == off) sprintf (options3.value[3],"OFF");
 
-        if (Settings2.ocarina == on) sprintf (options3.value[3],"ON");
-		else if (Settings2.ocarina == off) sprintf (options3.value[3],"OFF");
+		if (Settings.sinfo == GameID) sprintf (options3.value[4],"Game ID");
+		else if (Settings.sinfo == GameRegion) sprintf (options3.value[4],"Game Region");
+		else if (Settings.sinfo == Both) sprintf (options3.value[4],"Both");
+		else if (Settings.sinfo == Neither) sprintf (options3.value[4],"Neither");
 
-		if (Settings2.ios == i249) sprintf (options3.value[4],"249");
-		else if (Settings2.ios == i222) sprintf (options3.value[4],"222");
+		if (Settings.ios == i249) sprintf (options3.value[5],"249");
+		else if (Settings.ios == i222) sprintf (options3.value[5],"222");
+		
 		ret = optionBrowser3.GetClickedOption();
 
 		switch (ret)
 		{
 			case 0:
-				Settings2.video++;
+				Settings.video++;
 				break;
 
 			case 1:
-				Settings2.vpatch++;
+				Settings.vpatch++;
 				break;
             case 2:
-				Settings2.language++;
+				Settings.language++;
 				break;
             case 3:
-				Settings2.ocarina++;
+				Settings.ocarina++;
 				break;
 			case 4:
-				Settings2.ios++;
+				Settings.sinfo++;
 				break;
+			case 5:
+				Settings.ios++;
+				break;
+			}
 
-		}
-
-		if(shutdown == 1)
-			Sys_Shutdown();
-
-		if(playBtn.GetState() == STATE_CLICKED)
-		
-			{menu = MENU_DISCLIST;
-						break;
-			
-			/*
-					// Set USB mode 
-					ret = Disc_SetUSB(header->id);
-					if (ret < 0) {
-						sprintf(text, "Error: %i", ret);
-						WindowPrompt(
-						"Failed to set USB:",
-						text,
-						"OK",0);
-					} 
-					else {
-						// Open disc 
-						ret = Disc_Open();
-						if (ret < 0) {
-							sprintf(text, "Error: %i", ret);
-							WindowPrompt(
-							"Failed to boot:",
-							text,
-							"OK",0);
-						} 
-						else {
-							menu = MENU_EXIT;
-						}
-					}*/
-				}
 		if(saveBtn.GetState() == STATE_CLICKED)
-		
-			{menu = MENU_DISCLIST;
-						break;}
+			{
+			menu = MENU_DISCLIST;
+			break;
+			}
 		if (deleteBtn.GetState() == STATE_CLICKED)
-				{menu = MENU_DISCLIST;
-						break;
-					/*choice = WindowPrompt(
+			{
+			
+/*			int choice = WindowPrompt(
 					"Do you really want to delete:",
-					text,
+					"Game",
 					"Yes","Cancel");
 
-					if (choice == 1) {
+					if (choice == 1) 
+						{
 						ret = WBFS_RemoveGame(header->id);
-						if (ret < 0) {
+						if (ret < 0) 
+							{
 							sprintf(text, "Error: %i", ret);
 							WindowPrompt(
 							"Can't delete:",
-							text,
+							"game",
 							"OK",0);
-						}
+							}
 						else {
 							__Menu_GetEntries();
 							WindowPrompt(
 							"Successfully deleted:",
-							text,
+							"game",
 							"OK",0);
 							optionBrowser.SetFocus(1);
-						}
+							}
+							
 						menu = MENU_DISCLIST;
 						break;
-					}*/
-				}
-
-		
+						}*/
+						
+			}
 	}
 
 	HaltGui();
@@ -3159,7 +3131,7 @@ int MainMenu(int menu)
                                 videopatch = 0;
                         break;
     }
-/*
+
 	u8 showinfo = 0;
     switch(Settings.sinfo)
     {
@@ -3182,9 +3154,25 @@ int MainMenu(int menu)
                         default:
                                 showinfo = 0;
                         break;
-    }*/
+    }
+	u8 ios = 0;
+    switch(Settings.ios)
+    {
+                        case i249:
+                                showinfo = 0;
+                        break;
+
+                        case i222:
+                                showinfo = 1;
+                        break;
+
+						default:
+                                showinfo = 0;
+                        break;
+    }
 ///////////////////////////////////Game specific settings///////////////////////////////////////////////
-	switch(Settings2.language)
+	//should be not needed anyway i will leave out commented
+	/*switch(Settings2.language)
     {
                         case ConsoleLangDefault:
                                 configbytes[0] = 0xCD;
@@ -3296,6 +3284,21 @@ int MainMenu(int menu)
                         break;
     }
 
+	u8 ios = 0;
+    switch(Settings2.ios)
+    {
+                        case i249:
+                                showinfo = 0;
+                        break;
+
+                        case i222:
+                                showinfo = 1;
+                        break;
+
+						default:
+                                showinfo = 0;
+                        break;
+    }*/
     ret = Disc_WiiBoot(videoselected, cheat, videopatch);
     if (ret < 0) {
         printf("    ERROR: BOOT ERROR! (ret = %d)\n", ret);
