@@ -525,7 +525,8 @@ int
 DeviceWait(const char *title, const char *msg, const char *btn1Label, const char *btn2Label)
 {
 	int i = 30;
-
+	char timer[20];
+	
 	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
@@ -536,10 +537,15 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
-
+	
+	GuiText timerTxt(timer, 26, (GXColor){0, 0, 0, 255});
+	timerTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	timerTxt.SetPosition(0,200);
+	
 	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,60);
+	
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	msgTxt.SetPosition(0,0);
@@ -548,6 +554,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&titleTxt);
 	promptWindow.Append(&msgTxt);
+	promptWindow.Append(&timerTxt);
 
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
 	HaltGui();
@@ -559,6 +566,8 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
     s32 ret2;
 	while(i >= 0)
 	{
+		sprintf(timer, "%u s left", i);
+		timerTxt.SetText(timer);
 		VIDEO_WaitVSync();
 		IOS_ReloadIOS(249);
 		sleep(1);
