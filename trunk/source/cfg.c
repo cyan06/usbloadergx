@@ -174,17 +174,13 @@ void CFG_Default()
 {
 	CFG.widescreen = CONF_GetAspectRatio();
 	
-	if (CFG.widescreen)
-	{
-		snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/wimages/");
+	if (CFG.widescreen) {
 		snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
 	}
 	else
 	{
-		snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
 		snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/theme/");
 	}
-
 //	CFG.simple  = 0;
 //	CFG.video	= CFG_VIDEO_DEFAULT;
 //	CFG.home	= CFG_HOME_REBOOT;
@@ -332,12 +328,12 @@ void widescreen_set(char *name, char *val)
 	if (cfg_bool("widescreen", &CFG.widescreen)) //reset default
 	{
 		if (CFG.widescreen) {
-			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/wimages/");
+//			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/wimages/");
 			snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
 		}
 		else
 		{
-			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
+//			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
 			snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/theme/");
 		}
 	}

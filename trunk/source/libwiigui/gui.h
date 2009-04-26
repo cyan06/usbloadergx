@@ -533,6 +533,8 @@ class GuiImage : public GuiElement
 		//!Sets the number of times to draw the image horizontally
 		//!\param t Number of times to draw the image
 		void SetTile(int t);
+		// not NULL set horizontal scale to 0.8 //added
+		void SetWidescreen(short w);
 		//!Constantly called to draw the image
 		void Draw();
 		//!Gets the image data
@@ -569,6 +571,7 @@ class GuiImage : public GuiElement
 		f32 imageangle; //!< Angle to draw the image
 		int tile; //!< Number of times to draw (tile) the image horizontally
 		int stripe; //!< Alpha value (0-255) to apply a stripe effect to the texture
+		short widescreen; //added
 };
 
 //!Display, manage, and manipulate text in the GUI

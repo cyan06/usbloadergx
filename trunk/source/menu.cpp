@@ -39,7 +39,7 @@
 
 static GuiImage * coverImg = NULL; //variable always start with lower case
 static GuiImageData * cover = NULL;
-static GuiImage * diskImg = NULL;
+//static GuiImage * diskImg = NULL;
 static GuiImageData * diskCover = NULL;
 
 static struct discHdr *gameList = NULL;
@@ -174,6 +174,7 @@ static void WindowCredits(void)
 
 	GuiImageData star(little_star_png);
 	GuiImage starImg(&star);
+	starImg.SetWidescreen(CFG.widescreen); //added
 	starImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	starImg.SetPosition(500,335);
 
@@ -612,6 +613,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 
 	GuiImageData dialogBox(dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
+	dialogBoxImg.SetWidescreen(CFG.widescreen);
 
 	GuiText msgTxt(msg, 22, (GXColor){50, 50, 50, 255});
 	GuiButton nameBtn(120,50);
@@ -634,11 +636,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		delete diskCover;
 		diskCover = NULL;
 	}
-	if (diskImg)
-	{
-		delete diskImg;
-		diskImg = NULL;
-	}
+
 	char imgPath[60];
 	snprintf(imgPath,sizeof(imgPath),"SD:/images/disc/%s.png",ID);
     diskCover = new GuiImageData(imgPath,0);
@@ -650,20 +648,22 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		diskCover = new GuiImageData(imgPath, 0);
 		if (!diskCover->GetImage())
 			{
+			delete diskCover;
 			diskCover = new GuiImageData(imgPath,nodisc_png);
 			}
 		}
 		
-	diskImg = new GuiImage(diskCover);
-	diskImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-    diskImg->SetAngle(angle);
-    diskImg->Draw();
+	GuiImage diskImg(diskCover);
+	diskImg.SetWidescreen(CFG.widescreen);
+	diskImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+    diskImg.SetAngle(angle);
+    diskImg.Draw();
 
 	GuiButton btn1(160, 160);
     btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
     btn1.SetPosition(0, -20);
-	btn1.SetImage(diskImg);
-	btn1.SetImageOver(diskImg);
+	btn1.SetImage(&diskImg);
+//	btn1.SetImageOver(diskImg);
 	btn1.SetSoundOver(&btnSoundOver);
 	btn1.SetSoundClick(&btnClick);
 	btn1.SetTrigger(&trigA);
@@ -729,19 +729,17 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	{
 		VIDEO_WaitVSync();
 		//angle++;
-		angle = (angle+speedup);
-		if (angle >359){ (angle = 0);
-		}
+		angle = int(angle+speedup) % 360;
 		//disc speedup and slowdown
-		else if (btn1.GetState() == STATE_SELECTED) {
+		if (btn1.GetState() == STATE_SELECTED) {
 				if (speedup < 11) {speedup = (speedup+0.20);}
 				}
 		else 	{
 				if (speedup > 1) {speedup = (speedup-0.05);}
 				}
 		if (speedup < 1){speedup=1;}
-        diskImg->SetAngle(angle);
-		diskImg->Draw();
+        diskImg.SetAngle(angle);
+		diskImg.Draw();
 
 		if(shutdown == 1)
 		{
@@ -1661,6 +1659,8 @@ static int MenuDiscList()
 
 	GuiImage installBtnImg(&btnInstall);
 	GuiImage installBtnImgOver(&btnInstallOver);
+	installBtnImg.SetWidescreen(CFG.widescreen); //added
+	installBtnImgOver.SetWidescreen(CFG.widescreen); //added
 	GuiButton installBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
 	installBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	installBtn.SetPosition(THEME.install_x, THEME.install_y);
@@ -1671,13 +1671,15 @@ static int MenuDiscList()
 	//installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 
 	if (godmode == 1)
-		{
+	{
 		installBtn.SetTrigger(&trigA);
 		installBtn.SetEffectGrow();
-		}
+	}
 
 	GuiImage settingsBtnImg(&btnSettings);
+	settingsBtnImg.SetWidescreen(CFG.widescreen); //added
 	GuiImage settingsBtnImgOver(&btnSettingsOver);
+	settingsBtnImgOver.SetWidescreen(CFG.widescreen); //added
 	GuiButton settingsBtn(btnSettings.GetWidth(), btnSettings.GetHeight());
 	settingsBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	settingsBtn.SetPosition(THEME.setting_x, THEME.setting_y);
@@ -1689,7 +1691,9 @@ static int MenuDiscList()
 	settingsBtn.SetEffectGrow();
 
 	GuiImage homeBtnImg(&btnhome);
+	homeBtnImg.SetWidescreen(CFG.widescreen); //added
 	GuiImage homeBtnImgOver(&btnhomeOver);
+	homeBtnImgOver.SetWidescreen(CFG.widescreen); //added
 	GuiButton homeBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	homeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	homeBtn.SetPosition(THEME.home_x, THEME.home_y);
@@ -1703,6 +1707,8 @@ static int MenuDiscList()
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
+	poweroffBtnImg.SetWidescreen(CFG.widescreen);
+	poweroffBtnImgOver.SetWidescreen(CFG.widescreen);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	poweroffBtn.SetPosition(THEME.power_x, THEME.power_y);
@@ -1955,6 +1961,7 @@ static int MenuDiscList()
 					}
 					__Disc_SetLowMem();
 					coverImg = new GuiImage(cover);
+					coverImg->SetWidescreen(CFG.widescreen);
 					coverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 					coverImg->SetPosition(THEME.cover_x,THEME.cover_y);
 					coverImg->SetEffect(EFFECT_FADE, 20);
@@ -2152,6 +2159,8 @@ static int MenuFormat()
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
+	poweroffBtnImg.SetWidescreen(CFG.widescreen);
+	poweroffBtnImgOver.SetWidescreen(CFG.widescreen);
 	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
 	poweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	poweroffBtn.SetPosition(THEME.power_x, THEME.power_y);
@@ -2164,6 +2173,8 @@ static int MenuFormat()
 
 	GuiImage exitBtnImg(&btnhome);
 	GuiImage exitBtnImgOver(&btnhomeOver);
+	exitBtnImg.SetWidescreen(CFG.widescreen);
+	exitBtnImgOver.SetWidescreen(CFG.widescreen);
 	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	exitBtn.SetPosition(240, 367);
@@ -3052,9 +3063,12 @@ int MainMenu(int menu)
 	mainWindow = new GuiWindow(screenwidth, screenheight);
 
 	char bgPath[100];
-
-	snprintf(bgPath, sizeof(bgPath), "%sbackground.png", CFG.theme_path);
-	background = new GuiImageData(bgPath, background_png);
+	if (CFG.widescreen)
+		snprintf(bgPath, sizeof(bgPath), "%swbackground.png", CFG.theme_path);
+	else
+		snprintf(bgPath, sizeof(bgPath), "%sbackground.png", CFG.theme_path);
+		
+	background = new GuiImageData(bgPath, CFG.widescreen? wbackground_png : background_png);
 
     bgImg = new GuiImage(background);
 	mainWindow->Append(bgImg);
@@ -3107,7 +3121,6 @@ int MainMenu(int menu)
 	delete cover;
 	delete diskCover;
 	delete coverImg;
-	delete diskImg;
 
 	mainWindow = NULL;
 	fatUnmount("SD");

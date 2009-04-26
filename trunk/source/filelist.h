@@ -41,6 +41,9 @@ extern const u32	little_star_png_size;
 extern const u8     background_png[];
 extern const u32    background_png_size;
 
+extern const u8     wbackground_png[];
+extern const u32    wbackground_png_size;
+
 extern const u8     bg_options_settings_png[];
 extern const u32    bg_options_settings_png_size;
 

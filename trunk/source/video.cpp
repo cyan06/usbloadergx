@@ -17,6 +17,8 @@
 #include "input.h"
 #include "libwiigui/gui.h"
 
+#include "cfg.h"
+
 #define DEFAULT_FIFO_SIZE 256 * 1024
 static unsigned int *xfb[2] = { NULL, NULL }; // Double buffered
 static int whichfb = 0; // Switch
@@ -164,7 +166,7 @@ InitVideo ()
 	vmode = VIDEO_GetPreferredMode(NULL); // get default video mode
 
 	// widescreen fix
-	if(CONF_GetAspectRatio() == CONF_ASPECT_16_9)
+	if(CFG.widescreen)
 	{
 		vmode->viWidth = VI_MAX_WIDTH_PAL-12;
 		vmode->viXOrigin = ((VI_MAX_WIDTH_PAL - vmode->viWidth) / 2) + 2;
@@ -260,7 +262,8 @@ void Menu_DrawImg(f32 xpos, f32 ypos, u16 width, u16 height, u8 data[],
 	guMtxScaleApply(m1,m1,scaleX,scaleY,1.0);
 	Vector axis = (Vector) {0 , 0, 1 };
 	guMtxRotAxisDeg (m2, &axis, degrees);
-	guMtxConcat(m2,m1,m);
+//	guMtxConcat(m2,m1,m);
+	guMtxConcat(m1,m2,m);
 
 	guMtxTransApply(m,m, xpos+width,ypos+height,0);
 	guMtxConcat (GXmodelView2D, m, mv);
