@@ -1293,6 +1293,7 @@ static int MenuInstall()
 	GuiImageData btnhome(imgPath, menu_button_png);
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
 	GuiImageData btnhomeOver(imgPath, menu_button_over_png);*/
+	
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
@@ -1323,7 +1324,7 @@ static int MenuInstall()
 	poweroffBtn.SetEffectGrow();
 */
 
-    #ifdef HW_RVL
+	#ifdef HW_RVL
 	int i = 0, level;
 	char txt[3];
 	GuiText * batteryTxt[4];
@@ -1334,7 +1335,7 @@ static int MenuInstall()
 	for(i=0; i < 4; i++)
 	{
 
-        if(i == 0)
+		if(i == 0)
 			sprintf(txt, "P %d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
@@ -1369,12 +1370,15 @@ static int MenuInstall()
 	GuiWindow w(screenwidth, screenheight);
  //   w.Append(&poweroffBtn);
 //	w.Append(&homeBtn);
-    #ifdef HW_RVL
-	w.Append(batteryBtn[0]);
-	w.Append(batteryBtn[1]);
-	w.Append(batteryBtn[2]);
-	w.Append(batteryBtn[3]);
-	#endif
+	if (THEME.showBattery)
+	{
+		#ifdef HW_RVL
+		w.Append(batteryBtn[0]);
+		w.Append(batteryBtn[1]);
+		w.Append(batteryBtn[2]);
+		w.Append(batteryBtn[3]);
+		#endif
+	}
 
     mainWindow->Append(&w);
 
@@ -1384,7 +1388,7 @@ static int MenuInstall()
 	{
 	    VIDEO_WaitVSync ();
 
-	    #ifdef HW_RVL
+		#ifdef HW_RVL
 		for(i=0; i < 4; i++)
 		{
 			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
@@ -1408,7 +1412,6 @@ static int MenuInstall()
 			}
 		}
 		#endif
-
 
 		ret = DiscWait("Insert Disk","Waiting...","Cancel",0);
 		if (ret < 0) {
@@ -1535,6 +1538,7 @@ static int MenuInstall()
 
 
 	HaltGui();
+	
 	#ifdef HW_RVL
 	for(i=0; i < 4; i++)
 	{
@@ -1544,6 +1548,7 @@ static int MenuInstall()
 		delete batteryBtn[i];
 	}
 	#endif
+
 	mainWindow->Remove(&w);
 	ResumeGui();
 	return menu;
@@ -1687,7 +1692,7 @@ static int MenuDiscList()
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
 
-    #ifdef HW_RVL
+	#ifdef HW_RVL
 	int i = 0, level;
 	char txt[3];
 	GuiText * batteryTxt[4];
@@ -1698,7 +1703,7 @@ static int MenuDiscList()
 	for(i=0; i < 4; i++)
 	{
 
-        if(i == 0)
+		if(i == 0)
 			sprintf(txt, "P %d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
@@ -1749,13 +1754,16 @@ static int MenuDiscList()
 	//if (THEME.showID)
 		//w.Append(GameIDTxt);
 
-    #ifdef HW_RVL
-	w.Append(batteryBtn[0]);
-	w.Append(batteryBtn[1]);
-	w.Append(batteryBtn[2]);
-	w.Append(batteryBtn[3]);
-	#endif
-
+	if (THEME.showBattery)
+	{
+		#ifdef HW_RVL
+		w.Append(batteryBtn[0]);
+		w.Append(batteryBtn[1]);
+		w.Append(batteryBtn[2]);
+		w.Append(batteryBtn[3]);
+		#endif
+	}
+	
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser);
 
@@ -1764,7 +1772,7 @@ static int MenuDiscList()
 	while(menu == MENU_NONE)
 	{
 	    VIDEO_WaitVSync ();
-
+		
 	    #ifdef HW_RVL
 		for(i=0; i < 4; i++)
 		{
@@ -2040,6 +2048,7 @@ static int MenuDiscList()
 
 
 	HaltGui();
+	
 	#ifdef HW_RVL
 	for(i=0; i < 4; i++)
 	{
@@ -2049,6 +2058,7 @@ static int MenuDiscList()
 		delete batteryBtn[i];
 	}
 	#endif
+
 	mainWindow->Remove(&optionBrowser);
 	mainWindow->Remove(&w);
 	ResumeGui();
@@ -2144,7 +2154,7 @@ static int MenuFormat()
 	exitBtn.SetTrigger(&trigHome);
 	exitBtn.SetEffectGrow();
 
-    #ifdef HW_RVL
+	#ifdef HW_RVL
 	int i = 0, level;
 	char txt[3];
 	GuiText * batteryTxt[4];
@@ -2155,7 +2165,7 @@ static int MenuFormat()
 	for(i=0; i < 4; i++)
 	{
 
-        if(i == 0)
+		if(i == 0)
 			sprintf(txt, "P %d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
@@ -2184,7 +2194,7 @@ static int MenuFormat()
 	batteryBtn[2]->SetPosition(-55, 425);
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
-
+	
 	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, startat);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
@@ -2196,13 +2206,17 @@ static int MenuFormat()
     w.Append(&titleTxt2);
     w.Append(&poweroffBtn);
 	w.Append(&exitBtn);
-    #ifdef HW_RVL
-	w.Append(batteryBtn[0]);
-	w.Append(batteryBtn[1]);
-	w.Append(batteryBtn[2]);
-	w.Append(batteryBtn[3]);
-	#endif
-
+	
+	if (THEME.showBattery)
+	{
+		#ifdef HW_RVL
+		w.Append(batteryBtn[0]);
+		w.Append(batteryBtn[1]);
+		w.Append(batteryBtn[2]);
+		w.Append(batteryBtn[3]);
+		#endif
+	}
+	
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser);
 
@@ -2212,7 +2226,7 @@ static int MenuFormat()
 	{
 	    VIDEO_WaitVSync ();
 
-	    #ifdef HW_RVL
+		#ifdef HW_RVL
 		for(i=0; i < 4; i++)
 		{
 			if(WPAD_Probe(i, NULL) == WPAD_ERR_NONE) // controller connected
@@ -2699,7 +2713,7 @@ int GameSettings(struct discHdr * header)
 			case 4:
 				iosChoice++;
 				break;
-			}
+		}
 
 		if(saveBtn.GetState() == STATE_CLICKED)
 		{

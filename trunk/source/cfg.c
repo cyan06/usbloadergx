@@ -799,7 +799,7 @@ void CFG_Load(int argc, char **argv)
 	cfg_parsetitlefile(pathname, &title_set);
 	
 	// load per-game settings
-//	cfg_load_games();
+	cfg_load_games();
 		
 	
 //	cfg_parsearg(argc, argv);

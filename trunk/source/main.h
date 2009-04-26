@@ -25,8 +25,8 @@ enum {
 };
 
 enum {
-    discdefault,
     systemdefault,
+    discdefault,
 	patch,
 	pal50,
 	pal60,
