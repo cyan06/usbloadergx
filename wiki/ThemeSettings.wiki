@@ -39,6 +39,8 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
 
   * more to add later
 
+  * *CAUTION*: All png files should have dimensions of multiple of 4
+
 = Options of theme.txt =
 
   * *show_id = 0 1* (0 means don't show game id, 1 means show game id)
@@ -62,6 +64,8 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * *show_region = 0 1* (0 means don't show, 1 otherwise)
 
   * *show_gamecount = 0 1* (0 means don't show, 1 otherwise)
+
+  * *show_battery = 0 1* (0 means don't show, 1 otherwise)
 
   * *hddinfo_coords = x, y* (x, y is the coordinate of hdd info text *(See hddinfo_align for more information)*
 
