@@ -3192,7 +3192,7 @@ int MainMenu(int menu)
                         break;
                         case patch:
 
-                                videoselected = 4;
+                                videoselected = 5;
                         break;
                         default:
                                 videoselected = 0;
