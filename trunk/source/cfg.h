@@ -114,7 +114,7 @@ struct Game_CFG
 	u8 language;
 	u8 ocarina;
 	u8 vipatch;
-	u8 iosChoice;
+	u8 ios;
 };
 
 

@@ -27,11 +27,11 @@ char current_path[100];
 
 struct CFG CFG;
 struct THEME THEME;
-u8 ocarinaChoice;
-u8 videoChoice;
-u8 languageChoice;
-u8 viChoice;
-u8 iosChoice;
+u8 ocarinaChoice = 0;
+u8 videoChoice = 0;
+u8 languageChoice = 0;
+u8 viChoice = 0;
+u8 iosChoice = 0;
 
 #define TITLE_MAX 65
 
@@ -47,8 +47,8 @@ int num_title = 0; //number of titles
 struct ID_Title *cfg_title = NULL;
 
 #define MAX_SAVED_GAMES 1000
-//int num_saved_games = 0;
-//struct Game_CFG cfg_game[MAX_SAVED_GAMES];
+int num_saved_games = 0;
+struct Game_CFG cfg_game[MAX_SAVED_GAMES];
 
 
 /* For Mapping */
@@ -619,7 +619,7 @@ void cfg_parsearg(int argc, char **argv)
 
 // PER-GAME SETTINGS
 
-/*
+
 // return existing or new
 struct Game_CFG* cfg_get_game(u8 *id)
 {
@@ -640,6 +640,7 @@ void cfg_set_game_opt(struct Game_CFG *game, u8 *id)
 	game->language = languageChoice;
 	game->ocarina = ocarinaChoice;
 	game->vipatch = viChoice;
+	game->ios = iosChoice;
 }
 
 void game_set(char *name, char *val)
@@ -690,6 +691,11 @@ void game_set(char *name, char *val)
 					game->vipatch = opt_c;
 				}
 			}
+			if (strcmp("ios", opt_name) == 0) {
+				if (sscanf(opt_val, "%hd", &opt_c) == 1) {
+					game->ios = opt_c;
+				}
+			}
 		}
 		// next opt
 		if (np) p = np + 1; else p = NULL;
@@ -723,7 +729,8 @@ bool cfg_save_games()
 		s = map_get_name(map_language, cfg_game[i].language);
 		if (s) fprintf(f, "language:%s; ", s);
 		fprintf(f, "ocarina:%d; ", cfg_game[i].ocarina);
-		fprintf(f, "vipatch:%d;\n", cfg_game[i].vipatch);
+		fprintf(f, "vipatch:%d; ", cfg_game[i].vipatch);
+		fprintf(f, "ios:%d;\n", cfg_game[i].vipatch);
 	}
 	fprintf(f, "# END\n");
 	fclose(f);
@@ -762,7 +769,7 @@ bool CFG_forget_game_opt(u8 *id)
 	memset(&cfg_game[num_saved_games], 0, sizeof(struct Game_CFG));
 	return cfg_save_games();
 }
-*/
+
 void CFG_Load(int argc, char **argv)
 {
 	char pathname[200];

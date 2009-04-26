@@ -1581,6 +1581,7 @@ static int MenuDiscList()
 			else
 			{
                 sprintf(options.name[cnt], get_title(header),  MAX_CHARACTERS);
+				options.name[cnt][MAX_CHARACTERS] = '\0';
                 strncat(options.name[cnt], "...", 3);
             }
             *options.value[cnt] = '\0';
@@ -1960,6 +1961,7 @@ static int MenuDiscList()
 				}
 				else {
 					strncpy(text, get_title(header),  MAX_CHARACTERS);
+					text[MAX_CHARACTERS] = '\0';
 					strncat(text, "...", 3);
 				}
 
@@ -2010,7 +2012,12 @@ static int MenuDiscList()
 					}
 					else if (choice == 2)
 					{
-						//GameSettings();
+						if (GameSettings(header) == 1) //if deleted
+						{
+							menu = MENU_DISCLIST;
+							break;
+						}
+
 						returnHere = true;
 
 					}
@@ -2523,19 +2530,29 @@ static int MenuSettings()
 /********************************************************************************
 *Game specific settings
 *********************************************************************************/
-void GameSettings()
+int GameSettings(struct discHdr * header)
 {
-	int menu = MENU_NONE;
+	bool exit = false;
 	int ret;
+	int retVal = 0;
 //	char imgPath[100];
+	char gameName[31];
+	
+	if (strlen(get_title(header)) < (27 + 3)) {
+		sprintf(gameName, "%s", get_title(header));
+	}
+	else {
+		strncpy(gameName, get_title(header),  27);
+		gameName[27] = '\0';
+		strncat(gameName, "...", 3);
+	}
 
-	customOptionList options3(6);
+	customOptionList options3(5);
 	sprintf(options3.name[0], "Video Mode");
 	sprintf(options3.name[1], "VIDTV Patch");
 	sprintf(options3.name[2], "Language");
 	sprintf(options3.name[3], "Ocarina");
-	sprintf(options3.name[4], "Display");
-	sprintf(options3.name[5], "IOS");
+	sprintf(options3.name[4], "IOS");
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(settings_menu_button_png);
@@ -2548,7 +2565,7 @@ void GameSettings()
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
 
-    GuiText titleTxt("Settings for BLABLABLA Game", 28, (GXColor){0, 0, 0, 255});
+    GuiText titleTxt(gameName, 28, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,40);
 
@@ -2570,7 +2587,7 @@ void GameSettings()
 	saveBtn.SetTrigger(&trigA);
 	saveBtn.SetTrigger(&trigB);
 	saveBtn.SetEffectGrow();
-
+	
 	GuiText deleteBtnTxt("Delete", 22, (GXColor){0, 0, 0, 255});
 	deleteBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage deleteBtnImg(&btnOutline);
@@ -2600,126 +2617,137 @@ void GameSettings()
 
 	ResumeGui();
 
-	while(menu == MENU_NONE)
+	struct Game_CFG* game_cfg = CFG_get_game_opt(header->id);
+	
+	if (game_cfg)
+	{
+		videoChoice = game_cfg->video;
+		languageChoice = game_cfg->language;
+		ocarinaChoice = game_cfg->ocarina;
+		viChoice = game_cfg->vipatch;
+		iosChoice = game_cfg->ios;	
+	}
+	else
+	{
+		videoChoice = Settings.video;
+		languageChoice = Settings.language;
+		ocarinaChoice = Settings.ocarina;
+		viChoice = Settings.vpatch;
+		iosChoice = i249;
+	}
+	
+	while(!exit)
 	{
 
 		VIDEO_WaitVSync ();
-		if(Settings.video > 5)
-			Settings.video = 0;
-		if(Settings.language  > 10)
-			Settings.language = 0;
-        if(Settings.ocarina  > 1)
-			Settings.ocarina = 0;
-        if(Settings.vpatch  > 1)
-			Settings.vpatch = 0;
-		if(Settings.sinfo  > 3)
-			Settings.sinfo = 0;
-		if(Settings.ios  > 1)
-			Settings.ios = 0;
+		if(videoChoice > 5)
+			videoChoice = 0;
+		if(languageChoice  > 10)
+			languageChoice = 0;
+        if(ocarinaChoice  > 1)
+			ocarinaChoice = 0;
+        if(viChoice  > 1)
+			viChoice = 0;
+		if(iosChoice  > 1)
+			iosChoice = 0;
+		
+		if (videoChoice == discdefault) sprintf (options3.value[0],"Disc Default");
+		else if (videoChoice == systemdefault) sprintf (options3.value[0],"System Default");
+		else if (videoChoice == patch) sprintf (options3.value[0],"Auto Patch");
+		else if (videoChoice == pal50) sprintf (options3.value[0],"Force PAL50");
+		else if (videoChoice == pal60) sprintf (options3.value[0],"Force PAL60");
+		else if (videoChoice == ntsc) sprintf (options3.value[0],"Force NTSC");
 
-		if (Settings.video == discdefault) sprintf (options3.value[0],"Disc Default");
-		else if (Settings.video == systemdefault) sprintf (options3.value[0],"System Default");
-		else if (Settings.video == patch) sprintf (options3.value[0],"Auto Patch");
-		else if (Settings.video == pal50) sprintf (options3.value[0],"Force PAL50");
-		else if (Settings.video == pal60) sprintf (options3.value[0],"Force PAL60");
-		else if (Settings.video == ntsc) sprintf (options3.value[0],"Force NTSC");
+        if (viChoice == on) sprintf (options3.value[1],"ON");
+		else if (viChoice == off) sprintf (options3.value[1],"OFF");
 
-        if (Settings.vpatch == on) sprintf (options3.value[1],"ON");
-		else if (Settings.vpatch == off) sprintf (options3.value[1],"OFF");
+		if (languageChoice == ConsoleLangDefault) sprintf (options3.value[2],"Console Default");
+		else if (languageChoice == jap) sprintf (options3.value[2],"Japanese");
+		else if (languageChoice == ger) sprintf (options3.value[2],"German");
+		else if (languageChoice == eng) sprintf (options3.value[2],"English");
+		else if (languageChoice == fren) sprintf (options3.value[2],"French");
+		else if (languageChoice == esp) sprintf (options3.value[2],"Spanish");
+        else if (languageChoice == it) sprintf (options3.value[2],"Italian");
+		else if (languageChoice == dut) sprintf (options3.value[2],"Dutch");
+		else if (languageChoice == schin) sprintf (options3.value[2],"S. Chinese");
+		else if (languageChoice == tchin) sprintf (options3.value[2],"T. Chinese");
+		else if (languageChoice == kor) sprintf (options3.value[2],"Korean");
 
-		if (Settings.language == ConsoleLangDefault) sprintf (options3.value[2],"Console Default");
-		else if (Settings.language == jap) sprintf (options3.value[2],"Japanese");
-		else if (Settings.language == ger) sprintf (options3.value[2],"German");
-		else if (Settings.language == eng) sprintf (options3.value[2],"English");
-		else if (Settings.language == fren) sprintf (options3.value[2],"French");
-		else if (Settings.language == esp) sprintf (options3.value[2],"Spanish");
-        else if (Settings.language == it) sprintf (options3.value[2],"Italian");
-		else if (Settings.language == dut) sprintf (options3.value[2],"Dutch");
-		else if (Settings.language == schin) sprintf (options3.value[2],"S. Chinese");
-		else if (Settings.language == tchin) sprintf (options3.value[2],"T. Chinese");
-		else if (Settings.language == kor) sprintf (options3.value[2],"Korean");
+        if (ocarinaChoice == on) sprintf (options3.value[3],"ON");
+		else if (ocarinaChoice == off) sprintf (options3.value[3],"OFF");
 
-        if (Settings.ocarina == on) sprintf (options3.value[3],"ON");
-		else if (Settings.ocarina == off) sprintf (options3.value[3],"OFF");
-
-		if (Settings.sinfo == GameID) sprintf (options3.value[4],"Game ID");
-		else if (Settings.sinfo == GameRegion) sprintf (options3.value[4],"Game Region");
-		else if (Settings.sinfo == Both) sprintf (options3.value[4],"Both");
-		else if (Settings.sinfo == Neither) sprintf (options3.value[4],"Neither");
-
-		if (Settings.ios == i249) sprintf (options3.value[5],"249");
-		else if (Settings.ios == i222) sprintf (options3.value[5],"222");
-
+		if (iosChoice == i249) sprintf (options3.value[4],"249");
+		else if (iosChoice == i222) sprintf (options3.value[4],"222");
+		
 		ret = optionBrowser3.GetClickedOption();
 
 		switch (ret)
 		{
 			case 0:
-				Settings.video++;
+				videoChoice++;
 				break;
 
 			case 1:
-				Settings.vpatch++;
+				viChoice++;
 				break;
             case 2:
-				Settings.language++;
+				languageChoice++;
 				break;
             case 3:
-				Settings.ocarina++;
+				ocarinaChoice++;
 				break;
 			case 4:
-				Settings.sinfo++;
-				break;
-			case 5:
-				Settings.ios++;
+				iosChoice++;
 				break;
 			}
 
 		if(saveBtn.GetState() == STATE_CLICKED)
-			{
-			menu = MENU_DISCLIST;
+		{
+			CFG_save_game_opt(header->id);
+			exit = true;
 			break;
-			}
+		}
 		if (deleteBtn.GetState() == STATE_CLICKED)
-			{
-
-/*			int choice = WindowPrompt(
+		{
+			int choice = WindowPrompt(
 					"Do you really want to delete:",
-					"Game",
+					gameName,
 					"Yes","Cancel");
 
-					if (choice == 1)
-						{
-						ret = WBFS_RemoveGame(header->id);
-						if (ret < 0)
-							{
-							sprintf(text, "Error: %i", ret);
-							WindowPrompt(
-							"Can't delete:",
-							"game",
-							"OK",0);
-							}
-						else {
-							__Menu_GetEntries();
-							WindowPrompt(
-							"Successfully deleted:",
-							"game",
-							"OK",0);
-							optionBrowser.SetFocus(1);
-							}
-
-						menu = MENU_DISCLIST;
-						break;
-						}*/
-
+			if (choice == 1) 
+			{
+				ret = WBFS_RemoveGame(header->id);
+				if (ret < 0) 
+				{
+					WindowPrompt(
+					"Can't delete:",
+					gameName,
+					"OK",0);
+				}
+				else {
+					__Menu_GetEntries();
+					WindowPrompt(
+					"Successfully deleted:",
+					gameName,
+					"OK",0);
+					retVal = 1;
+				}
+				break;
 			}
+			else if (choice == 0)
+			{
+				deleteBtn.ResetState();
+				optionBrowser3.SetFocus(1);
+			}
+						
+		}
 	}
 
 	HaltGui();
 	mainWindow->Remove(&optionBrowser3);
 	mainWindow->Remove(&w);
 	ResumeGui();
-	return;
+	return retVal;
 }
 
 /****************************************************************************
@@ -3054,7 +3082,27 @@ int MainMenu(int menu)
 	//boot game
     s32 ret;
 
-    switch(Settings.language)
+	struct discHdr *header = &gameList[gameSelected];
+	struct Game_CFG* game_cfg = CFG_get_game_opt(header->id);
+	
+	if (game_cfg)
+	{
+		videoChoice = game_cfg->video;
+		languageChoice = game_cfg->language;
+		ocarinaChoice = game_cfg->ocarina;
+		viChoice = game_cfg->vipatch;
+		iosChoice = game_cfg->ios;	
+	}
+	else
+	{
+		videoChoice = Settings.video;
+		languageChoice = Settings.language;
+		ocarinaChoice = Settings.ocarina;
+		viChoice = Settings.vpatch;
+		iosChoice = i249;
+	}
+	
+    switch(languageChoice)
     {
                         case ConsoleLangDefault:
                                 configbytes[0] = 0xCD;
@@ -3107,7 +3155,7 @@ int MainMenu(int menu)
 
     u32 videoselected = 0;
 
-    switch(Settings.video)
+    switch(videoChoice)
     {
                         case discdefault:
                                 videoselected = 0;
@@ -3138,7 +3186,7 @@ int MainMenu(int menu)
     }
 
     u32 cheat = 0;
-    switch(Settings.ocarina)
+    switch(ocarinaChoice)
     {
                         case on:
                                 cheat = 1;
@@ -3154,7 +3202,7 @@ int MainMenu(int menu)
     }
 
     u8 vipatch = 0;
-    switch(Settings.vpatch)
+    switch(viChoice)
     {
                         case on:
                                 vipatch = 1;
@@ -3169,42 +3217,19 @@ int MainMenu(int menu)
                         break;
     }
 
-	u8 showinfo = 0;
-    switch(Settings.sinfo)
-    {
-                        case GameID:
-                                showinfo = 0;
-                        break;
-
-                        case GameRegion:
-                                showinfo = 1;
-                        break;
-
-						case Both:
-                                showinfo = 2;
-                        break;
-
-						case Neither:
-                                showinfo = 3;
-                        break;
-
-                        default:
-                                showinfo = 0;
-                        break;
-    }
 	u8 ios = 0;
-    switch(Settings.ios)
+    switch(iosChoice)
     {
                         case i249:
-                                showinfo = 0;
+                                ios = 0;
                         break;
 
                         case i222:
-                                showinfo = 1;
+                                ios = 1;
                         break;
 
 						default:
-                                showinfo = 0;
+                                ios = 0;
                         break;
     }
 
