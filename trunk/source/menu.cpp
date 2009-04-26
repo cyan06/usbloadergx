@@ -641,7 +641,19 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	}
 	char imgPath[60];
 	snprintf(imgPath,sizeof(imgPath),"SD:/images/disc/%s.png",ID);
-    diskCover = new GuiImageData(imgPath,nodisc_png);
+    diskCover = new GuiImageData(imgPath,0);
+	
+	if (!diskCover->GetImage()) 
+		{
+		delete diskCover;
+		snprintf(imgPath, sizeof(imgPath), "SD:/images/disc/%s.png", IDfull);
+		diskCover = new GuiImageData(imgPath, 0);
+		if (!diskCover->GetImage())
+			{
+			diskCover = new GuiImageData(imgPath,nodisc_png);
+			}
+		}
+		
 	diskImg = new GuiImage(diskCover);
 	diskImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
     diskImg->SetAngle(angle);
