@@ -1,35 +1,32 @@
 /****************************************************************************
  * libwiigui
  *
- * gui_customoptionbrowser.cpp
+ * gui_gamebrowser.cpp
  *
  * GUI class definitions
  ***************************************************************************/
 
 #include "gui.h"
 #include "../wpad.h"
-#include "gui_customoptionbrowser.h"
 
 #include <unistd.h>
-
+#include "gui_gamebrowser.h"
 
 #define GAMESELECTSIZE      30
 
-static int scrollbaron = 0;
-
 /**
- * Constructor for the GuiCustomOptionBrowser class.
+ * Constructor for the GuiGameBrowser class.
  */
-GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * l, const char *themePath, const u8 *imagebg, int scrollon)
+GuiGameBrowser::GuiGameBrowser(int w, int h, GameBrowserList * l, const char *themePath, const u8 *imagebg, int selected, int offset)
 {
 	width = w;
 	height = h;
-	options = l;
-	size = ((l->length > PAGESIZE)? PAGESIZE: l->length);
-	scrollbaron = scrollon;
+	gameList = l;
+	pagesize = (l->length > PAGESIZE) ? PAGESIZE : l->length;
+	scrollbaron = (l->length > PAGESIZE) ? 1 : 0;
 	selectable = true;
-	listOffset = this->FindMenuItem(-1, 1);
-	selectedItem = 0;
+	listOffset = (offset == 0) ? this->FindMenuItem(-1, 1) : offset;
+	selectedItem = selected - offset;
 	focus = 1; // allow focus
 	char imgPath[100];
 
@@ -40,14 +37,14 @@ GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * 
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
 
 	snprintf(imgPath, sizeof(imgPath), "%sbg_options.png", themePath);
-	bgOptions = new GuiImageData(imgPath, imagebg);
+	bgGames = new GuiImageData(imgPath, imagebg);
 
-	bgOptionsImg = new GuiImage(bgOptions);
-	bgOptionsImg->SetParent(this);
-	bgOptionsImg->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+	bgGameImg = new GuiImage(bgGames);
+	bgGameImg->SetParent(this);
+	bgGameImg->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 
 	snprintf(imgPath, sizeof(imgPath), "%sbg_options_entry.png", themePath);
-	bgOptionsEntry = new GuiImageData(imgPath, bg_options_entry_png);
+	bgGamesEntry = new GuiImageData(imgPath, bg_options_entry_png);
     if (scrollbaron == 1) {
 	snprintf(imgPath, sizeof(imgPath), "%sscrollbar.png", themePath);
 	scrollbar = new GuiImageData(imgPath, scrollbar_png);
@@ -110,39 +107,38 @@ GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * 
 	scrollbarBoxBtn->SetTrigger(trigHeldA);
     }
 
-	optionIndex = new int[size];
-	optionVal = new GuiText * [size];
-	optionBtn = new GuiButton * [size];
-	optionTxt = new GuiText * [size];
-	optionBg = new GuiImage * [size];
-
-	for(int i=0; i < size; i++)
+	gameIndex = new int[pagesize];
+	game = new GuiButton * [pagesize];
+	gameTxt = new GuiText * [pagesize];
+	gameBg = new GuiImage * [pagesize];
+	
+	for(int i=0; i < pagesize; i++)
 	{
-		optionTxt[i] = new GuiText(options->name[i], 20, (GXColor){0, 0, 0, 0xff});
-		optionTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
-		optionTxt[i]->SetPosition(24,0);
+		gameTxt[i] = new GuiText(gameList->name[i], 20, (GXColor){0, 0, 0, 0xff});
+		gameTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+		gameTxt[i]->SetPosition(24,0);
 
-		optionBg[i] = new GuiImage(bgOptionsEntry);
-		
-		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
-		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
-		optionVal[i]->SetPosition(250,0);
+		gameBg[i] = new GuiImage(bgGamesEntry);
 
-		optionBtn[i] = new GuiButton(width-28,GAMESELECTSIZE);
-		optionBtn[i]->SetParent(this);
-		optionBtn[i]->SetLabel(optionTxt[i], 0);
-		optionBtn[i]->SetLabel(optionVal[i], 1);
-		optionBtn[i]->SetImageOver(optionBg[i]);
-		optionBtn[i]->SetPosition(5,GAMESELECTSIZE*i+4);
-		optionBtn[i]->SetTrigger(trigA);
-		optionBtn[i]->SetSoundClick(btnSoundClick);
+//		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
+//		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+//		optionVal[i]->SetPosition(250,0);
+
+		game[i] = new GuiButton(width-28,GAMESELECTSIZE);
+		game[i]->SetParent(this);
+		game[i]->SetLabel(gameTxt[i]);
+//		game[i]->SetLabel(optionVal[i], 1);
+		game[i]->SetImageOver(gameBg[i]);
+		game[i]->SetPosition(5,GAMESELECTSIZE*i+4);
+		game[i]->SetTrigger(trigA);
+		game[i]->SetSoundClick(btnSoundClick);
 	}
 }
 
 /**
- * Destructor for the GuiCustomOptionBrowser class.
+ * Destructor for the GuiGameBrowser class.
  */
-GuiCustomOptionBrowser::~GuiCustomOptionBrowser()
+GuiGameBrowser::~GuiGameBrowser()
 {
     if (scrollbaron == 1) {
 	delete arrowUpBtn;
@@ -163,46 +159,38 @@ GuiCustomOptionBrowser::~GuiCustomOptionBrowser()
 	delete scrollbarBox;
 	delete scrollbarBoxOver;
     }
-    delete bgOptionsImg;
-	delete bgOptions;
-	delete bgOptionsEntry;
+    delete bgGameImg;
+	delete bgGames;
+	delete bgGamesEntry;
 
 	delete trigA;
 	delete btnSoundClick;
 
 //	delete optionBg;
-	for(int i = 0; i < size; i++)
+	for(int i=0; i<pagesize; i++)
 	{
-		delete optionTxt[i];
-		delete optionVal[i];
-		delete optionBg[i];
-		delete optionBtn[i];
+		delete gameTxt[i];
+		delete gameBg[i];
+		delete game[i];
 	}
-	delete [] optionIndex;
-	delete [] optionVal;
-	delete [] optionBtn;
-	delete [] optionTxt;
-	delete [] optionBg;
+	delete [] gameIndex;
+	delete [] game;
+	delete [] gameTxt;
+	delete [] gameBg;
 }
 
-void GuiCustomOptionBrowser::SetCol2Position(int x)
-{
-	for(int i = 0; i < size; i++)
-		optionVal[i]->SetPosition(x,0);
-}
-
-void GuiCustomOptionBrowser::SetFocus(int f)
+void GuiGameBrowser::SetFocus(int f)
 {
 	focus = f;
 
-	for(int i = 0; i < size; i++)
-		optionBtn[i]->ResetState();
+	for(int i=0; i<pagesize; i++)
+		game[i]->ResetState();
 
 	if(f == 1)
-		optionBtn[selectedItem]->SetState(STATE_SELECTED);
+		game[selectedItem]->SetState(STATE_SELECTED);
 }
 
-void GuiCustomOptionBrowser::ResetState()
+void GuiGameBrowser::ResetState()
 {
 	if(state != STATE_DISABLED)
 	{
@@ -210,35 +198,40 @@ void GuiCustomOptionBrowser::ResetState()
 		stateChan = -1;
 	}
 
-	for(int i = 0; i < size; i++)
+	for(int i=0; i<pagesize; i++)
 	{
-		optionBtn[i]->ResetState();
+		game[i]->ResetState();
 	}
 }
 
-int GuiCustomOptionBrowser::GetClickedOption()
+int GuiGameBrowser::GetOffset()
+{
+	return listOffset;
+}
+int GuiGameBrowser::GetClickedOption()
 {
 	int found = -1;
-	for(int i = 0; i < size; i++)
+	for(int i=0; i<pagesize; i++)
 	{
-		if(optionBtn[i]->GetState() == STATE_CLICKED)
+		if(game[i]->GetState() == STATE_CLICKED)
 		{
-			optionBtn[i]->SetState(STATE_SELECTED);
-			found = optionIndex[i];
+			game[i]->SetState(STATE_SELECTED);
+			found = gameIndex[i];
 			break;
 		}
 	}
 	return found;
 }
 
-int GuiCustomOptionBrowser::GetSelectedOption()
+int GuiGameBrowser::GetSelectedOption()
 {
 	int found = -1;
-	for(int i = 0; i < size; i++)
+	for(int i=0; i<pagesize; i++)
 	{
-		if(optionBtn[i]->GetState() == STATE_SELECTED)
+		if(game[i]->GetState() == STATE_SELECTED)
 		{
-			found = optionIndex[i];
+			game[i]->SetState(STATE_SELECTED);
+			found = gameIndex[i];
 			break;
 		}
 	}
@@ -251,14 +244,14 @@ int GuiCustomOptionBrowser::GetSelectedOption()
  * Help function to find the next visible menu item on the list
  ***************************************************************************/
 
-int GuiCustomOptionBrowser::FindMenuItem(int currentItem, int direction)
+int GuiGameBrowser::FindMenuItem(int currentItem, int direction)
 {
 	int nextItem = currentItem + direction;
 
-	if(nextItem < 0 || nextItem >= options->length)
+	if(nextItem < 0 || nextItem >= gameList->length)
 		return -1;
 
-	if(strlen(options->name[nextItem]) > 0)
+	if(strlen(gameList->name[nextItem]) > 0)
 		return nextItem;
 	else
 		return FindMenuItem(nextItem, direction);
@@ -267,20 +260,20 @@ int GuiCustomOptionBrowser::FindMenuItem(int currentItem, int direction)
 /**
  * Draw the button on screen
  */
-void GuiCustomOptionBrowser::Draw()
+void GuiGameBrowser::Draw()
 {
 	if(!this->IsVisible())
 		return;
 
-	bgOptionsImg->Draw();
+	bgGameImg->Draw();
 
 	int next = listOffset;
 
-	for(int i=0; i < size; i++)
+	for(int i=0; i<pagesize; i++)
 	{
 		if(next >= 0)
 		{
-			optionBtn[i]->Draw();
+			game[i]->Draw();
 			next = this->FindMenuItem(next, 1);
 		}
 		else
@@ -296,60 +289,58 @@ void GuiCustomOptionBrowser::Draw()
 	this->UpdateEffects();
 }
 
-void GuiCustomOptionBrowser::Update(GuiTrigger * t)
-{	int next, prev, lang = options->length;
-
+void GuiGameBrowser::Update(GuiTrigger * t)
+{	
 	if(state == STATE_DISABLED || !t)
 		return;
-												
+
+	int next, prev;
 	
 	// scrolldelay affects how fast the list scrolls
 	// when the arrows are clicked
 	float scrolldelay = 3.5;
-	
-	
+
+
     if (scrollbaron == 1) {
 	// update the location of the scroll box based on the position in the option list
-
-
-	arrowUpBtn->Update(t);
-	arrowDownBtn->Update(t);
-	scrollbarBoxBtn->Update(t);
+		arrowUpBtn->Update(t);
+		arrowDownBtn->Update(t);
+		scrollbarBoxBtn->Update(t);
     }
+	
 	next = listOffset;
 
-	for(int i=0; i < size; i++)
+	for(int i=0; i<pagesize; i++)
 	{
 		if(next >= 0)
 		{
-			if(optionBtn[i]->GetState() == STATE_DISABLED)
+			if(game[i]->GetState() == STATE_DISABLED)
 			{
-				optionBtn[i]->SetVisible(true);
-				optionBtn[i]->SetState(STATE_DEFAULT);
+				game[i]->SetVisible(true);
+				game[i]->SetState(STATE_DEFAULT);
 			}
 
-			optionTxt[i]->SetText(options->name[next]);
-			optionVal[i]->SetText(options->value[next]);
-			optionIndex[i] = next;
+			gameTxt[i]->SetText(gameList->name[next]);
+			gameIndex[i] = next;
 			next = this->FindMenuItem(next, 1);
 		}
 		else
 		{
-			optionBtn[i]->SetVisible(false);
-			optionBtn[i]->SetState(STATE_DISABLED);
+			game[i]->SetVisible(false);
+			game[i]->SetState(STATE_DISABLED);
 		}
 
 		if(focus)
 		{
-			if(i != selectedItem && optionBtn[i]->GetState() == STATE_SELECTED)
-				optionBtn[i]->ResetState();
-			else if(i == selectedItem && optionBtn[i]->GetState() == STATE_DEFAULT)
-				optionBtn[selectedItem]->SetState(STATE_SELECTED, t->chan);
+			if(i != selectedItem && game[i]->GetState() == STATE_SELECTED)
+				game[i]->ResetState();
+			else if(i == selectedItem && game[i]->GetState() == STATE_DEFAULT)
+				game[selectedItem]->SetState(STATE_SELECTED, t->chan);
 		}
 
-		optionBtn[i]->Update(t);
+		game[i]->Update(t);
 
-		if(optionBtn[i]->GetState() == STATE_SELECTED)
+		if(game[i]->GetState() == STATE_SELECTED)
 		{
 			selectedItem = i;
 		}
@@ -360,25 +351,25 @@ void GuiCustomOptionBrowser::Update(GuiTrigger * t)
 		return; // skip navigation
 
     if (scrollbaron == 1) {
-		
-	if (t->Down() || 
+
+	if (t->Down() ||
 	arrowDownBtn->GetState() == STATE_CLICKED || ////////////////////////////////////////////down
-	arrowDownBtn->GetState() == STATE_HELD) 
+	arrowDownBtn->GetState() == STATE_HELD)
 	{
 
-		next = this->FindMenuItem(optionIndex[selectedItem], 1);
-		
+		next = this->FindMenuItem(gameIndex[selectedItem], 1);
+
 		if(next >= 0)
-		{	
-			if(selectedItem == size-1)
+		{
+			if(selectedItem == pagesize-1)
 			{
 				// move list down by 1
 				listOffset = this->FindMenuItem(listOffset, 1);
 			}
-			else if(optionBtn[selectedItem+1]->IsVisible())
+			else if(game[selectedItem+1]->IsVisible())
 			{
-				optionBtn[selectedItem]->ResetState();
-				optionBtn[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
+				game[selectedItem]->ResetState();
+				game[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
 				selectedItem++;
 			}
 			scrollbarBoxBtn->Draw();
@@ -394,15 +385,15 @@ void GuiCustomOptionBrowser::Update(GuiTrigger * t)
 
         } else {
             arrowDownBtn->ResetState();
-			
+
         }
-        
+
 	}
-	else if(t->Up() || 
+	else if(t->Up() ||
 	arrowUpBtn->GetState() == STATE_CLICKED || ////////////////////////////////////////////up
 	arrowUpBtn->GetState() == STATE_HELD)
 	{
-		prev = this->FindMenuItem(optionIndex[selectedItem], -1);
+		prev = this->FindMenuItem(gameIndex[selectedItem], -1);
 
 		if(prev >= 0)
 		{
@@ -413,8 +404,8 @@ void GuiCustomOptionBrowser::Update(GuiTrigger * t)
 			}
 			else
 			{
-				optionBtn[selectedItem]->ResetState();
-				optionBtn[selectedItem-1]->SetState(STATE_SELECTED, t->chan);
+				game[selectedItem]->ResetState();
+				game[selectedItem-1]->SetState(STATE_SELECTED, t->chan);
 				selectedItem--;
 			}
 			scrollbarBoxBtn->Draw();
@@ -430,13 +421,15 @@ void GuiCustomOptionBrowser::Update(GuiTrigger * t)
 
         } else {
             arrowUpBtn->ResetState();
-			
-        }  
+
+        }
 	}
 
+	int lang = gameList->length;
+	
     if(scrollbarBoxBtn->GetState() == STATE_HELD &&
 		scrollbarBoxBtn->GetStateChan() == t->chan &&
-		t->wpad.ir.valid && options->length > size)
+		t->wpad.ir.valid && gameList->length > pagesize)
     {
 		scrollbarBoxBtn->SetPosition(width/2-18+7,0);
 		int position = t->wpad.ir.y - 50 - scrollbarBoxBtn->GetTop();
@@ -448,10 +441,10 @@ void GuiCustomOptionBrowser::Update(GuiTrigger * t)
 			listOffset = 0;
 			selectedItem = 0;
 		}
-		else if(listOffset+size >= lang)
+		else if(listOffset+pagesize >= lang)
 		{
-			listOffset = lang-size;
-			selectedItem = size-1;
+			listOffset = lang-pagesize;
+			selectedItem = pagesize-1;
 		}
 
 	}
@@ -464,18 +457,18 @@ void GuiCustomOptionBrowser::Update(GuiTrigger * t)
 
     if(t->Right())
 	{
-		if(listOffset < lang && lang > size)
+		if(listOffset < lang && lang > pagesize)
 		{
-			listOffset =listOffset+ size;
-			if(listOffset+size >= lang)
-            listOffset = lang-size;
+			listOffset =listOffset+ pagesize;
+			if(listOffset+pagesize >= lang)
+            listOffset = lang-pagesize;
 		}
 	}
 	else if(t->Left())
 	{
 		if(listOffset > 0)
 		{
-			listOffset =listOffset- size;
+			listOffset =listOffset- pagesize;
 			if(listOffset < 0)
 				listOffset = 0;
 		}
@@ -486,26 +479,26 @@ void GuiCustomOptionBrowser::Update(GuiTrigger * t)
 
 	if(t->Down())
 	{
-		next = this->FindMenuItem(optionIndex[selectedItem], 1);
+		next = this->FindMenuItem(gameIndex[selectedItem], 1);
 
 		if(next >= 0)
 		{
-			if(selectedItem == size-1)
+			if(selectedItem == pagesize-1)
 			{
 				// move list down by 1
 				listOffset = this->FindMenuItem(listOffset, 1);
 			}
-			else if(optionBtn[selectedItem+1]->IsVisible())
+			else if(game[selectedItem+1]->IsVisible())
 			{
-				optionBtn[selectedItem]->ResetState();
-				optionBtn[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
+				game[selectedItem]->ResetState();
+				game[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
 				selectedItem++;
 			}
 		}
 	}
 	else if(t->Up())
 	{
-		prev = this->FindMenuItem(optionIndex[selectedItem], -1);
+		prev = this->FindMenuItem(gameIndex[selectedItem], -1);
 
 		if(prev >= 0)
 		{
@@ -516,8 +509,8 @@ void GuiCustomOptionBrowser::Update(GuiTrigger * t)
 			}
 			else
 			{
-				optionBtn[selectedItem]->ResetState();
-				optionBtn[selectedItem-1]->SetState(STATE_SELECTED, t->chan);
+				game[selectedItem]->ResetState();
+				game[selectedItem-1]->SetState(STATE_SELECTED, t->chan);
 				selectedItem--;
 			}
 		}

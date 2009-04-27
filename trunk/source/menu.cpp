@@ -34,13 +34,14 @@
 #include "wpad.h"
 #include "cfg.h"
 #include "libwiigui/gui_customoptionbrowser.h"
+#include "libwiigui/gui_gamebrowser.h"
 
 #define MAX_CHARACTERS		38
 
 static GuiImage * coverImg = NULL; //variable always start with lower case
 static GuiImageData * cover = NULL;
 //static GuiImage * diskImg = NULL;
-static GuiImageData * diskCover = NULL;
+//static GuiImageData * diskCover = NULL;
 
 static struct discHdr *gameList = NULL;
 static GuiImageData * pointer[4];
@@ -68,7 +69,8 @@ static double progressTotal = 1;
 int godmode = 0;
 int height = 224;
 int width = 160;
-static int startat;
+static int startat = 0;
+static int offset = 0;
 
 static char gameregion[7];
 //power button fix
@@ -611,7 +613,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
 
-	GuiImageData dialogBox(dialogue_box_startgame_png);
+	GuiImageData dialogBox(CFG.widescreen ? wdialogue_box_startgame_png : dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
 	dialogBoxImg.SetWidescreen(CFG.widescreen);
 
@@ -630,16 +632,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
 	sizeTxt.SetPosition(-60,70);
 
-	//disk image load
-	if (diskCover)
-	{
-		delete diskCover;
-		diskCover = NULL;
-	}
-
 	char imgPath[60];
 	snprintf(imgPath,sizeof(imgPath),"SD:/images/disc/%s.png",ID);
-    diskCover = new GuiImageData(imgPath,0);
+    GuiImageData * diskCover = new GuiImageData(imgPath,0);
 	
 	if (!diskCover->GetImage()) 
 		{
@@ -767,6 +762,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	mainWindow->Remove(&promptWindow);
 	mainWindow->SetState(STATE_DEFAULT);
 	ResumeGui();
+	
+	delete diskCover;
+
 	return choice;
 }
 
@@ -1583,7 +1581,7 @@ static int MenuDiscList()
 	char imgPath[100];
 	__Disc_SetLowMem();
 
-	OptionList options;
+	GameBrowserList games(gameCnt);
 	f32 free, used, size = 0.0;
 	u32 cnt = 0, nolist;
 	char text[MAX_CHARACTERS + 4], text2[20];
@@ -1600,19 +1598,16 @@ static int MenuDiscList()
 
             if (strlen(get_title(header)) < (MAX_CHARACTERS + 3))
 			{
-                sprintf(options.name[cnt], "%s", get_title(header));
+                sprintf(games.name[cnt], "%s", get_title(header));
             }
 			else
 			{
-                sprintf(options.name[cnt], get_title(header),  MAX_CHARACTERS);
-				options.name[cnt][MAX_CHARACTERS] = '\0';
-                strncat(options.name[cnt], "...", 3);
+                sprintf(games.name[cnt], get_title(header),  MAX_CHARACTERS);
+				games.name[cnt][MAX_CHARACTERS] = '\0';
+                strncat(games.name[cnt], "...", 3);
             }
-            *options.value[cnt] = '\0';
         }
     }
-
-    options.length = cnt;
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
@@ -1760,10 +1755,9 @@ static int MenuDiscList()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, startat);
-	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
-	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
-	optionBrowser.SetCol2Position(80);
+	GuiGameBrowser gameBrowser(THEME.selection_w, THEME.selection_h, &games, CFG.theme_path, bg_options_png, startat, offset);
+	gameBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
+	gameBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
@@ -1792,7 +1786,7 @@ static int MenuDiscList()
 	}
 	
     mainWindow->Append(&w);
-    mainWindow->Append(&optionBrowser);
+    mainWindow->Append(&gameBrowser);
 
 	ResumeGui();
 
@@ -1842,7 +1836,7 @@ static int MenuDiscList()
 				//exit(0);
 			} else {
 			    poweroffBtn.ResetState();
-			    optionBrowser.SetFocus(1);
+			    gameBrowser.SetFocus(1);
 			}
 
 		}
@@ -1862,7 +1856,7 @@ static int MenuDiscList()
 				//exit(0); //Back to HBC
 			} else {
 			homeBtn.ResetState();
-			optionBrowser.SetFocus(1);
+			gameBrowser.SetFocus(1);
 			}
 
         }
@@ -1877,11 +1871,12 @@ static int MenuDiscList()
 				else
 				{
 					installBtn.ResetState();
-					optionBrowser.SetFocus(1);
+					gameBrowser.SetFocus(1);
 				}
 		}
 		else if(settingsBtn.GetState() == STATE_CLICKED)
-		{		startat = optionBrowser.GetSelectedOption();
+		{		startat = gameBrowser.GetSelectedOption();
+				offset = gameBrowser.GetOffset();
 				menu = MENU_SETTINGS;
 			    break;
 
@@ -1892,8 +1887,8 @@ static int MenuDiscList()
 
 		char ID[4];
 		char IDfull[7];
-		selectimg = optionBrowser.GetSelectedOption();
-	    gameSelected = optionBrowser.GetClickedOption();
+		selectimg = gameBrowser.GetSelectedOption();
+	    gameSelected = gameBrowser.GetClickedOption();
 		
 		if (gameSelected > 0) //if click occured
 			selectimg = gameSelected;
@@ -2069,7 +2064,7 @@ static int MenuDiscList()
 					menu = MENU_CHECK;
 				}
 				else if(choice == 0)
-					optionBrowser.SetFocus(1);
+					gameBrowser.SetFocus(1);
 			}
 		}
 	}
@@ -2086,7 +2081,7 @@ static int MenuDiscList()
 	}
 	#endif
 
-	mainWindow->Remove(&optionBrowser);
+	mainWindow->Remove(&gameBrowser);
 	mainWindow->Remove(&w);
 	ResumeGui();
 	return menu;
@@ -2226,10 +2221,9 @@ static int MenuFormat()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 	
-	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, startat);
+	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, 0);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
-	optionBrowser.SetCol2Position(130);
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
@@ -2724,6 +2718,9 @@ int GameSettings(struct discHdr * header)
 		if (iosChoice == i249) sprintf (options3.value[4],"249");
 		else if (iosChoice == i222) sprintf (options3.value[4],"222");
 		
+		if(shutdown == 1)
+			Sys_Shutdown();
+		
 		ret = optionBrowser3.GetClickedOption();
 
 		switch (ret)
@@ -3118,7 +3115,6 @@ int MainMenu(int menu)
 	delete pointer[3];
 
 	delete cover;
-	delete diskCover;
 	delete coverImg;
 
 	mainWindow = NULL;
