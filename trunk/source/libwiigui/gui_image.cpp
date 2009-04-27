@@ -220,7 +220,7 @@ void GuiImage::Draw()
 	if(tile > 0)
 	{
 		for(int i=0; i<tile; i++)
-			Menu_DrawImg(currLeft, this->GetTop(), width, height, image, imageangle, widescreen ? currScale*0.8 : currScale, currScale, this->GetAlpha());
+			Menu_DrawImg(currLeft+width*i, this->GetTop(), width, height, image, imageangle, widescreen ? currScale*0.8 : currScale, currScale, this->GetAlpha());
 	}
 	else
 	{

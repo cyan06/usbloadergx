@@ -625,9 +625,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
 
-	GuiImageData dialogBox(dialogue_box_startgame_png);
+	GuiImageData dialogBox(CFG.widescreen ? wdialogue_box_startgame_png : dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
-	dialogBoxImg.SetWidescreen(CFG.widescreen);
+//	dialogBoxImg.SetWidescreen(CFG.widescreen);
 
 	GuiText msgTxt(msg, 22, (GXColor){50, 50, 50, 255});
 	GuiButton nameBtn(120,50);

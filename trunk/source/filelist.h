@@ -74,6 +74,9 @@ extern const u32    button_install_over_png_size;
 extern const u8		dialogue_box_startgame_png[];
 extern const u32	dialogue_box_startgame_png_size;
 
+extern const u8		wdialogue_box_startgame_png[];
+extern const u32	wdialogue_box_startgame_png_size;
+
 extern const u8		button_dialogue_box_startgame_png[];
 extern const u32	button_dialogue_box_startgame_size;
 
