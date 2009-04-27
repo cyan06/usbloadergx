@@ -11,19 +11,21 @@
 
 #include <unistd.h>
 #include "gui_gamebrowser.h"
+#include "cfg.h"
 
 #define GAMESELECTSIZE      30
 
 /**
  * Constructor for the GuiGameBrowser class.
  */
-GuiGameBrowser::GuiGameBrowser(int w, int h, GameBrowserList * l, const char *themePath, const u8 *imagebg, int selected, int offset)
+GuiGameBrowser::GuiGameBrowser(int w, int h, struct discHdr * l, int gameCnt, const char *themePath, const u8 *imagebg, int selected, int offset)
 {
 	width = w;
 	height = h;
+	this->gameCnt = gameCnt;
 	gameList = l;
-	pagesize = (l->length > PAGESIZE) ? PAGESIZE : l->length;
-	scrollbaron = (l->length > PAGESIZE) ? 1 : 0;
+	pagesize = (gameCnt > PAGESIZE) ? PAGESIZE : gameCnt;
+	scrollbaron = (gameCnt > PAGESIZE) ? 1 : 0;
 	selectable = true;
 	listOffset = (offset == 0) ? this->FindMenuItem(-1, 1) : offset;
 	selectedItem = selected - offset;
@@ -114,7 +116,7 @@ GuiGameBrowser::GuiGameBrowser(int w, int h, GameBrowserList * l, const char *th
 	
 	for(int i=0; i < pagesize; i++)
 	{
-		gameTxt[i] = new GuiText(gameList->name[i], 20, (GXColor){0, 0, 0, 0xff});
+		gameTxt[i] = new GuiText(get_title(&gameList[i]), 20, (GXColor){0, 0, 0, 0xff});
 		gameTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		gameTxt[i]->SetPosition(24,0);
 
@@ -130,7 +132,6 @@ GuiGameBrowser::GuiGameBrowser(int w, int h, GameBrowserList * l, const char *th
 //		game[i]->SetLabel(optionVal[i], 1);
 		game[i]->SetImageOver(gameBg[i]);
 		game[i]->SetPosition(5,GAMESELECTSIZE*i+4);
-		game[i]->SetRumble(false);
 		game[i]->SetTrigger(trigA);
 		game[i]->SetSoundClick(btnSoundClick);
 	}
@@ -249,10 +250,10 @@ int GuiGameBrowser::FindMenuItem(int currentItem, int direction)
 {
 	int nextItem = currentItem + direction;
 
-	if(nextItem < 0 || nextItem >= gameList->length)
+	if(nextItem < 0 || nextItem >= gameCnt)
 		return -1;
 
-	if(strlen(gameList->name[nextItem]) > 0)
+	if(strlen(get_title(&gameList[nextItem])) > 0)
 		return nextItem;
 	else
 		return FindMenuItem(nextItem, direction);
@@ -321,7 +322,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 				game[i]->SetState(STATE_DEFAULT);
 			}
 
-			gameTxt[i]->SetText(gameList->name[next]);
+			gameTxt[i]->SetText(get_title(&gameList[next]));
 			gameIndex[i] = next;
 			next = this->FindMenuItem(next, 1);
 		}
@@ -426,30 +427,28 @@ void GuiGameBrowser::Update(GuiTrigger * t)
         }
 	}
 
-	int lang = gameList->length;
-	
     if(scrollbarBoxBtn->GetState() == STATE_HELD &&
 		scrollbarBoxBtn->GetStateChan() == t->chan &&
-		t->wpad.ir.valid && gameList->length > pagesize)
+		t->wpad.ir.valid && gameCnt > pagesize)
     {
 		scrollbarBoxBtn->SetPosition(width/2-18+7,0);
 		int position = t->wpad.ir.y - 50 - scrollbarBoxBtn->GetTop();
 
-		listOffset = (position * lang)/180 - selectedItem;
+		listOffset = (position * gameCnt)/180 - selectedItem;
 
 		if(listOffset <= 0)
 		{
 			listOffset = 0;
 			selectedItem = 0;
 		}
-		else if(listOffset+pagesize >= lang)
+		else if(listOffset+pagesize >= gameCnt)
 		{
-			listOffset = lang-pagesize;
+			listOffset = gameCnt - pagesize;
 			selectedItem = pagesize-1;
 		}
 
 	}
-        int positionbar = 237*(listOffset + selectedItem) / lang;
+        int positionbar = 237*(listOffset + selectedItem) / gameCnt;
 
         if(positionbar > 216)
 		positionbar = 216;
@@ -458,11 +457,11 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 
     if(t->Right())
 	{
-		if(listOffset < lang && lang > pagesize)
+		if(listOffset < gameCnt && gameCnt > pagesize)
 		{
 			listOffset =listOffset+ pagesize;
-			if(listOffset+pagesize >= lang)
-            listOffset = lang-pagesize;
+			if(listOffset+pagesize >= gameCnt)
+            listOffset = gameCnt-pagesize;
 		}
 	}
 	else if(t->Left())

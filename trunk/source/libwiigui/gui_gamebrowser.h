@@ -1,5 +1,9 @@
-#include "gui.h"
+#ifndef _GUIGAMEBROWSER_H_
+#define _GUIGAMEBROWSER_H_
 
+#include "gui.h"
+#include "../disc.h"
+/*
 class GameBrowserList {
 	public:
 		GameBrowserList(int size) {
@@ -23,11 +27,12 @@ class GameBrowserList {
 		int length;
 		char ** name;
 };
+*/
 
 class GuiGameBrowser : public GuiElement
 {
 	public:
-		GuiGameBrowser(int w, int h, GameBrowserList * l, const char *themePath, const u8 *imagebg, int selected = 0, int offSet = 0);
+		GuiGameBrowser(int w, int h, struct discHdr * l, int gameCnt, const char *themePath, const u8 *imagebg, int selected = 0, int offset = 0);
 		~GuiGameBrowser();
 		int FindMenuItem(int c, int d);
 		int GetClickedOption();
@@ -44,7 +49,9 @@ class GuiGameBrowser : public GuiElement
 		int scrollbaron;
 		int pagesize;
 
-		GameBrowserList * gameList;
+		struct discHdr * gameList;
+		int gameCnt;
+
 		int * gameIndex;
 		GuiButton ** game;
 		GuiText ** gameTxt;
@@ -79,3 +86,4 @@ class GuiGameBrowser : public GuiElement
 		GuiTrigger * trigB;
 		GuiTrigger * trigHeldA;
 };
+#endif

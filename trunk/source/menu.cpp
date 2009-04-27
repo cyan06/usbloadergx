@@ -153,19 +153,18 @@ HaltGui()
  * WindowCredits
  * Display credits
  ***************************************************************************/
-static void WindowCredits(void * ptr)
+static void WindowCredits(void)
 {
-	int angle = 0;
-
-	if(btnLogo->GetState() != STATE_CLICKED) {
-		return;
-		}
-
 	bgMusic->Stop();
 	creditsMusic = new GuiSound(credits_music_ogg, credits_music_ogg_size, SOUND_OGG);
 	creditsMusic->SetVolume(40);
 	creditsMusic->SetLoop(1);
 	creditsMusic->Play();
+
+	int angle = 0;
+
+	if(btnLogo->GetState() != STATE_CLICKED)
+		return;
 
 	btnLogo->ResetState();
 
@@ -174,19 +173,18 @@ static void WindowCredits(void * ptr)
 	int y = 95;
 
 	GuiWindow creditsWindow(screenwidth,screenheight);
-	GuiWindow creditsWindowBox(580,448);
-	creditsWindowBox.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-
-	GuiImageData creditsBox(credits_bg_png);
-	GuiImage creditsBoxImg(&creditsBox);
-	creditsBoxImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	creditsWindowBox.Append(&creditsBoxImg);
 
 	GuiImageData star(little_star_png);
 	GuiImage starImg(&star);
 	starImg.SetWidescreen(CFG.widescreen); //added
 	starImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	starImg.SetPosition(500,335);
+
+
+	GuiImageData creditsBg(credits_bg_png);
+	GuiImage creditsBgImg(&creditsBg);
+	creditsBgImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	creditsWindow.Append(&creditsBgImg);
 
 	int numEntries = 15;
 	GuiText * txt[numEntries];
@@ -264,41 +262,31 @@ static void WindowCredits(void * ptr)
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); 
 	i++; 
 	y+=22;
-	
+
 	for(i=0; i < numEntries; i++)
-		creditsWindowBox.Append(txt[i]);
+		creditsWindow.Append(txt[i]);
 
-
-	creditsWindow.Append(&creditsWindowBox);
-	creditsWindow.Append(&starImg);
+    creditsWindow.Append(&starImg);
+    HaltGui();
+	mainWindow->Append(&creditsWindow);
+	ResumeGui();
 
 	while(!exit)
 	{
-		creditsWindow.Draw();
 
 		angle ++;
-		angle = int(angle) % 360;
-		usleep(12000);
-		starImg.SetAngle(angle);
 
-		for(i=3; i >= 0; i--)
-		{
-			#ifdef HW_RVL
-			if(userInput[i].wpad.ir.valid)
-				Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
-					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
-			DoRumble(i);
-			#endif
+		if (angle >359){ (angle = 0);
 		}
-
-		Menu_Render();
+        usleep(12000);
+		starImg.SetAngle(angle);
 
 		for(i=0; i < 4; i++)
 		{
 			if(userInput[i].wpad.btns_d || userInput[i].pad.btns_d)
 				exit = true;
 		}
-	}
+    }
 
 	// clear buttons pressed
 	for(i=0; i < 4; i++)
@@ -306,19 +294,19 @@ static void WindowCredits(void * ptr)
 		userInput[i].wpad.btns_d = 0;
 		userInput[i].pad.btns_d = 0;
 	}
+
+    HaltGui();
+	mainWindow->Remove(&creditsWindow);
+	ResumeGui();
 	creditsMusic->Stop();
-	for(i=0; i < numEntries; i++)
+	for (i = 0; i < numEntries; i++)
+	{
 		delete txt[i];
-		
+	}
 	delete creditsMusic;
 	bgMusic->SetLoop(1);
 	bgMusic->Play();
 }
-
-/****************************************************************************
- * WiiMenuWindowPrompt
- * Display Menu WindowPrompt
- ***************************************************************************/
 
 int
 WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2Label, const char *btn3Label)
@@ -625,9 +613,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
 
-	GuiImageData dialogBox(CFG.widescreen ? wdialogue_box_startgame_png : dialogue_box_startgame_png);
+	GuiImageData dialogBox(dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
-//	dialogBoxImg.SetWidescreen(CFG.widescreen);
+	dialogBoxImg.SetWidescreen(CFG.widescreen);
 
 	GuiText msgTxt(msg, 22, (GXColor){50, 50, 50, 255});
 	GuiButton nameBtn(120,50);
@@ -637,10 +625,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	nameBtn.SetPosition(0,-122);
 	nameBtn.SetSoundOver(&btnSoundOver);
 	nameBtn.SetSoundClick(&btnClick);
-	if (godmode == 1){
 	nameBtn.SetTrigger(&trigA);
 	nameBtn.SetEffectGrow();
-					}
 
     GuiText sizeTxt(size, 22, (GXColor){50, 50, 50, 255});
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
@@ -1090,10 +1076,9 @@ UpdateGUI (void *arg)
 				if(userInput[i].wpad.ir.valid)
 					Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
 						96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
-				DoRumble(i);
 			}
 			#endif
-			
+
 			Menu_Render();
 
 			for(int i=0; i < 4; i++)
@@ -1368,7 +1353,7 @@ static int MenuInstall()
 	{
 
 		if(i == 0)
-			sprintf(txt, "P%d", i+1);
+			sprintf(txt, "P %d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
 
@@ -1596,19 +1581,19 @@ static int MenuDiscList()
 	char imgPath[100];
 	__Disc_SetLowMem();
 
-	GameBrowserList games(gameCnt);
+//	GameBrowserList games(gameCnt);
 	f32 free, used, size = 0.0;
 	u32 cnt = 0, nolist;
 	char text[MAX_CHARACTERS + 4], text2[20];
 	int choice = 0, selectedold = 100;
 	s32 ret;
-	time_t time1 = 0, time2 = 0; //TT
 
 	WBFS_DiskSpace(&used, &free);
 
     if (!gameCnt) {
         nolist = 1;
-    } else {
+    } 
+/*	else {
         for (cnt = 0; cnt < gameCnt; cnt++) {
             struct discHdr *header = &gameList[cnt];
 
@@ -1624,7 +1609,7 @@ static int MenuDiscList()
             }
         }
     }
-
+*/
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
 
@@ -1667,19 +1652,6 @@ static int MenuDiscList()
 	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
 	gamecntTxt.SetAlignment(THEME.gameCntAlign, ALIGN_TOP);
 	gamecntTxt.SetPosition(THEME.gameCnt_x,THEME.gameCnt_y);
-	
-	GuiImageData tooltipLarge(tooltip_large_png);
-	GuiImage tooltipLargeImg(&tooltipLarge);
-
-	GuiText ttinstallTxt("Install a game", 22, (GXColor){0, 0, 0, 255}); //TOOLTIP DATA FOR INSTALL BUTTON
-	GuiImageData ttinstall(tooltip_medium_png);
-	GuiImage ttinstallImg(&ttinstall);
-	GuiButton ttinstallBtn(ttinstall.GetWidth(), ttinstall.GetHeight());
-	ttinstallBtn.SetImage(&ttinstallImg);
-	ttinstallBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	ttinstallBtn.SetPosition(39,333);
-	ttinstallBtn.SetLabel(&ttinstallTxt);
-	ttinstallBtn.SetEffect(EFFECT_FADE, 20);
 
 	GuiImage installBtnImg(&btnInstall);
 	GuiImage installBtnImgOver(&btnInstallOver);
@@ -1699,16 +1671,6 @@ static int MenuDiscList()
 		installBtn.SetTrigger(&trigA);
 		installBtn.SetEffectGrow();
 	}
-	
-	GuiText ttsettingsTxt("Settings", 22, (GXColor){0, 0, 0, 255});		//TOOLTIP DATA FOR SETTINGS BUTTON
-	GuiImageData ttsettings(tooltip_png);
-	GuiImage ttsettingsImg(&ttsettings);
-	GuiButton ttsettingsBtn(ttsettings.GetWidth(), ttsettings.GetHeight());
-	ttsettingsBtn.SetImage(&ttsettingsImg);
-	ttsettingsBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	ttsettingsBtn.SetPosition(115,350);
-	ttsettingsBtn.SetLabel(&ttsettingsTxt);
-	ttsettingsBtn.SetEffect(EFFECT_FADE, 20);
 
 	GuiImage settingsBtnImg(&btnSettings);
 	settingsBtnImg.SetWidescreen(CFG.widescreen); //added
@@ -1723,17 +1685,6 @@ static int MenuDiscList()
 	settingsBtn.SetSoundClick(&btnClick);
 	settingsBtn.SetTrigger(&trigA);
 	settingsBtn.SetEffectGrow();
-	
-	GuiText tthomeTxt("Back to HBC or Wii Menu", 22, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
-	GuiImageData tthome(tooltip_large_png);
-	GuiImage tthomeImg(&tthome);
-	GuiButton tthomeBtn(tthome.GetWidth(), tthome.GetHeight());
-	tthomeBtn.SetImage(&tthomeImg);
-	tthomeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	tthomeBtn.SetPosition(250,350);
-	tthomeBtn.SetLabel(&tthomeTxt);
-	tthomeBtn.SetEffect(EFFECT_FADE, 20);
-
 
 	GuiImage homeBtnImg(&btnhome);
 	homeBtnImg.SetWidescreen(CFG.widescreen); //added
@@ -1749,16 +1700,6 @@ static int MenuDiscList()
 	homeBtn.SetTrigger(&trigA);
 	homeBtn.SetTrigger(&trigHome);
 	homeBtn.SetEffectGrow();
-	
-	GuiText ttpoweroffTxt("Power off the Wii", 22, (GXColor){0, 0, 0, 255}); //TOOLTIP DATA FOR POWER BUTTON
-	GuiImageData ttpoweroff(tooltip_medium_png);
-	GuiImage ttpoweroffImg(&ttpoweroff);
-	GuiButton ttpoweroffBtn(ttpoweroff.GetWidth(), ttpoweroff.GetHeight());
-	ttpoweroffBtn.SetImage(&ttpoweroffImg);
-	ttpoweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	ttpoweroffBtn.SetPosition(390,333);
-	ttpoweroffBtn.SetLabel(&ttpoweroffTxt);
-
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
@@ -1786,7 +1727,7 @@ static int MenuDiscList()
 	{
 
 		if(i == 0)
-			sprintf(txt, "P%d", i+1);
+			sprintf(txt, "P %d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
 
@@ -1815,7 +1756,7 @@ static int MenuDiscList()
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
 
-	GuiGameBrowser gameBrowser(THEME.selection_w, THEME.selection_h, &games, CFG.theme_path, bg_options_png, startat, offset);
+	GuiGameBrowser gameBrowser(THEME.selection_w, THEME.selection_h, gameList, gameCnt, CFG.theme_path, bg_options_png, startat, offset);
 	gameBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	gameBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 
@@ -1900,20 +1841,6 @@ static int MenuDiscList()
 			}
 
 		}
-		else if(poweroffBtn.GetState() == STATE_SELECTED) //TT
-		{
-			
-		    if (time2 == 0)
-		    time(&time2);
-
-		    time(&time1);
-
-            if (difftime(time1,time2) == 2)
-            w.Append(&ttpoweroffBtn); 
-
-			if(poweroffBtn.GetState() == STATE_SELECTED) {
-			}
-		} 
 		else if(homeBtn.GetState() == STATE_CLICKED)
 		{
 
@@ -1934,20 +1861,6 @@ static int MenuDiscList()
 			}
 
         }
-		else if(homeBtn.GetState() == STATE_SELECTED) //TT
-		{
-			
-		    if (time2 == 0)
-		    time(&time2);
-
-		    time(&time1);
-
-            if (difftime(time1,time2) == 2)
-            w.Append(&tthomeBtn); 
-
-			if(homeBtn.GetState() == STATE_SELECTED) {
-			}
-		}
 		else if(installBtn.GetState() == STATE_CLICKED)
 		{
 				choice = WindowPrompt ("Install a game?",0,"Yes","No");
@@ -1962,20 +1875,6 @@ static int MenuDiscList()
 					gameBrowser.SetFocus(1);
 				}
 		}
-		else if(installBtn.GetState() == STATE_SELECTED) //TT
-		{
-			
-		    if (time2 == 0)
-		    time(&time2);
-
-		    time(&time1);
-
-            if (difftime(time1,time2) == 2)
-            w.Append(&ttinstallBtn); 
-
-			if(installBtn.GetState() == STATE_SELECTED) {
-			}
-		}
 		else if(settingsBtn.GetState() == STATE_CLICKED)
 		{		startat = gameBrowser.GetSelectedOption();
 				offset = gameBrowser.GetOffset();
@@ -1983,29 +1882,6 @@ static int MenuDiscList()
 			    break;
 
 		}
-		else if(settingsBtn.GetState() == STATE_SELECTED) //TT
-		{
-			
-		    if (time2 == 0)
-		    time(&time2);
-
-		    time(&time1);
-
-            if (difftime(time1,time2) == 2)
-            w.Append(&ttsettingsBtn); 
-
-			if(settingsBtn.GetState() == STATE_SELECTED) {
-			}
-		} 
-
-			else {
-			w.Remove(&ttpoweroffBtn);
-			w.Remove(&ttinstallBtn);
-			w.Remove(&tthomeBtn);
-			w.Remove(&ttsettingsBtn);
-			time2 = 0;
-		}
-
 
 		//Get selected game under cursor
 		int selectimg;
@@ -2179,7 +2055,7 @@ static int MenuDiscList()
 					returnHere = true;
 				}
 				
-				else if (choice == 3) //&& (godmode == 1))
+				else if (choice == 3)
 				{
 					//enter new game title
 					char entered[40];
@@ -2317,7 +2193,7 @@ static int MenuFormat()
 	{
 
 		if(i == 0)
-			sprintf(txt, "P%d", i+1);
+			sprintf(txt, "P %d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
 
@@ -2553,7 +2429,6 @@ static int MenuSettings()
 	btnLogo->SetSoundOver(&btnSoundOver);
 	btnLogo->SetSoundClick(&btnClick);
 	btnLogo->SetTrigger(&trigA);
-	btnLogo->SetUpdateCallback(WindowCredits);
 
 	GuiCustomOptionBrowser optionBrowser2(396, 280, &options2, 0, bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(0, 90);
@@ -2572,13 +2447,11 @@ static int MenuSettings()
     mainWindow->Append(&optionBrowser2);
 
 	ResumeGui();
-	
-	int i;
 
 	while(menu == MENU_NONE)
-	{	
+	{
+
 		VIDEO_WaitVSync ();
-		
 		if(Settings.video > 5)
 			Settings.video = 0;
 		if(Settings.language  > 10)
@@ -2658,6 +2531,10 @@ static int MenuSettings()
 			menu = MENU_DISCLIST;
 			break;
 		}
+		if(btnLogo->GetState() == STATE_CLICKED)
+		{
+			WindowCredits();
+		}
 
 		if(lockBtn.GetState() == STATE_CLICKED)
 		{
@@ -2668,12 +2545,12 @@ static int MenuSettings()
 			{
 			if (godmode == 0)
 				{
-				WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
+				WindowPrompt("Correct Password","Install and Delete are unlocked.","OK",0);
 				godmode = 1;
 				}
 				else
 				{
-				WindowPrompt("Correct Password","Install, Rename, and Delete are locked.","OK",0);
+				WindowPrompt("Correct Password","Install and Delete are locked.","OK",0);
 				godmode = 0;
 				}
 			}
@@ -2983,7 +2860,7 @@ static int MenuCheck()
 	{
 
         if(i == 0)
-			sprintf(txt, "P%d", i+1);
+			sprintf(txt, "P %d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
 

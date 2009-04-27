@@ -33,7 +33,7 @@ u8 languageChoice = 0;
 u8 viChoice = 0;
 u8 iosChoice = 0;
 
-#define TITLE_MAX 65
+#define TITLE_MAX 50
 
 struct ID_Title
 {
