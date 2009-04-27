@@ -2572,11 +2572,13 @@ static int MenuSettings()
     mainWindow->Append(&optionBrowser2);
 
 	ResumeGui();
+	
+	int i;
 
 	while(menu == MENU_NONE)
-	{
-
+	{	
 		VIDEO_WaitVSync ();
+		
 		if(Settings.video > 5)
 			Settings.video = 0;
 		if(Settings.language  > 10)
