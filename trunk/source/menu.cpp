@@ -1368,7 +1368,7 @@ static int MenuInstall()
 	{
 
 		if(i == 0)
-			sprintf(txt, "P %d", i+1);
+			sprintf(txt, "P%d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
 
@@ -1786,7 +1786,7 @@ static int MenuDiscList()
 	{
 
 		if(i == 0)
-			sprintf(txt, "P %d", i+1);
+			sprintf(txt, "P%d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
 
@@ -2317,7 +2317,7 @@ static int MenuFormat()
 	{
 
 		if(i == 0)
-			sprintf(txt, "P %d", i+1);
+			sprintf(txt, "P%d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
 
@@ -2981,7 +2981,7 @@ static int MenuCheck()
 	{
 
         if(i == 0)
-			sprintf(txt, "P %d", i+1);
+			sprintf(txt, "P%d", i+1);
 		else
 			sprintf(txt, "P%d", i+1);
 
