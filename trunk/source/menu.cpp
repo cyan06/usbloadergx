@@ -625,8 +625,10 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	nameBtn.SetPosition(0,-122);
 	nameBtn.SetSoundOver(&btnSoundOver);
 	nameBtn.SetSoundClick(&btnClick);
+	if (godmode == 1){
 	nameBtn.SetTrigger(&trigA);
 	nameBtn.SetEffectGrow();
+					}
 
     GuiText sizeTxt(size, 22, (GXColor){50, 50, 50, 255});
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
@@ -2164,7 +2166,7 @@ static int MenuDiscList()
 					returnHere = true;
 				}
 				
-				else if (choice == 3)
+				else if (choice == 3) //&& (godmode == 1))
 				{
 					//enter new game title
 					char entered[40];
@@ -2654,12 +2656,12 @@ static int MenuSettings()
 			{
 			if (godmode == 0)
 				{
-				WindowPrompt("Correct Password","Install and Delete are unlocked.","OK",0);
+				WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
 				godmode = 1;
 				}
 				else
 				{
-				WindowPrompt("Correct Password","Install and Delete are locked.","OK",0);
+				WindowPrompt("Correct Password","Install, Rename, and Delete are locked.","OK",0);
 				godmode = 0;
 				}
 			}
