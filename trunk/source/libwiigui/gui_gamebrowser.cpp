@@ -130,6 +130,7 @@ GuiGameBrowser::GuiGameBrowser(int w, int h, GameBrowserList * l, const char *th
 //		game[i]->SetLabel(optionVal[i], 1);
 		game[i]->SetImageOver(gameBg[i]);
 		game[i]->SetPosition(5,GAMESELECTSIZE*i+4);
+		game[i]->SetRumble(false);
 		game[i]->SetTrigger(trigA);
 		game[i]->SetSoundClick(btnSoundClick);
 	}

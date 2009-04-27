@@ -134,6 +134,7 @@ GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * 
 		optionBtn[i]->SetLabel(optionVal[i], 1);
 		optionBtn[i]->SetImageOver(optionBg[i]);
 		optionBtn[i]->SetPosition(5,GAMESELECTSIZE*i+4);
+		optionBtn[i]->SetRumble(false);
 		optionBtn[i]->SetTrigger(trigA);
 		optionBtn[i]->SetSoundClick(btnSoundClick);
 	}
