@@ -5,7 +5,9 @@
 In order to be able to use your theme, you need to have a config.txt in SD:/config/ to point to the theme folder.
 
 If your wii is using 16:9 settings, in config.txt, put the following line:
-wtheme_path = SD:/mytheme/ (or the theme folder you use)
+wtheme_path = SD:/mytheme/ (or the theme folder you use) 
+
+Note: wtheme_path config option might be removed in the future release
 
 If your wii is using 4:3 settings, in config.txt, put the following line:
 theme_path = SD:/mytheme/ (or the theme folder you use)
@@ -15,7 +17,9 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
 
   * Currently, you can put the following files in your theme folder:
 
-  * *background.png* is the loader's main background
+  * *background.png* is the loader's main background (for 4:3)
+
+  * *wbackground.png* is the loader's widescreen background (for 16:9)
 
   * *bg_options.png* is the background of selection game list
 
@@ -39,7 +43,7 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
 
   * more to add later
 
-  * *CAUTION*: All png files should have dimensions of multiple of 4
+  * *CAUTION*: All png files should have dimensions of *multiple of 4*
 
 = Options of theme.txt =
 
