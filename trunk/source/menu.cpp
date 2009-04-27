@@ -153,18 +153,19 @@ HaltGui()
  * WindowCredits
  * Display credits
  ***************************************************************************/
-static void WindowCredits(void)
+static void WindowCredits(void * ptr)
 {
+	int angle = 0;
+
+	if(btnLogo->GetState() != STATE_CLICKED) {
+		return;
+		}
+
 	bgMusic->Stop();
 	creditsMusic = new GuiSound(credits_music_ogg, credits_music_ogg_size, SOUND_OGG);
 	creditsMusic->SetVolume(40);
 	creditsMusic->SetLoop(1);
 	creditsMusic->Play();
-
-	int angle = 0;
-
-	if(btnLogo->GetState() != STATE_CLICKED)
-		return;
 
 	btnLogo->ResetState();
 
@@ -173,18 +174,19 @@ static void WindowCredits(void)
 	int y = 95;
 
 	GuiWindow creditsWindow(screenwidth,screenheight);
+	GuiWindow creditsWindowBox(580,448);
+	creditsWindowBox.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+
+	GuiImageData creditsBox(credits_bg_png);
+	GuiImage creditsBoxImg(&creditsBox);
+	creditsBoxImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	creditsWindowBox.Append(&creditsBoxImg);
 
 	GuiImageData star(little_star_png);
 	GuiImage starImg(&star);
 	starImg.SetWidescreen(CFG.widescreen); //added
 	starImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	starImg.SetPosition(500,335);
-
-
-	GuiImageData creditsBg(credits_bg_png);
-	GuiImage creditsBgImg(&creditsBg);
-	creditsBgImg.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-	creditsWindow.Append(&creditsBgImg);
 
 	int numEntries = 15;
 	GuiText * txt[numEntries];
@@ -262,31 +264,41 @@ static void WindowCredits(void)
 	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); 
 	i++; 
 	y+=22;
-
+	
 	for(i=0; i < numEntries; i++)
-		creditsWindow.Append(txt[i]);
+		creditsWindowBox.Append(txt[i]);
 
-    creditsWindow.Append(&starImg);
-    HaltGui();
-	mainWindow->Append(&creditsWindow);
-	ResumeGui();
+
+	creditsWindow.Append(&creditsWindowBox);
+	creditsWindow.Append(&starImg);
 
 	while(!exit)
 	{
+		creditsWindow.Draw();
 
 		angle ++;
-
-		if (angle >359){ (angle = 0);
-		}
-        usleep(12000);
+		angle = int(angle) % 360;
+		usleep(12000);
 		starImg.SetAngle(angle);
+
+		for(i=3; i >= 0; i--)
+		{
+			#ifdef HW_RVL
+			if(userInput[i].wpad.ir.valid)
+				Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
+					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
+			DoRumble(i);
+			#endif
+		}
+
+		Menu_Render();
 
 		for(i=0; i < 4; i++)
 		{
 			if(userInput[i].wpad.btns_d || userInput[i].pad.btns_d)
 				exit = true;
 		}
-    }
+	}
 
 	// clear buttons pressed
 	for(i=0; i < 4; i++)
@@ -294,19 +306,19 @@ static void WindowCredits(void)
 		userInput[i].wpad.btns_d = 0;
 		userInput[i].pad.btns_d = 0;
 	}
-
-    HaltGui();
-	mainWindow->Remove(&creditsWindow);
-	ResumeGui();
 	creditsMusic->Stop();
-	for (i = 0; i < numEntries; i++)
-	{
+	for(i=0; i < numEntries; i++)
 		delete txt[i];
-	}
+		
 	delete creditsMusic;
 	bgMusic->SetLoop(1);
 	bgMusic->Play();
 }
+
+/****************************************************************************
+ * WiiMenuWindowPrompt
+ * Display Menu WindowPrompt
+ ***************************************************************************/
 
 int
 WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2Label, const char *btn3Label)
@@ -2541,6 +2553,7 @@ static int MenuSettings()
 	btnLogo->SetSoundOver(&btnSoundOver);
 	btnLogo->SetSoundClick(&btnClick);
 	btnLogo->SetTrigger(&trigA);
+	btnLogo->SetUpdateCallback(WindowCredits);
 
 	GuiCustomOptionBrowser optionBrowser2(396, 280, &options2, 0, bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(0, 90);
@@ -2642,10 +2655,6 @@ static int MenuSettings()
 		{
 			menu = MENU_DISCLIST;
 			break;
-		}
-		if(btnLogo->GetState() == STATE_CLICKED)
-		{
-			WindowCredits();
 		}
 
 		if(lockBtn.GetState() == STATE_CLICKED)
