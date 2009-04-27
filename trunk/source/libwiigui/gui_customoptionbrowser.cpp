@@ -27,7 +27,7 @@ GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * 
 	width = w;
 	height = h;
 	options = l;
-	this->size = l->length;
+	size = ((l->length > PAGESIZE)? PAGESIZE: l->length);
 	scrollbaron = scrollon;
 	selectable = true;
 	listOffset = this->FindMenuItem(-1, 1);

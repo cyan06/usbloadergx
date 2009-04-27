@@ -1894,186 +1894,185 @@ static int MenuDiscList()
 		char IDfull[7];
 		selectimg = optionBrowser.GetSelectedOption();
 	    gameSelected = optionBrowser.GetClickedOption();
-		//startat = selectimg;
-		for (cnt = 0; cnt < gameCnt; cnt++) {
-			if ((s32) (cnt) == selectimg) {
-				if (selectimg != selectedold)
+		
+		if (gameSelected > 0) //if click occured
+			selectimg = gameSelected;
+			
+		if ((selectimg >= 0) && (selectimg < (s32) gameCnt))
+		{
+			if (selectimg != selectedold)
+			{
+				selectedold = selectimg;
+				struct discHdr *header = &gameList[selectimg];
+				snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
+				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+				w.Remove(coverImg);
+
+				if (GameIDTxt)
 				{
-					selectedold = selectimg;
-					struct discHdr *header = &gameList[selectimg];
-					snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
-					snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-					w.Remove(coverImg);
+					w.Remove(GameIDTxt);
+					delete GameIDTxt;
+					GameIDTxt = NULL;
+				}
+				if(GameRegionTxt)
+				{
+					w.Remove(GameRegionTxt);
+					delete GameRegionTxt;
+					GameRegionTxt = NULL;
+				}
 
-					if (GameIDTxt)
-					{
-						w.Remove(GameIDTxt);
-						delete GameIDTxt;
-						GameIDTxt = NULL;
-					}
-					if(GameRegionTxt)
-					{
-						w.Remove(GameRegionTxt);
-						delete GameRegionTxt;
-						GameRegionTxt = NULL;
-					}
+				switch(header->id[3])
+				{
+					case 'E':
+					sprintf(gameregion,"NTSC U");
+					break;
 
-					switch(header->id[3])
-					{
-						case 'E':
-						sprintf(gameregion,"NTSC U");
-						break;
+					case 'J':
+					sprintf(gameregion,"NTSC J");
+					break;
 
-						case 'J':
-						sprintf(gameregion,"NTSC J");
-						break;
+					case 'P':
+					sprintf(gameregion,"  PAL ");
+					break;
+				}
 
-						case 'P':
-						sprintf(gameregion,"  PAL ");
-						break;
-					}
+				//load game cover
+				if (cover)
+				{
+					delete cover;
+					cover = NULL;
+				}
 
-					//load game cover
-					if (cover)
-					{
-						delete cover;
-						cover = NULL;
-					}
-
-					snprintf(imgPath, sizeof(imgPath), "SD:/images/%s.png", ID);
-					cover = new GuiImageData(imgPath,0); //load short id
-					if (!cover->GetImage()) //if could not load the short id image
+				snprintf(imgPath, sizeof(imgPath), "SD:/images/%s.png", ID);
+				cover = new GuiImageData(imgPath,0); //load short id
+				if (!cover->GetImage()) //if could not load the short id image
+				{
+					delete cover;
+					snprintf(imgPath, sizeof(imgPath), "SD:/images/%s.png", IDfull);
+					cover = new GuiImageData(imgPath, 0); //load full id image
+					if (!cover->GetImage())
 					{
 						delete cover;
-						snprintf(imgPath, sizeof(imgPath), "SD:/images/%s.png", IDfull);
-						cover = new GuiImageData(imgPath, 0); //load full id image
-						if (!cover->GetImage())
-						{
-							delete cover;
-							cover = new GuiImageData("SD:/images/noimage.png", nocover_png); //load no image
-						}
-					}
-
-					if (coverImg)
-					{
-						delete coverImg;
-						coverImg = NULL;
-					}
-					__Disc_SetLowMem();
-					coverImg = new GuiImage(cover);
-					coverImg->SetWidescreen(CFG.widescreen);
-					coverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-					coverImg->SetPosition(THEME.cover_x,THEME.cover_y);
-					coverImg->SetEffect(EFFECT_FADE, 20);
-					w.Append(coverImg);
-
-					if ((Settings.sinfo == GameID) || (Settings.sinfo == Both)){
-						GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
-						GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
-						GameIDTxt->SetEffect(EFFECT_FADE, 20);
-						w.Append(GameIDTxt);
-					}
-
-					if ((Settings.sinfo == GameRegion) || (Settings.sinfo == Both)){
-						GameRegionTxt = new GuiText(gameregion, 22, (GXColor){63, 154, 192, 255});
-						GameRegionTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-						GameRegionTxt->SetPosition(THEME.region_x, THEME.region_y);
-						//GameRegionTxt->SetPosition(THEME.id_x,THEME.id_y);
-						GameRegionTxt->SetEffect(EFFECT_FADE, 20);
-						w.Append(GameRegionTxt);
+						cover = new GuiImageData("SD:/images/noimage.png", nocover_png); //load no image
 					}
 				}
-				break;
+
+				if (coverImg)
+				{
+					delete coverImg;
+					coverImg = NULL;
+				}
+				__Disc_SetLowMem();
+				coverImg = new GuiImage(cover);
+				coverImg->SetWidescreen(CFG.widescreen);
+				coverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+				coverImg->SetPosition(THEME.cover_x,THEME.cover_y);
+				coverImg->SetEffect(EFFECT_FADE, 20);
+				w.Append(coverImg);
+
+				if ((Settings.sinfo == GameID) || (Settings.sinfo == Both)){
+					GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
+					GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+					GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
+					GameIDTxt->SetEffect(EFFECT_FADE, 20);
+					w.Append(GameIDTxt);
+				}
+
+				if ((Settings.sinfo == GameRegion) || (Settings.sinfo == Both)){
+					GameRegionTxt = new GuiText(gameregion, 22, (GXColor){63, 154, 192, 255});
+					GameRegionTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+					GameRegionTxt->SetPosition(THEME.region_x, THEME.region_y);
+					//GameRegionTxt->SetPosition(THEME.id_x,THEME.id_y);
+					GameRegionTxt->SetEffect(EFFECT_FADE, 20);
+					w.Append(GameRegionTxt);
+				}
 			}
+		}
+		__Disc_SetLowMem();
+
+		if ((gameSelected >= 0) && (gameSelected < (s32)gameCnt))
+		{
+			struct discHdr *header = &gameList[gameSelected];
+			WBFS_GameSize(header->id, &size);
 			__Disc_SetLowMem();
+			if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
+				sprintf(text, "%s", get_title(header));
+			}
+			else {
+				strncpy(text, get_title(header),  MAX_CHARACTERS);
+				text[MAX_CHARACTERS] = '\0';
+				strncat(text, "...", 3);
+			}
 
-			if ((s32) (cnt) == gameSelected) {
-				struct discHdr *header = &gameList[gameSelected];
-				WBFS_GameSize(header->id, &size);
-                __Disc_SetLowMem();
-				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
-					sprintf(text, "%s", get_title(header));
-				}
-				else {
-					strncpy(text, get_title(header),  MAX_CHARACTERS);
-					text[MAX_CHARACTERS] = '\0';
-					strncat(text, "...", 3);
-				}
+			bool returnHere = true;
+			while (returnHere)
+			{
+				returnHere = false;
+				wiilight(1);
+				 __Disc_SetLowMem();
+				sprintf(text2, "%.2fGB", size);
+				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
+				sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+				choice = GameWindowPrompt(
+				text2,
+				text,
+				"Boot",
+				"Back",
+				"Settings",
+				ID,
+				IDfull);
+				wiilight(0);
 
-				bool returnHere = true;
-				while (returnHere)
+				if(choice == 1)
 				{
-					returnHere = false;
-					wiilight(1);
-					 __Disc_SetLowMem();
-					sprintf(text2, "%.2fGB", size);
-					sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
-					sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-					choice = GameWindowPrompt(
-					text2,
-					text,
-					"Boot",
-					"Back",
-					"Settings",
-					ID,
-					IDfull);
-					wiilight(0);
-
-					if(choice == 1)
-					{
-						/* Set USB mode */
-						ret = Disc_SetUSB(header->id);
+					/* Set USB mode */
+					ret = Disc_SetUSB(header->id);
+					if (ret < 0) {
+						sprintf(text, "Error: %i", ret);
+						WindowPrompt(
+						"Failed to set USB:",
+						text,
+						"OK",0);
+					}
+					else {
+						/* Open disc */
+						ret = Disc_Open();
 						if (ret < 0) {
 							sprintf(text, "Error: %i", ret);
 							WindowPrompt(
-							"Failed to set USB:",
+							"Failed to boot:",
 							text,
 							"OK",0);
 						}
 						else {
-							/* Open disc */
-							ret = Disc_Open();
-							if (ret < 0) {
-								sprintf(text, "Error: %i", ret);
-								WindowPrompt(
-								"Failed to boot:",
-								text,
-								"OK",0);
-							}
-							else {
-								menu = MENU_EXIT;
-							}
+							menu = MENU_EXIT;
 						}
 					}
-					else if (choice == 2)
-					{
-						if (GameSettings(header) == 1) //if deleted
-						{
-							menu = MENU_DISCLIST;
-							break;
-						}
-
-						returnHere = true;
-
-					}
-					else if (choice == 3)
-					{
-						//enter new game title
-						char entered[40];
-						sprintf(entered,"%s",text);
-						OnScreenKeyboard(entered, 40);
-						WBFS_RenameGame(header->id,entered);
-						menu = MENU_CHECK;
-					}
-					else if(choice == 0)
-						optionBrowser.SetFocus(1);
-
 				}
+				else if (choice == 2)
+				{
+					if (GameSettings(header) == 1) //if deleted
+					{
+						menu = MENU_DISCLIST;
+						break;
+					}
+					returnHere = true;
+				}
+				
+				else if (choice == 3)
+				{
+					//enter new game title
+					char entered[40];
+					sprintf(entered,"%s",text);
+					OnScreenKeyboard(entered, 40);
+					WBFS_RenameGame(header->id,entered);
+					menu = MENU_CHECK;
+				}
+				else if(choice == 0)
+					optionBrowser.SetFocus(1);
 			}
 		}
 	}
-
 
 	HaltGui();
 	

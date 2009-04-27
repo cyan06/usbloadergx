@@ -192,7 +192,8 @@ void CFG_Default()
 	CFG.parentalcontrol = 0;
 //	CFG.installdownload = 0;
 //	CFG.hidesettingmenu = 0;
-
+	snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
+	
 	//all alignments are left top here
 	THEME.selection_x = 200;
 	THEME.selection_y = 40;
