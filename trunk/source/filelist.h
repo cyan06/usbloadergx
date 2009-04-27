@@ -32,6 +32,15 @@ extern const u32	button_click2_pcm_size;
 extern const u8		logo_png[];
 extern const u32	logo_png_size;
 
+extern const u8     tooltip_png[];
+extern const u32    tooltip_png_size;
+
+extern const u8     tooltip_medium_png[];
+extern const u32    tooltip_medium_png_size;
+
+extern const u8     tooltip_large_png[];
+extern const u32    tooltip_large_png_size;
+
 extern const u8		credits_bg_png[];
 extern const u32	credits_bg_png_size;
 

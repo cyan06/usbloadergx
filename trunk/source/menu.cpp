@@ -1587,6 +1587,7 @@ static int MenuDiscList()
 	char text[MAX_CHARACTERS + 4], text2[20];
 	int choice = 0, selectedold = 100;
 	s32 ret;
+	time_t time1 = 0, time2 = 0; //TT
 
 	WBFS_DiskSpace(&used, &free);
 
@@ -1651,6 +1652,19 @@ static int MenuDiscList()
 	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
 	gamecntTxt.SetAlignment(THEME.gameCntAlign, ALIGN_TOP);
 	gamecntTxt.SetPosition(THEME.gameCnt_x,THEME.gameCnt_y);
+	
+	GuiImageData tooltipLarge(tooltip_large_png);
+	GuiImage tooltipLargeImg(&tooltipLarge);
+
+	GuiText ttinstallTxt("Install a game", 22, (GXColor){0, 0, 0, 255}); //TOOLTIP DATA FOR INSTALL BUTTON
+	GuiImageData ttinstall(tooltip_medium_png);
+	GuiImage ttinstallImg(&ttinstall);
+	GuiButton ttinstallBtn(ttinstall.GetWidth(), ttinstall.GetHeight());
+	ttinstallBtn.SetImage(&ttinstallImg);
+	ttinstallBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	ttinstallBtn.SetPosition(39,333);
+	ttinstallBtn.SetLabel(&ttinstallTxt);
+	ttinstallBtn.SetEffect(EFFECT_FADE, 20);
 
 	GuiImage installBtnImg(&btnInstall);
 	GuiImage installBtnImgOver(&btnInstallOver);
@@ -1670,6 +1684,16 @@ static int MenuDiscList()
 		installBtn.SetTrigger(&trigA);
 		installBtn.SetEffectGrow();
 	}
+	
+	GuiText ttsettingsTxt("Settings", 22, (GXColor){0, 0, 0, 255});		//TOOLTIP DATA FOR SETTINGS BUTTON
+	GuiImageData ttsettings(tooltip_png);
+	GuiImage ttsettingsImg(&ttsettings);
+	GuiButton ttsettingsBtn(ttsettings.GetWidth(), ttsettings.GetHeight());
+	ttsettingsBtn.SetImage(&ttsettingsImg);
+	ttsettingsBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	ttsettingsBtn.SetPosition(115,350);
+	ttsettingsBtn.SetLabel(&ttsettingsTxt);
+	ttsettingsBtn.SetEffect(EFFECT_FADE, 20);
 
 	GuiImage settingsBtnImg(&btnSettings);
 	settingsBtnImg.SetWidescreen(CFG.widescreen); //added
@@ -1684,6 +1708,17 @@ static int MenuDiscList()
 	settingsBtn.SetSoundClick(&btnClick);
 	settingsBtn.SetTrigger(&trigA);
 	settingsBtn.SetEffectGrow();
+	
+	GuiText tthomeTxt("Back to HBC or Wii Menu", 22, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
+	GuiImageData tthome(tooltip_large_png);
+	GuiImage tthomeImg(&tthome);
+	GuiButton tthomeBtn(tthome.GetWidth(), tthome.GetHeight());
+	tthomeBtn.SetImage(&tthomeImg);
+	tthomeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	tthomeBtn.SetPosition(250,350);
+	tthomeBtn.SetLabel(&tthomeTxt);
+	tthomeBtn.SetEffect(EFFECT_FADE, 20);
+
 
 	GuiImage homeBtnImg(&btnhome);
 	homeBtnImg.SetWidescreen(CFG.widescreen); //added
@@ -1699,6 +1734,16 @@ static int MenuDiscList()
 	homeBtn.SetTrigger(&trigA);
 	homeBtn.SetTrigger(&trigHome);
 	homeBtn.SetEffectGrow();
+	
+	GuiText ttpoweroffTxt("Power off the Wii", 22, (GXColor){0, 0, 0, 255}); //TOOLTIP DATA FOR POWER BUTTON
+	GuiImageData ttpoweroff(tooltip_medium_png);
+	GuiImage ttpoweroffImg(&ttpoweroff);
+	GuiButton ttpoweroffBtn(ttpoweroff.GetWidth(), ttpoweroff.GetHeight());
+	ttpoweroffBtn.SetImage(&ttpoweroffImg);
+	ttpoweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	ttpoweroffBtn.SetPosition(390,333);
+	ttpoweroffBtn.SetLabel(&ttpoweroffTxt);
+
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
@@ -1840,6 +1885,20 @@ static int MenuDiscList()
 			}
 
 		}
+		else if(poweroffBtn.GetState() == STATE_SELECTED) //TT
+		{
+			
+		    if (time2 == 0)
+		    time(&time2);
+
+		    time(&time1);
+
+            if (difftime(time1,time2) == 2)
+            w.Append(&ttpoweroffBtn); 
+
+			if(poweroffBtn.GetState() == STATE_SELECTED) {
+			}
+		} 
 		else if(homeBtn.GetState() == STATE_CLICKED)
 		{
 
@@ -1860,6 +1919,20 @@ static int MenuDiscList()
 			}
 
         }
+		else if(homeBtn.GetState() == STATE_SELECTED) //TT
+		{
+			
+		    if (time2 == 0)
+		    time(&time2);
+
+		    time(&time1);
+
+            if (difftime(time1,time2) == 2)
+            w.Append(&tthomeBtn); 
+
+			if(homeBtn.GetState() == STATE_SELECTED) {
+			}
+		}
 		else if(installBtn.GetState() == STATE_CLICKED)
 		{
 				choice = WindowPrompt ("Install a game?",0,"Yes","No");
@@ -1874,6 +1947,20 @@ static int MenuDiscList()
 					gameBrowser.SetFocus(1);
 				}
 		}
+		else if(installBtn.GetState() == STATE_SELECTED) //TT
+		{
+			
+		    if (time2 == 0)
+		    time(&time2);
+
+		    time(&time1);
+
+            if (difftime(time1,time2) == 2)
+            w.Append(&ttinstallBtn); 
+
+			if(installBtn.GetState() == STATE_SELECTED) {
+			}
+		}
 		else if(settingsBtn.GetState() == STATE_CLICKED)
 		{		startat = gameBrowser.GetSelectedOption();
 				offset = gameBrowser.GetOffset();
@@ -1881,6 +1968,29 @@ static int MenuDiscList()
 			    break;
 
 		}
+		else if(settingsBtn.GetState() == STATE_SELECTED) //TT
+		{
+			
+		    if (time2 == 0)
+		    time(&time2);
+
+		    time(&time1);
+
+            if (difftime(time1,time2) == 2)
+            w.Append(&ttsettingsBtn); 
+
+			if(settingsBtn.GetState() == STATE_SELECTED) {
+			}
+		} 
+
+			else {
+			w.Remove(&ttpoweroffBtn);
+			w.Remove(&ttinstallBtn);
+			w.Remove(&tthomeBtn);
+			w.Remove(&ttsettingsBtn);
+			time2 = 0;
+		}
+
 
 		//Get selected game under cursor
 		int selectimg;
