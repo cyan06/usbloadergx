@@ -657,7 +657,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	diskImg.SetWidescreen(CFG.widescreen);
 	diskImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
     diskImg.SetAngle(angle);
-    diskImg.Draw();
+//    diskImg.Draw();
 
 	GuiButton btn1(160, 160);
     btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
@@ -739,7 +739,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 				}
 		if (speedup < 1){speedup=1;}
         diskImg.SetAngle(angle);
-		diskImg.Draw();
+//		diskImg.Draw();
 
 		if(shutdown == 1)
 		{
