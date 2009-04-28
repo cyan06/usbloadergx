@@ -73,6 +73,7 @@ static int startat = 0;
 static int offset = 0;
 
 static char gameregion[7];
+static u8 id222[6];
 //power button fix
 extern u8 shutdown;
 
@@ -2152,6 +2153,10 @@ static int MenuDiscList()
 
 				if(choice == 1)
 				{
+					int i = 0;
+					for (i = 0; i<7; i++) {
+                    id222[i] = header->id[i];
+					}
 					/* Set USB mode */
 					ret = Disc_SetUSB(header->id);
 					if (ret < 0) {
@@ -2491,13 +2496,12 @@ static int MenuSettings()
 	int ret;
 //	char imgPath[100];
 
-	customOptionList options2(6);
+	customOptionList options2(5);
 	sprintf(options2.name[0], "Video Mode");
 	sprintf(options2.name[1], "VIDTV Patch");
 	sprintf(options2.name[2], "Language");
 	sprintf(options2.name[3], "Ocarina");
 	sprintf(options2.name[4], "Display");
-	sprintf(options2.name[5], "IOS");
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
@@ -2596,8 +2600,6 @@ static int MenuSettings()
 			Settings.vpatch = 0;
 		if(Settings.sinfo  > 3)
 			Settings.sinfo = 0;
-		if(Settings.ios  > 1)
-			Settings.ios = 0;
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
@@ -2629,8 +2631,6 @@ static int MenuSettings()
 		else if (Settings.sinfo == Both) sprintf (options2.value[4],"Both");
 		else if (Settings.sinfo == Neither) sprintf (options2.value[4],"Neither");
 
-		if (Settings.ios == i249) sprintf (options2.value[5],"249");
-		else if (Settings.ios == i222) sprintf (options2.value[5],"222");
 
 		ret = optionBrowser2.GetClickedOption();
 
@@ -2651,9 +2651,6 @@ static int MenuSettings()
 				break;
 			case 4:
 				Settings.sinfo++;
-				break;
-			case 5:
-				Settings.ios++;
 				break;
 		}
 
@@ -3277,6 +3274,34 @@ int MainMenu(int menu)
 		}
 	}
 
+	int ios2 = 0, ret;
+    switch(iosChoice)
+    {
+                        case i249:
+                                ios2 = 0;
+                        break;
+
+                        case i222:
+                                ios2 = 1;
+                        break;
+
+						default:
+                                ios2 = 0;
+                        break;
+    }
+
+    if (ios2 == 1) {
+    ret = IOS_ReloadIOS(222);
+    if (ret < 0) {
+    ret = IOS_ReloadIOS(249);
+    }
+    WBFS_Init(WBFS_DEVICE_USB);
+    Disc_Init();
+    WBFS_Open();
+    Disc_SetUSB(id222);
+    Disc_Open();
+    }
+
     bgMusic->Stop();
 	delete bgMusic;
 	delete background;
@@ -3294,9 +3319,6 @@ int MainMenu(int menu)
 	fatUnmount("SD");
 	__io_wiisd.shutdown();
     ExitApp();
-
-	//boot game
-    s32 ret;
 
 	struct discHdr *header = &gameList[gameSelected];
 	struct Game_CFG* game_cfg = CFG_get_game_opt(header->id);
@@ -3433,21 +3455,6 @@ int MainMenu(int menu)
                         break;
     }
 
-	u8 ios = 0;
-    switch(iosChoice)
-    {
-                        case i249:
-                                ios = 0;
-                        break;
-
-                        case i222:
-                                ios = 1;
-                        break;
-
-						default:
-                                ios = 0;
-                        break;
-    }
 
     ret = Disc_WiiBoot(videoselected, cheat, vipatch);
     if (ret < 0) {
