@@ -625,7 +625,14 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
 
-	GuiImageData dialogBox(CFG.widescreen ? wdialogue_box_startgame_png : dialogue_box_startgame_png);
+	char imgPath[100];
+
+	if (CFG.widescreen)
+		snprintf(imgPath, sizeof(imgPath), "%swdialogue_box_startgame.png", CFG.theme_path);
+	else
+		snprintf(imgPath, sizeof(imgPath), "%sdialogue_box_startgame.png", CFG.theme_path);
+		
+	GuiImageData dialogBox(imgPath, CFG.widescreen ? wdialogue_box_startgame_png : dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
 //	dialogBoxImg.SetWidescreen(CFG.widescreen);
 
@@ -646,7 +653,6 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
 	sizeTxt.SetPosition(-60,70);
 
-	char imgPath[60];
 	snprintf(imgPath,sizeof(imgPath),"%s%s.png", CFG.disc_path, ID);
     GuiImageData * diskCover = new GuiImageData(imgPath,0);
 	
@@ -2704,6 +2710,7 @@ int GameSettings(struct discHdr * header)
 	int retVal = 0;
 //	char imgPath[100];
 	char gameName[31];
+	bool saved = false;
 	
 	if (strlen(get_title(header)) < (27 + 3)) {
 		sprintf(gameName, "%s", get_title(header));
@@ -2742,25 +2749,40 @@ int GameSettings(struct discHdr * header)
 	settingsbackgroundbtn.SetPosition(0, 0);
 	settingsbackgroundbtn.SetImage(&settingsbackground);
 
-    GuiText saveBtnTxt("Save and Exit", 22, (GXColor){0, 0, 0, 255});
+    GuiText saveBtnTxt("", 22, (GXColor){0, 0, 0, 255});
 	saveBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage saveBtnImg(&btnOutline);
 	GuiButton saveBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	saveBtn.SetScale(0.9);
 	saveBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	saveBtn.SetPosition(-180, 400);
 	saveBtn.SetLabel(&saveBtnTxt);
 	saveBtn.SetImage(&saveBtnImg);
 	saveBtn.SetSoundOver(&btnSoundOver);
 	saveBtn.SetTrigger(&trigA);
-	saveBtn.SetTrigger(&trigB);
 	saveBtn.SetEffectGrow();
+
+    GuiText cancelBtnTxt("Back", 22, (GXColor){0, 0, 0, 255});
+	cancelBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
+	GuiImage cancelBtnImg(&btnOutline);
+	GuiButton cancelBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	cancelBtn.SetScale(0.9);
+	cancelBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	cancelBtn.SetPosition(180, 400);
+	cancelBtn.SetLabel(&cancelBtnTxt);
+	cancelBtn.SetImage(&cancelBtnImg);
+	cancelBtn.SetSoundOver(&btnSoundOver);
+	cancelBtn.SetTrigger(&trigA);
+	cancelBtn.SetTrigger(&trigB);
+	cancelBtn.SetEffectGrow();
 	
-	GuiText deleteBtnTxt("Delete", 22, (GXColor){0, 0, 0, 255});
+	GuiText deleteBtnTxt("Uninstall", 22, (GXColor){0, 0, 0, 255});
 	deleteBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage deleteBtnImg(&btnOutline);
 	GuiButton deleteBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
+	deleteBtn.SetScale(0.9);
 	deleteBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	deleteBtn.SetPosition(180, 400);
+	deleteBtn.SetPosition(0, 400);
 	deleteBtn.SetLabel(&deleteBtnTxt);
 	deleteBtn.SetImage(&deleteBtnImg);
 	deleteBtn.SetSoundOver(&btnSoundOver);
@@ -2778,6 +2800,7 @@ int GameSettings(struct discHdr * header)
     w.Append(&titleTxt);
 	w.Append(&deleteBtn);
 	w.Append(&saveBtn);
+	w.Append(&cancelBtn);
 
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser3);
@@ -2788,6 +2811,8 @@ int GameSettings(struct discHdr * header)
 	
 	if (game_cfg)
 	{
+		saved = true;
+		saveBtnTxt.SetText("Discard");
 		videoChoice = game_cfg->video;
 		languageChoice = game_cfg->language;
 		ocarinaChoice = game_cfg->ocarina;
@@ -2796,6 +2821,8 @@ int GameSettings(struct discHdr * header)
 	}
 	else
 	{
+		saved = false;
+		saveBtnTxt.SetText("Save");
 		videoChoice = Settings.video;
 		languageChoice = Settings.language;
 		ocarinaChoice = Settings.ocarina;
@@ -2807,16 +2834,6 @@ int GameSettings(struct discHdr * header)
 	{
 
 		VIDEO_WaitVSync ();
-		if(videoChoice > 5)
-			videoChoice = 0;
-		if(languageChoice  > 10)
-			languageChoice = 0;
-        if(ocarinaChoice  > 1)
-			ocarinaChoice = 0;
-        if(viChoice  > 1)
-			viChoice = 0;
-		if(iosChoice  > 1)
-			iosChoice = 0;
 		
 		if (videoChoice == discdefault) sprintf (options3.value[0],"Disc Default");
 		else if (videoChoice == systemdefault) sprintf (options3.value[0],"System Default");
@@ -2854,29 +2871,60 @@ int GameSettings(struct discHdr * header)
 		switch (ret)
 		{
 			case 0:
-				videoChoice++;
+				videoChoice = (videoChoice + 1) % CFG_VIDEO_COUNT;
 				break;
-
 			case 1:
-				viChoice++;
+				viChoice = (viChoice + 1) % 2;
 				break;
             case 2:
-				languageChoice++;
+				languageChoice = (languageChoice + 1) % CFG_LANG_COUNT;
 				break;
             case 3:
-				ocarinaChoice++;
+				ocarinaChoice = (ocarinaChoice + 1) % 2;
 				break;
 			case 4:
-				iosChoice++;
+				iosChoice = (iosChoice + 1) % 2;
 				break;
 		}
 
 		if(saveBtn.GetState() == STATE_CLICKED)
 		{
-			CFG_save_game_opt(header->id);
+			if (saved)
+			{
+				if (CFG_forget_game_opt(header->id))
+				{
+					WindowPrompt("Successfully Discarded", 0, "OK", 0);
+					saved = false;
+					saveBtnTxt.SetText("Save");
+				}
+				else
+				{
+					WindowPrompt("Discard Failed", 0, "OK", 0);
+				}
+			}
+			else
+			{
+				if (CFG_save_game_opt(header->id))
+				{
+					WindowPrompt("Successfully Saved", 0, "OK", 0);
+					saved = true;
+					saveBtnTxt.SetText("Discard");
+				}
+				else
+				{
+					WindowPrompt("Save Failed", 0, "OK", 0);
+				}
+			}
+			saveBtn.ResetState();
+			optionBrowser3.SetFocus(1);
+		}
+		
+		if (cancelBtn.GetState() == STATE_CLICKED)
+		{
 			exit = true;
 			break;
 		}
+		
 		if (deleteBtn.GetState() == STATE_CLICKED)
 		{
 			int choice = WindowPrompt(

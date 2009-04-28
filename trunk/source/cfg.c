@@ -749,7 +749,7 @@ bool cfg_save_games()
 		if (s) fprintf(f, "language:%s; ", s);
 		fprintf(f, "ocarina:%d; ", cfg_game[i].ocarina);
 		fprintf(f, "vipatch:%d; ", cfg_game[i].vipatch);
-		fprintf(f, "ios:%d;\n", cfg_game[i].vipatch);
+		fprintf(f, "ios:%d;\n", cfg_game[i].ios);
 	}
 	fprintf(f, "# END\n");
 	fclose(f);
