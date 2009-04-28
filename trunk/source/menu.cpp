@@ -1522,7 +1522,7 @@ static int MenuInstall()
 					__Menu_GetEntries(); //get the entries again
 					wiilight(1);
 					WindowPrompt ("Successfully installed:",name,"OK",0);
-					menu = MENU_DISCLIST;
+					menu = MENU_CHECK;
 					wiilight(0);
 					break;
 				}
@@ -1542,7 +1542,7 @@ static int MenuInstall()
 				__Menu_GetEntries(); //get the entries again
 				wiilight(1);
 				WindowPrompt ("Successfully installed:",name,"OK",0);
-				menu = MENU_DISCLIST;
+				menu = MENU_CHECK;
 				wiilight(0);
 				break;
 			}
