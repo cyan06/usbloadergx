@@ -113,9 +113,9 @@ GuiGameBrowser::GuiGameBrowser(int w, int h, struct discHdr * l, int gameCnt, co
 	game = new GuiButton * [pagesize];
 	gameTxt = new GuiText * [pagesize];
 	gameBg = new GuiImage * [pagesize];
-	
+
 	char buffer[CFG.maxcharacters + 4];
-	
+
 	for(int i=0; i < pagesize; i++)
 	{
 		if (strlen(get_title(&gameList[i])) < (u32)(CFG.maxcharacters + 3))
@@ -128,7 +128,7 @@ GuiGameBrowser::GuiGameBrowser(int w, int h, struct discHdr * l, int gameCnt, co
 			buffer[CFG.maxcharacters] = '\0';
 			strncat(buffer, "...", 3);
 		}
-		
+
 		gameTxt[i] = new GuiText(buffer, 20, (GXColor){0, 0, 0, 0xff});
 		gameTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		gameTxt[i]->SetPosition(24,0);
@@ -306,12 +306,12 @@ void GuiGameBrowser::Draw()
 }
 
 void GuiGameBrowser::Update(GuiTrigger * t)
-{	
+{
 	if(state == STATE_DISABLED || !t)
 		return;
 
 	int next, prev;
-	
+    static int position2;
 	// scrolldelay affects how fast the list scrolls
 	// when the arrows are clicked
 	float scrolldelay = 3.5;
@@ -323,7 +323,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 		arrowDownBtn->Update(t);
 		scrollbarBoxBtn->Update(t);
     }
-	
+
 	next = listOffset;
 	char buffer[CFG.maxcharacters + 4];
 
@@ -336,7 +336,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 				game[i]->SetVisible(true);
 				game[i]->SetState(STATE_DEFAULT);
 			}
-			
+
 			if (strlen(get_title(&gameList[next])) < (u32)(CFG.maxcharacters + 3))
 			{
 				sprintf(buffer, "%s", get_title(&gameList[next]));
@@ -347,7 +347,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 				buffer[CFG.maxcharacters] = '\0';
 				strncat(buffer, "...", 3);
 			}
-			
+
 			gameTxt[i]->SetText(buffer);
 			gameIndex[i] = next;
 			next = this->FindMenuItem(next, 1);
@@ -440,7 +440,9 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 			usleep(10000 * scrolldelay);
 
 
-		}WPAD_ScanPads();
+		}
+
+		WPAD_ScanPads();
         u8 cnt, buttons = NULL;
         /* Get pressed buttons */
         for (cnt = 0; cnt < 4; cnt++)
@@ -452,6 +454,73 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 
         }
 	}
+
+    WPAD_ScanPads();
+    u8 cnt, buttons = NULL;
+    int position1 = 0;
+
+
+    position1 = t->wpad.ir.y;
+
+    if (position2 == 0 && position1 > 0) {
+    position2 = position1;
+    }
+
+    for (cnt = 0; cnt < 4; cnt++)
+        buttons |= WPAD_ButtonsHeld(cnt);
+
+    if (buttons == WPAD_BUTTON_B && position1 > 0) {
+        if (position2 > position1) {
+
+
+		prev = this->FindMenuItem(gameIndex[selectedItem], -1);
+
+		if(prev >= 0)
+		{
+			if(selectedItem == 0)
+			{
+				// move list up by 1
+				listOffset = prev;
+			}
+			else
+			{
+				game[selectedItem]->ResetState();
+				game[selectedItem-1]->SetState(STATE_SELECTED, t->chan);
+				selectedItem--;
+			}
+			scrollbarBoxBtn->Draw();
+			usleep(10000 * scrolldelay);
+
+
+		}
+
+        } else if (position2 < position1) {
+
+
+		next = this->FindMenuItem(gameIndex[selectedItem], 1);
+
+		if(next >= 0)
+		{
+			if(selectedItem == pagesize-1)
+			{
+				// move list down by 1
+				listOffset = this->FindMenuItem(listOffset, 1);
+			}
+			else if(game[selectedItem+1]->IsVisible())
+			{
+				game[selectedItem]->ResetState();
+				game[selectedItem+1]->SetState(STATE_SELECTED, t->chan);
+				selectedItem++;
+			}
+			scrollbarBoxBtn->Draw();
+			usleep(10000 * scrolldelay);
+
+
+		}
+        }
+    } else if (!buttons) {
+    position2 = 0;
+    }
 
     if(scrollbarBoxBtn->GetState() == STATE_HELD &&
 		scrollbarBoxBtn->GetStateChan() == t->chan &&

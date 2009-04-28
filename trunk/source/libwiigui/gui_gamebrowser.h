@@ -8,7 +8,7 @@ class GameBrowserList {
 	public:
 		GameBrowserList(int size) {
 			name = new char * [size];
-			
+
 			for (int i = 0; i < size; i++)
 			{
 				name[i] = new char[50];
@@ -83,7 +83,6 @@ class GuiGameBrowser : public GuiElement
 		GuiSound * btnSoundOver;
 		GuiSound * btnSoundClick;
 		GuiTrigger * trigA;
-		GuiTrigger * trigB;
 		GuiTrigger * trigHeldA;
 };
 #endif
