@@ -637,7 +637,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	nameBtn.SetPosition(0,-122);
 	nameBtn.SetSoundOver(&btnSoundOver);
 	nameBtn.SetSoundClick(&btnClick);
-	if (godmode == 1){
+	if (CFG.godmode == 1){
 	nameBtn.SetTrigger(&trigA);
 	nameBtn.SetEffectGrow();
 					}
@@ -683,7 +683,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiImage btn2Img(&btnOutline);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
 	//check if unlocked
-	if (godmode == 1)
+	if (CFG.godmode == 1)
 	{
 	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
 	btn2.SetPosition(40, -40);
@@ -720,7 +720,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
     promptWindow.Append(&btn2);
 
 	//check if unlocked
-	if (godmode == 1)
+	if (CFG.godmode == 1)
 	{
     promptWindow.Append(&btn3);
 	}
@@ -1171,7 +1171,7 @@ s32 __Menu_GetEntries(void)
 	if (ret < 0)
 		goto err;
 
-	if (CFG.parentalcontrol)
+	if (CFG.parentalcontrol && !CFG.godmode)
 	{
 		u32 cnt2 = 0;
 
@@ -1695,7 +1695,7 @@ static int MenuDiscList()
 	installBtn.SetSoundClick(&btnClick);
 	//installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 
-	if (godmode == 1)
+	if (CFG.godmode == 1)
 	{
 		installBtn.SetTrigger(&trigA);
 		installBtn.SetEffectGrow();
@@ -2181,7 +2181,7 @@ static int MenuDiscList()
 					returnHere = true;
 				}
 				
-				else if (choice == 3) //&& (godmode == 1))
+				else if (choice == 3) //&& (CFG.godmode == 1))
 				{
 					//enter new game title
 					char entered[40];
@@ -2666,17 +2666,17 @@ static int MenuSettings()
 			//password check to un/lock Install,Delete and Format
 			char entered[8] = "";
 			OnScreenKeyboard(entered, 8);
-			if (!strcmp(entered,"ab121b"))
+			if (!strcmp(entered, CFG.unlockCode))
 			{
-			if (godmode == 0)
+			if (CFG.godmode == 0)
 				{
 				WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
-				godmode = 1;
+				CFG.godmode = 1;
 				}
 				else
 				{
 				WindowPrompt("Correct Password","Install, Rename, and Delete are locked.","OK",0);
-				godmode = 0;
+				CFG.godmode = 0;
 				}
 			}
 		}

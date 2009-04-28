@@ -61,6 +61,8 @@ struct CFG
 	short widescreen;
 	short parentalcontrol;
 	short maxcharacters;
+	short godmode;
+	char unlockCode[20];
 	char covers_path[100];
 	char theme_path[100];
 };

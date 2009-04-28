@@ -191,9 +191,11 @@ void CFG_Default()
 //	CFG.savesettings = 0;
 	CFG.parentalcontrol = 0;
 	CFG.maxcharacters = 38;
+	CFG.godmode = 0;
 //	CFG.installdownload = 0;
 //	CFG.hidesettingmenu = 0;
 	snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
+	snprintf(CFG.unlockCode, sizeof(CFG.unlockCode), "ab121b");
 	
 	//all alignments are left top here
 	THEME.selection_x = 200;
@@ -391,6 +393,12 @@ void cfg_set(char *name, char *val)
 	}
 	
 	cfg_int("parentalcontrol", &CFG.parentalcontrol, 4);
+	cfg_bool("godmode", &CFG.godmode);
+	
+	if (strcmp(name, "unlock_code") == 0) {
+		strcopy(CFG.unlockCode, val, sizeof(CFG.unlockCode));
+		return;
+	}
 }
 
 void theme_set(char *name, char *val)
