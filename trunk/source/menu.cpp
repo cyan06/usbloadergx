@@ -1910,7 +1910,7 @@ static int MenuDiscList()
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2)
+            if (difftime(time1,time2) == 2 && THEME.showToolTip)
             w.Append(&ttpoweroffBtn); 
 
 			if(poweroffBtn.GetState() == STATE_SELECTED) {
@@ -1944,7 +1944,7 @@ static int MenuDiscList()
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2)
+            if (difftime(time1,time2) == 2 && THEME.showToolTip)
             w.Append(&tthomeBtn); 
 
 			if(homeBtn.GetState() == STATE_SELECTED) {
@@ -1972,7 +1972,7 @@ static int MenuDiscList()
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2)
+            if (difftime(time1,time2) == 2 && THEME.showToolTip)
             w.Append(&ttinstallBtn); 
 
 			if(installBtn.GetState() == STATE_SELECTED) {
@@ -1993,7 +1993,7 @@ static int MenuDiscList()
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2)
+            if (difftime(time1,time2) == 2 && THEME.showToolTip)
             w.Append(&ttsettingsBtn); 
 
 			if(settingsBtn.GetState() == STATE_SELECTED) {

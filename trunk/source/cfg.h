@@ -101,6 +101,7 @@ struct THEME
 	int gameCnt_y;
 	short showRegion;
 	short showBattery;
+	short showToolTip;
 };
 
 extern struct CFG CFG;

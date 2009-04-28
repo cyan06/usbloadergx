@@ -228,6 +228,7 @@ void CFG_Default()
 	THEME.gameCnt_x = 0;
 	THEME.gameCnt_y = 350;
 	THEME.gameCntAlign = CFG_ALIGN_CENTRE;
+	THEME.showToolTip = 1;
 }
 
 
@@ -504,6 +505,7 @@ void theme_set(char *name, char *val)
 	cfg_bool("show_gamecount", &THEME.showGameCnt);
 	cfg_bool("show_region", &THEME.showRegion);
 	cfg_bool("show_battery", &THEME.showBattery);
+	cfg_bool("show_tooltip", &THEME.showToolTip);
 	cfg_map_auto("hddinfo_align", map_alignment, &THEME.hddInfoAlign);
 	cfg_map_auto("gamecount_align", map_alignment, &THEME.gameCntAlign);
 	
