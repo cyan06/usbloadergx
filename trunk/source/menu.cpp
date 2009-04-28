@@ -3274,7 +3274,7 @@ int MainMenu(int menu)
 		}
 	}
 
-	int ios2 = 0, ret;
+	int ios2 = 0, ret = 0;
     switch(iosChoice)
     {
                         case i249:
@@ -3295,6 +3295,19 @@ int MainMenu(int menu)
     if (ret < 0) {
     ret = IOS_ReloadIOS(249);
     }
+    ret = WBFS_Init(WBFS_DEVICE_USB);
+    if (ret >= 0)
+    ret = Disc_Init();
+    if (ret >= 0)
+    ret = WBFS_Open();
+    if (ret >= 0)
+    ret = Disc_SetUSB(id222);
+    if (ret >= 0)
+    ret = Disc_Open();
+    }
+
+    if (ret < 0) {
+    IOS_ReloadIOS(249);
     WBFS_Init(WBFS_DEVICE_USB);
     Disc_Init();
     WBFS_Open();
