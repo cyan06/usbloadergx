@@ -2743,7 +2743,7 @@ int GameSettings(struct discHdr * header)
 	settingsbackgroundbtn.SetPosition(0, 0);
 	settingsbackgroundbtn.SetImage(&settingsbackground);
 
-    GuiText saveBtnTxt("", 22, (GXColor){0, 0, 0, 255});
+    GuiText saveBtnTxt("Save", 22, (GXColor){0, 0, 0, 255});
 	saveBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage saveBtnImg(&btnOutline);
 	GuiButton saveBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
@@ -2806,7 +2806,7 @@ int GameSettings(struct discHdr * header)
 	if (game_cfg)
 	{
 		saved = true;
-		saveBtnTxt.SetText("Discard");
+		//saveBtnTxt.SetText("Save Changes");
 		videoChoice = game_cfg->video;
 		languageChoice = game_cfg->language;
 		ocarinaChoice = game_cfg->ocarina;
@@ -2816,7 +2816,7 @@ int GameSettings(struct discHdr * header)
 	else
 	{
 		saved = false;
-		saveBtnTxt.SetText("Save");
+		//saveBtnTxt.SetText("Save");
 		videoChoice = Settings.video;
 		languageChoice = Settings.language;
 		ocarinaChoice = Settings.ocarina;
@@ -2883,7 +2883,7 @@ int GameSettings(struct discHdr * header)
 
 		if(saveBtn.GetState() == STATE_CLICKED)
 		{
-			if (saved)
+			/*if (saved)
 			{
 				if (CFG_forget_game_opt(header->id))
 				{
@@ -2897,18 +2897,18 @@ int GameSettings(struct discHdr * header)
 				}
 			}
 			else
-			{
+			{*/
 				if (CFG_save_game_opt(header->id))
 				{
 					WindowPrompt("Successfully Saved", 0, "OK", 0);
 					saved = true;
-					saveBtnTxt.SetText("Discard");
+					//saveBtnTxt.SetText("Save");
 				}
 				else
 				{
 					WindowPrompt("Save Failed", 0, "OK", 0);
 				}
-			}
+			//}
 			saveBtn.ResetState();
 			optionBrowser3.SetFocus(1);
 		}
