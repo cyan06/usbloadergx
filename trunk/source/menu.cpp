@@ -2428,7 +2428,7 @@ static int MenuFormat()
 
                         } else {
                             WBFS_Open();
-                            WindowPrompt("Success:","Partion formated!","OK",0);
+                            WindowPrompt("Success:","Partition formated!","OK",0);
                             menu = MENU_DISCLIST;
                         }
                     }
