@@ -25,6 +25,7 @@ GuiButton::GuiButton(int w, int h)
 	iconOver = NULL;
 	iconHold = NULL;
 	iconClick = NULL;
+	toolTip = NULL;
 
 	for(int i=0; i < 3; i++)
 	{
@@ -122,6 +123,18 @@ void GuiButton::SetSoundClick(GuiSound * snd)
 	soundClick = snd;
 }
 
+//Needs still work
+void GuiButton::SetToolTip(GuiImage* img)
+{
+	toolTip = img;
+	if(img)
+	{ 
+		img->SetParent(this);
+		img->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
+		img->SetPosition(-65,-20);	
+		img->SetEffect(EFFECT_FADE, 10);	
+	}
+}
 /**
  * Draw the button on screen
  */
@@ -147,6 +160,11 @@ void GuiButton::Draw()
 			labelOver[i]->Draw();
 		else if(label[i])
 			label[i]->Draw();
+	}
+	//draw ToolTip
+	if((state == STATE_SELECTED  || state == STATE_HELD) && toolTip)
+	{
+		toolTip->Draw(); 
 	}
 
 	this->UpdateEffects();

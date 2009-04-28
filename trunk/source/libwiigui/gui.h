@@ -689,6 +689,10 @@ class GuiButton : public GuiElement
 		//!\param s Pointer to GuiSound object
 		void SetSoundClick(GuiSound * s);
 		//!Constantly called to draw the GuiButton
+		//!Sets the button's Tooltip on over
+		//!\param i Pointer to GuiImage object
+		void SetToolTip(GuiImage* i);
+		//!Constantly called to draw the GuiButton
 		void Draw();
 		//!Constantly called to allow the GuiButton to respond to updated input data
 		//!\param t Pointer to a GuiTrigger, containing the current input data from PAD/WPAD
@@ -702,6 +706,7 @@ class GuiButton : public GuiElement
 		GuiImage * iconOver; //!< Button icon for STATE_SELECTED
 		GuiImage * iconHold; //!< Button icon for STATE_HELD
 		GuiImage * iconClick; //!< Button icon for STATE_CLICKED
+		GuiImage * toolTip; //!< Tooltip for STATE_SELECTED
 		GuiText * label[3]; //!< Label(s) to display (default)
 		GuiText * labelOver[3]; //!< Label(s) to display for STATE_SELECTED
 		GuiText * labelHold[3]; //!< Label(s) to display for STATE_HELD
