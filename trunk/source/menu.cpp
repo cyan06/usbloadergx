@@ -198,73 +198,73 @@ static void WindowCredits(void * ptr)
 			FTGX_JUSTIFY_LEFT | FTGX_ALIGN_TOP, ALIGN_LEFT, ALIGN_TOP);
 
 	txt[i] = new GuiText("Coding:");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y); 
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y);
 	i++;
 
 	txt[i] = new GuiText("Waninkoko");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("Kwiirk");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("dimok");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("nIxx");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("hungyip84");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("giantpune");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=24;
 
 	txt[i] = new GuiText("Design:");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y); 
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(-100,y);
 	i++;
 
 	txt[i] = new GuiText("cyrex");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("NeoRame");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("WiiShizza");
-	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP); txt[i]->SetPosition(320,y);
+	i++;
 	y+=26;
 
 	txt[i] = new GuiText("Special thanks to Tantric for libwiigui");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("and to Waninkoko & Kwiirk for the USB Loader ");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y);
+	i++;
 	y+=22;
 
 	txt[i] = new GuiText("and releasing the source code ;)");
-	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y); 
-	i++; 
+	txt[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP); txt[i]->SetPosition(0,y);
+	i++;
 	y+=22;
-	
+
 	for(i=0; i < numEntries; i++)
 		creditsWindowBox.Append(txt[i]);
 
@@ -309,7 +309,7 @@ static void WindowCredits(void * ptr)
 	creditsMusic->Stop();
 	for(i=0; i < numEntries; i++)
 		delete txt[i];
-		
+
 	delete creditsMusic;
 	bgMusic->SetLoop(1);
 	bgMusic->Play();
@@ -541,7 +541,7 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 {
 	int i = 30;
 	char timer[20];
-	
+
 	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
@@ -552,15 +552,15 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
 
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
-	
+
 	GuiText timerTxt(timer, 26, (GXColor){0, 0, 0, 255});
 	timerTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	timerTxt.SetPosition(0,200);
-	
+
 	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,60);
-	
+
 	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	msgTxt.SetPosition(0,0);
@@ -631,7 +631,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		snprintf(imgPath, sizeof(imgPath), "%swdialogue_box_startgame.png", CFG.theme_path);
 	else
 		snprintf(imgPath, sizeof(imgPath), "%sdialogue_box_startgame.png", CFG.theme_path);
-		
+
 	GuiImageData dialogBox(imgPath, CFG.widescreen ? wdialogue_box_startgame_png : dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
 //	dialogBoxImg.SetWidescreen(CFG.widescreen);
@@ -655,8 +655,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 
 	snprintf(imgPath,sizeof(imgPath),"%s%s.png", CFG.disc_path, ID);
     GuiImageData * diskCover = new GuiImageData(imgPath,0);
-	
-	if (!diskCover->GetImage()) 
+
+	if (!diskCover->GetImage())
 		{
 		delete diskCover;
 		snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.disc_path, IDfull);
@@ -667,7 +667,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 			diskCover = new GuiImageData(imgPath,nodisc_png);
 			}
 		}
-		
+
 	GuiImage diskImg(diskCover);
 	diskImg.SetWidescreen(CFG.widescreen);
 	diskImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
@@ -782,7 +782,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	mainWindow->Remove(&promptWindow);
 	mainWindow->SetState(STATE_DEFAULT);
 	ResumeGui();
-	
+
 	delete diskCover;
 
 	return choice;
@@ -1099,7 +1099,7 @@ UpdateGUI (void *arg)
 				DoRumble(i);
 			}
 			#endif
-			
+
 			Menu_Render();
 
 			for(int i=0; i < 4; i++)
@@ -1331,7 +1331,7 @@ static int MenuInstall()
 	GuiImageData btnhome(imgPath, menu_button_png);
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
 	GuiImageData btnhomeOver(imgPath, menu_button_over_png);*/
-	
+
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
@@ -1576,7 +1576,7 @@ static int MenuInstall()
 
 
 	HaltGui();
-	
+
 	#ifdef HW_RVL
 	for(i=0; i < 4; i++)
 	{
@@ -1604,7 +1604,7 @@ static int MenuDiscList()
 
 //	GameBrowserList games(gameCnt);
 	f32 free, used, size = 0.0;
-	u32 cnt = 0, nolist;
+	u32 nolist;
 	char text[MAX_CHARACTERS + 4], text2[20];
 	int choice = 0, selectedold = 100;
 	s32 ret;
@@ -1614,7 +1614,7 @@ static int MenuDiscList()
 
     if (!gameCnt) {
         nolist = 1;
-    } 
+    }
 	/*else {
         for (cnt = 0; cnt < gameCnt; cnt++) {
             struct discHdr *header = &gameList[cnt];
@@ -1674,7 +1674,7 @@ static int MenuDiscList()
 	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
 	gamecntTxt.SetAlignment(THEME.gameCntAlign, ALIGN_TOP);
 	gamecntTxt.SetPosition(THEME.gameCnt_x,THEME.gameCnt_y);
-	
+
 	GuiImageData tooltipLarge(tooltip_large_png);
 	GuiImage tooltipLargeImg(&tooltipLarge);
 
@@ -1706,7 +1706,7 @@ static int MenuDiscList()
 		installBtn.SetTrigger(&trigA);
 		installBtn.SetEffectGrow();
 	}
-	
+
 	GuiText ttsettingsTxt("Settings", 22, (GXColor){0, 0, 0, 255});		//TOOLTIP DATA FOR SETTINGS BUTTON
 	GuiImageData ttsettings(tooltip_png);
 	GuiImage ttsettingsImg(&ttsettings);
@@ -1730,7 +1730,7 @@ static int MenuDiscList()
 	settingsBtn.SetSoundClick(&btnClick);
 	settingsBtn.SetTrigger(&trigA);
 	settingsBtn.SetEffectGrow();
-	
+
 	GuiText tthomeTxt("Back to HBC or Wii Menu", 22, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
 	GuiImageData tthome(tooltip_large_png);
 	GuiImage tthomeImg(&tthome);
@@ -1755,7 +1755,7 @@ static int MenuDiscList()
 	homeBtn.SetTrigger(&trigA);
 	homeBtn.SetTrigger(&trigHome);
 	homeBtn.SetEffectGrow();
-	
+
 	GuiText ttpoweroffTxt("Power off the Wii", 22, (GXColor){0, 0, 0, 255}); //TOOLTIP DATA FOR POWER BUTTON
 	GuiImageData ttpoweroff(tooltip_medium_png);
 	GuiImage ttpoweroffImg(&ttpoweroff);
@@ -1850,7 +1850,7 @@ static int MenuDiscList()
 		w.Append(batteryBtn[3]);
 		#endif
 	}
-	
+
     mainWindow->Append(&w);
     mainWindow->Append(&gameBrowser);
 
@@ -1859,7 +1859,7 @@ static int MenuDiscList()
 	while(menu == MENU_NONE)
 	{
 	    VIDEO_WaitVSync ();
-		
+
 	    #ifdef HW_RVL
 		for(i=0; i < 4; i++)
 		{
@@ -1908,18 +1908,18 @@ static int MenuDiscList()
 		}
 		else if(poweroffBtn.GetState() == STATE_SELECTED) //TT
 		{
-			
+
 		    if (time2 == 0)
 		    time(&time2);
 
 		    time(&time1);
 
             if (difftime(time1,time2) == 2 && THEME.showToolTip)
-            w.Append(&ttpoweroffBtn); 
+            w.Append(&ttpoweroffBtn);
 
 			if(poweroffBtn.GetState() == STATE_SELECTED) {
 			}
-		} 
+		}
 		else if(homeBtn.GetState() == STATE_CLICKED)
 		{
 
@@ -1942,14 +1942,14 @@ static int MenuDiscList()
         }
 		else if((homeBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
 		{
-			
+
 		    if (time2 == 0)
 		    time(&time2);
 
 		    time(&time1);
 
             if (difftime(time1,time2) == 2)
-            w.Append(&tthomeBtn); 
+            w.Append(&tthomeBtn);
 
 			if(homeBtn.GetState() == STATE_SELECTED) {
 			}
@@ -1970,14 +1970,14 @@ static int MenuDiscList()
 		}
 		else if((installBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
 		{
-			
+
 		    if (time2 == 0)
 		    time(&time2);
 
 		    time(&time1);
 
             if (difftime(time1,time2) == 2)
-            w.Append(&ttinstallBtn); 
+            w.Append(&ttinstallBtn);
 
 			if(installBtn.GetState() == STATE_SELECTED) {
 			}
@@ -1991,18 +1991,18 @@ static int MenuDiscList()
 		}
 		else if((settingsBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
 		{
-			
+
 		    if (time2 == 0)
 		    time(&time2);
 
 		    time(&time1);
 
             if (difftime(time1,time2) == 2)
-            w.Append(&ttsettingsBtn); 
+            w.Append(&ttsettingsBtn);
 
 			if(settingsBtn.GetState() == STATE_SELECTED) {
 			}
-		} 
+		}
 
 			else {
 			w.Remove(&ttpoweroffBtn);
@@ -2020,10 +2020,10 @@ static int MenuDiscList()
 		char IDfull[7];
 		selectimg = gameBrowser.GetSelectedOption();
 	    gameSelected = gameBrowser.GetClickedOption();
-		
+
 		if (gameSelected > 0) //if click occured
 			selectimg = gameSelected;
-			
+
 		if ((selectimg >= 0) && (selectimg < (s32) gameCnt))
 		{
 			if (selectimg != selectedold)
@@ -2185,7 +2185,7 @@ static int MenuDiscList()
 					}
 					returnHere = true;
 				}
-				
+
 				else if (choice == 3) //&& (CFG.godmode == 1))
 				{
 					//enter new game title
@@ -2202,7 +2202,7 @@ static int MenuDiscList()
 	}
 
 	HaltGui();
-	
+
 	#ifdef HW_RVL
 	for(i=0; i < 4; i++)
 	{
@@ -2352,7 +2352,7 @@ static int MenuFormat()
 	batteryBtn[2]->SetPosition(-55, 425);
 	batteryBtn[3]->SetPosition(35, 425);
 	#endif
-	
+
 	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, 0);
 	optionBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	optionBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
@@ -2363,7 +2363,7 @@ static int MenuFormat()
     w.Append(&titleTxt2);
     w.Append(&poweroffBtn);
 	w.Append(&exitBtn);
-	
+
 	if (THEME.showBattery)
 	{
 		#ifdef HW_RVL
@@ -2373,7 +2373,7 @@ static int MenuFormat()
 		w.Append(batteryBtn[3]);
 		#endif
 	}
-	
+
     mainWindow->Append(&w);
     mainWindow->Append(&optionBrowser);
 
@@ -2428,7 +2428,8 @@ static int MenuFormat()
 
                         } else {
                             WBFS_Open();
-                            WindowPrompt("Success:","Partition formated!","OK",0);
+                            sprintf(text, "%s formated!", text);
+                            WindowPrompt("Success:",text,"OK",0);
                             menu = MENU_DISCLIST;
                         }
                     }
@@ -2579,13 +2580,12 @@ static int MenuSettings()
     mainWindow->Append(&optionBrowser2);
 
 	ResumeGui();
-	
-	int i;
+
 
 	while(menu == MENU_NONE)
-	{	
+	{
 		VIDEO_WaitVSync ();
-		
+
 		if(Settings.video > 5)
 			Settings.video = 0;
 		if(Settings.language  > 10)
@@ -2708,7 +2708,7 @@ int GameSettings(struct discHdr * header)
 //	char imgPath[100];
 	char gameName[31];
 	bool saved = false;
-	
+
 	if (strlen(get_title(header)) < (27 + 3)) {
 		sprintf(gameName, "%s", get_title(header));
 	}
@@ -2772,7 +2772,7 @@ int GameSettings(struct discHdr * header)
 	cancelBtn.SetTrigger(&trigA);
 	cancelBtn.SetTrigger(&trigB);
 	cancelBtn.SetEffectGrow();
-	
+
 	GuiText deleteBtnTxt("Uninstall", 22, (GXColor){0, 0, 0, 255});
 	deleteBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage deleteBtnImg(&btnOutline);
@@ -2805,7 +2805,7 @@ int GameSettings(struct discHdr * header)
 	ResumeGui();
 
 	struct Game_CFG* game_cfg = CFG_get_game_opt(header->id);
-	
+
 	if (game_cfg)
 	{
 		saved = true;
@@ -2814,7 +2814,7 @@ int GameSettings(struct discHdr * header)
 		languageChoice = game_cfg->language;
 		ocarinaChoice = game_cfg->ocarina;
 		viChoice = game_cfg->vipatch;
-		iosChoice = game_cfg->ios;	
+		iosChoice = game_cfg->ios;
 	}
 	else
 	{
@@ -2826,12 +2826,12 @@ int GameSettings(struct discHdr * header)
 		viChoice = Settings.vpatch;
 		iosChoice = i249;
 	}
-	
+
 	while(!exit)
 	{
 
 		VIDEO_WaitVSync ();
-		
+
 		if (videoChoice == discdefault) sprintf (options3.value[0],"Disc Default");
 		else if (videoChoice == systemdefault) sprintf (options3.value[0],"System Default");
 		else if (videoChoice == patch) sprintf (options3.value[0],"Auto Patch");
@@ -2859,10 +2859,10 @@ int GameSettings(struct discHdr * header)
 
 		if (iosChoice == i249) sprintf (options3.value[4],"249");
 		else if (iosChoice == i222) sprintf (options3.value[4],"222");
-		
+
 		if(shutdown == 1)
 			Sys_Shutdown();
-		
+
 		ret = optionBrowser3.GetClickedOption();
 
 		switch (ret)
@@ -2915,13 +2915,13 @@ int GameSettings(struct discHdr * header)
 			saveBtn.ResetState();
 			optionBrowser3.SetFocus(1);
 		}
-		
+
 		if (cancelBtn.GetState() == STATE_CLICKED)
 		{
 			exit = true;
 			break;
 		}
-		
+
 		if (deleteBtn.GetState() == STATE_CLICKED)
 		{
 			int choice = WindowPrompt(
@@ -2929,10 +2929,10 @@ int GameSettings(struct discHdr * header)
 					gameName,
 					"Yes","Cancel");
 
-			if (choice == 1) 
+			if (choice == 1)
 			{
 				ret = WBFS_RemoveGame(header->id);
-				if (ret < 0) 
+				if (ret < 0)
 				{
 					WindowPrompt(
 					"Can't delete:",
@@ -2954,7 +2954,7 @@ int GameSettings(struct discHdr * header)
 				deleteBtn.ResetState();
 				optionBrowser3.SetFocus(1);
 			}
-						
+
 		}
 	}
 
@@ -3236,7 +3236,7 @@ int MainMenu(int menu)
 		snprintf(bgPath, sizeof(bgPath), "%swbackground.png", CFG.theme_path);
 	else
 		snprintf(bgPath, sizeof(bgPath), "%sbackground.png", CFG.theme_path);
-		
+
 	background = new GuiImageData(bgPath, CFG.widescreen? wbackground_png : background_png);
 
     bgImg = new GuiImage(background);
@@ -3300,14 +3300,14 @@ int MainMenu(int menu)
 
 	struct discHdr *header = &gameList[gameSelected];
 	struct Game_CFG* game_cfg = CFG_get_game_opt(header->id);
-	
+
 	if (game_cfg)
 	{
 		videoChoice = game_cfg->video;
 		languageChoice = game_cfg->language;
 		ocarinaChoice = game_cfg->ocarina;
 		viChoice = game_cfg->vipatch;
-		iosChoice = game_cfg->ios;	
+		iosChoice = game_cfg->ios;
 	}
 	else
 	{
@@ -3317,7 +3317,7 @@ int MainMenu(int menu)
 		viChoice = Settings.vpatch;
 		iosChoice = i249;
 	}
-	
+
     switch(languageChoice)
     {
                         case ConsoleLangDefault:
