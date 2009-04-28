@@ -60,6 +60,7 @@ struct CFG
 //	short savesettings;
 	short widescreen;
 	short parentalcontrol;
+	short maxcharacters;
 	char covers_path[100];
 	char theme_path[100];
 };

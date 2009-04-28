@@ -33,7 +33,7 @@ u8 languageChoice = 0;
 u8 viChoice = 0;
 u8 iosChoice = 0;
 
-#define TITLE_MAX 50
+#define TITLE_MAX 65
 
 struct ID_Title
 {
@@ -190,6 +190,7 @@ void CFG_Default()
 //	CFG.vipatch = 0;
 //	CFG.savesettings = 0;
 	CFG.parentalcontrol = 0;
+	CFG.maxcharacters = 38;
 //	CFG.installdownload = 0;
 //	CFG.hidesettingmenu = 0;
 	snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");

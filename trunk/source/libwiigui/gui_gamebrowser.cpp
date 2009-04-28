@@ -114,9 +114,22 @@ GuiGameBrowser::GuiGameBrowser(int w, int h, struct discHdr * l, int gameCnt, co
 	gameTxt = new GuiText * [pagesize];
 	gameBg = new GuiImage * [pagesize];
 	
+	char buffer[CFG.maxcharacters + 4];
+	
 	for(int i=0; i < pagesize; i++)
 	{
-		gameTxt[i] = new GuiText(get_title(&gameList[i]), 20, (GXColor){0, 0, 0, 0xff});
+		if (strlen(get_title(&gameList[i])) < (u32)(CFG.maxcharacters + 3))
+		{
+			sprintf(buffer, "%s", get_title(&gameList[i]));
+		}
+		else
+		{
+			sprintf(buffer, get_title(&gameList[i]),  CFG.maxcharacters);
+			buffer[CFG.maxcharacters] = '\0';
+			strncat(buffer, "...", 3);
+		}
+		
+		gameTxt[i] = new GuiText(buffer, 20, (GXColor){0, 0, 0, 0xff});
 		gameTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		gameTxt[i]->SetPosition(24,0);
 
@@ -312,6 +325,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
     }
 	
 	next = listOffset;
+	char buffer[CFG.maxcharacters + 4];
 
 	for(int i=0; i<pagesize; i++)
 	{
@@ -322,8 +336,19 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 				game[i]->SetVisible(true);
 				game[i]->SetState(STATE_DEFAULT);
 			}
-
-			gameTxt[i]->SetText(get_title(&gameList[next]));
+			
+			if (strlen(get_title(&gameList[next])) < (u32)(CFG.maxcharacters + 3))
+			{
+				sprintf(buffer, "%s", get_title(&gameList[next]));
+			}
+			else
+			{
+				sprintf(buffer, get_title(&gameList[next]),  CFG.maxcharacters);
+				buffer[CFG.maxcharacters] = '\0';
+				strncat(buffer, "...", 3);
+			}
+			
+			gameTxt[i]->SetText(buffer);
 			gameIndex[i] = next;
 			next = this->FindMenuItem(next, 1);
 		}
