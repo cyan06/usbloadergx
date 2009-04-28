@@ -1734,13 +1734,12 @@ static int MenuDiscList()
 	GuiText tthomeTxt("Back to HBC or Wii Menu", 22, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
 	GuiImageData tthome(tooltip_large_png);
 	GuiImage tthomeImg(&tthome);
-/*	GuiButton tthomeBtn(tthome.GetWidth(), tthome.GetHeight());
+	GuiButton tthomeBtn(tthome.GetWidth(), tthome.GetHeight());
 	tthomeBtn.SetImage(&tthomeImg);
 	tthomeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	tthomeBtn.SetPosition(250,350);
 	tthomeBtn.SetLabel(&tthomeTxt);
 	tthomeBtn.SetEffect(EFFECT_FADE, 20);
-*/
 
 	GuiImage homeBtnImg(&btnhome);
 	homeBtnImg.SetWidescreen(CFG.widescreen); //added
@@ -1753,8 +1752,6 @@ static int MenuDiscList()
 	homeBtn.SetImageOver(&homeBtnImgOver);
 	homeBtn.SetSoundOver(&btnSoundOver);
 	homeBtn.SetSoundClick(&btnClick);
-	if (THEME.showToolTip)
-		homeBtn.SetToolTip(&tthomeImg); //Use SetToolTip instead of tthomeBtn
 	homeBtn.SetTrigger(&trigA);
 	homeBtn.SetTrigger(&trigHome);
 	homeBtn.SetEffectGrow();
@@ -1943,19 +1940,19 @@ static int MenuDiscList()
 			}
 
         }
-		else if(homeBtn.GetState() == STATE_SELECTED) //TT
+		else if((homeBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
 		{
 			
-/*		    if (time2 == 0)
+		    if (time2 == 0)
 		    time(&time2);
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2 && THEME.showToolTip)
+            if (difftime(time1,time2) == 2)
             w.Append(&tthomeBtn); 
 
 			if(homeBtn.GetState() == STATE_SELECTED) {
-			}*/
+			}
 		}
 		else if(installBtn.GetState() == STATE_CLICKED)
 		{
@@ -1971,7 +1968,7 @@ static int MenuDiscList()
 					gameBrowser.SetFocus(1);
 				}
 		}
-		else if(installBtn.GetState() == STATE_SELECTED) //TT
+		else if((installBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
 		{
 			
 		    if (time2 == 0)
@@ -1979,7 +1976,7 @@ static int MenuDiscList()
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2 && THEME.showToolTip)
+            if (difftime(time1,time2) == 2)
             w.Append(&ttinstallBtn); 
 
 			if(installBtn.GetState() == STATE_SELECTED) {
@@ -1992,7 +1989,7 @@ static int MenuDiscList()
 			    break;
 
 		}
-		else if(settingsBtn.GetState() == STATE_SELECTED) //TT
+		else if((settingsBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
 		{
 			
 		    if (time2 == 0)
@@ -2000,7 +1997,7 @@ static int MenuDiscList()
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2 && THEME.showToolTip)
+            if (difftime(time1,time2) == 2)
             w.Append(&ttsettingsBtn); 
 
 			if(settingsBtn.GetState() == STATE_SELECTED) {
@@ -2010,7 +2007,7 @@ static int MenuDiscList()
 			else {
 			w.Remove(&ttpoweroffBtn);
 			w.Remove(&ttinstallBtn);
-			//w.Remove(&tthomeBtn);
+			w.Remove(&tthomeBtn);
 			w.Remove(&ttsettingsBtn);
 			time2 = 0;
 		}
