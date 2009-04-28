@@ -195,6 +195,7 @@ void CFG_Default()
 //	CFG.installdownload = 0;
 //	CFG.hidesettingmenu = 0;
 	snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
+	snprintf(CFG.disc_path, sizeof(CFG.disc_path), "SD:/images/disc/");
 	snprintf(CFG.unlockCode, sizeof(CFG.unlockCode), "ab121b");
 	
 	//all alignments are left top here
@@ -389,6 +390,16 @@ void cfg_set(char *name, char *val)
 
 	if (CFG.widescreen && strcmp(name, "wtheme_path") == 0) {
 		strcopy(CFG.theme_path, val, sizeof(CFG.theme_path));
+		return;
+	}
+	
+	if (strcmp(name, "cover_path") == 0) {
+		strcopy(CFG.covers_path, val, sizeof(CFG.covers_path));
+		return;
+	}
+	
+	if (strcmp(name, "disc_path") == 0) {
+		strcopy(CFG.disc_path, val, sizeof(CFG.disc_path));
 		return;
 	}
 	

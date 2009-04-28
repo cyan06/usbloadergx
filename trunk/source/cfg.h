@@ -65,6 +65,7 @@ struct CFG
 	char unlockCode[20];
 	char covers_path[100];
 	char theme_path[100];
+	char disc_path[100];
 };
 
 struct THEME

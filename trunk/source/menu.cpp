@@ -647,13 +647,13 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	sizeTxt.SetPosition(-60,70);
 
 	char imgPath[60];
-	snprintf(imgPath,sizeof(imgPath),"SD:/images/disc/%s.png",ID);
+	snprintf(imgPath,sizeof(imgPath),"%s%s.png", CFG.disc_path, ID);
     GuiImageData * diskCover = new GuiImageData(imgPath,0);
 	
 	if (!diskCover->GetImage()) 
 		{
 		delete diskCover;
-		snprintf(imgPath, sizeof(imgPath), "SD:/images/disc/%s.png", IDfull);
+		snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.disc_path, IDfull);
 		diskCover = new GuiImageData(imgPath, 0);
 		if (!diskCover->GetImage())
 			{
@@ -2065,17 +2065,18 @@ static int MenuDiscList()
 					cover = NULL;
 				}
 
-				snprintf(imgPath, sizeof(imgPath), "SD:/images/%s.png", ID);
+				snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.covers_path, ID);
 				cover = new GuiImageData(imgPath,0); //load short id
 				if (!cover->GetImage()) //if could not load the short id image
 				{
 					delete cover;
-					snprintf(imgPath, sizeof(imgPath), "SD:/images/%s.png", IDfull);
+					snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.covers_path, IDfull);
 					cover = new GuiImageData(imgPath, 0); //load full id image
 					if (!cover->GetImage())
 					{
 						delete cover;
-						cover = new GuiImageData("SD:/images/noimage.png", nocover_png); //load no image
+						snprintf(imgPath, sizeof(imgPath), "%snoimage.png", CFG.covers_path);
+						cover = new GuiImageData(imgPath, nocover_png); //load no image
 					}
 				}
 
