@@ -1747,7 +1747,8 @@ static int MenuDiscList()
 	homeBtn.SetImageOver(&homeBtnImgOver);
 	homeBtn.SetSoundOver(&btnSoundOver);
 	homeBtn.SetSoundClick(&btnClick);
-	homeBtn.SetToolTip(&tthomeImg); //Use SetToolTip instead of tthomeBtn
+	if (THEME.showToolTip)
+		homeBtn.SetToolTip(&tthomeImg); //Use SetToolTip instead of tthomeBtn
 	homeBtn.SetTrigger(&trigA);
 	homeBtn.SetTrigger(&trigHome);
 	homeBtn.SetEffectGrow();
