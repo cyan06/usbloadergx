@@ -730,7 +730,7 @@ bool cfg_save_games()
 {
 	FILE *f;
 	int i;
-
+	mkdir("SD:/config/", 0777);
 	f = fopen("SD:/config/settings.cfg", "wb");
 	if (!f) {
 		printf("Error saving %s\n", "settings.cfg");
