@@ -35,6 +35,12 @@ extern const u32	logo_png_size;
 extern const u8     tooltip_png[];
 extern const u32    tooltip_png_size;
 
+extern const u8     arrowleft_png[];
+extern const u32    arrowleft_png_size;
+
+extern const u8     arrowright_png[];
+extern const u32    arrowright_png_size;
+
 extern const u8     tooltip_medium_png[];
 extern const u32    tooltip_medium_png_size;
 

@@ -72,6 +72,8 @@ int width = 160;
 static int startat = 0;
 static int offset = 0;
 
+int direction = 0; // direction the gameprompt slides in
+
 static char gameregion[7];
 static u8 id222[7];
 //power button fix
@@ -388,8 +390,8 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
     promptWindow.Append(&btn3);
-
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	
 	HaltGui();
 	mainWindow->SetState(STATE_DISABLED);
 	mainWindow->Append(&promptWindow);
@@ -620,6 +622,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_png);
+	GuiImageData imgLeft(arrowleft_png);
+	GuiImageData imgRight(arrowright_png);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -719,12 +723,35 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btn3.SetSoundClick(&btnClick);
 	btn3.SetTrigger(&trigA);
 	btn3.SetEffectGrow();
+	
+	GuiImage btnLeftImg(&imgLeft);
+	GuiButton btnLeft(imgLeft.GetWidth(), imgLeft.GetHeight());
+	btnLeft.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+	btnLeft.SetPosition(20, 0);
+	btnLeft.SetImage(&btnLeftImg);
+	btnLeft.SetSoundOver(&btnSoundOver);
+	btnLeft.SetSoundClick(&btnClick);
+	btnLeft.SetTrigger(&trigA);
+	btnLeft.SetEffectGrow();
+	
+	GuiImage btnRightImg(&imgRight);
+	GuiButton btnRight(imgRight.GetWidth(), imgRight.GetHeight());
+	btnRight.SetAlignment(ALIGN_RIGHT, ALIGN_MIDDLE);
+	btnRight.SetPosition(-20, 0);
+	btnRight.SetImage(&btnRightImg);
+	btnRight.SetSoundOver(&btnSoundOver);
+	btnRight.SetSoundClick(&btnClick);
+	btnRight.SetTrigger(&trigA);
+	btnRight.SetEffectGrow();
 
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&nameBtn);
 	promptWindow.Append(&sizeTxt);
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
+	promptWindow.Append(&btnLeft);
+	promptWindow.Append(&btnRight);
+
 
 	//check if unlocked
 	if (CFG.godmode == 1)
@@ -732,7 +759,13 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
     promptWindow.Append(&btn3);
 	}
 
-	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	if (direction ==0){
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);}
+	if (direction ==1){
+	promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 50);}
+	if (direction ==2){
+	promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 50);}
+	
 	HaltGui();
 	mainWindow->SetState(STATE_DISABLED);
 	mainWindow->Append(&promptWindow);
@@ -764,20 +797,35 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		}
 		if(btn1.GetState() == STATE_CLICKED) {
 			choice = 1;
+			direction =0;
 			SDCARD_deInit();
 		}
 		else if(btn2.GetState() == STATE_CLICKED) {
 			choice = 0;
+			direction =0;
+			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
 		}
         else if(btn3.GetState() == STATE_CLICKED) {
             choice = 2;
+			direction =0;
+			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
         }
 		else if(nameBtn.GetState() == STATE_CLICKED) {
             choice = 3;
+			direction =0;
+			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+        }
+		else if(btnRight.GetState() == STATE_CLICKED) {
+            choice = 5;
+			promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_OUT, 50);
+        }
+		else if(btnLeft.GetState() == STATE_CLICKED) {
+            choice = 4;
+			promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_OUT, 50);
         }
 	}
 
-	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+	//promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
 	while(promptWindow.GetEffect() > 0) usleep(50);
 	HaltGui();
 	mainWindow->Remove(&promptWindow);
@@ -2015,13 +2063,15 @@ static int MenuDiscList()
 
 
 		//Get selected game under cursor
-		int selectimg;
-
+		int selectimg, promptnumber;
+		promptnumber = 0;
 		char ID[4];
 		char IDfull[7];
 		selectimg = gameBrowser.GetSelectedOption();
 	    gameSelected = gameBrowser.GetClickedOption();
-
+		
+		
+		
 		if (gameSelected > 0) //if click occured
 			selectimg = gameSelected;
 
@@ -2131,16 +2181,19 @@ static int MenuDiscList()
 				text[MAX_CHARACTERS] = '\0';
 				strncat(text, "...", 3);
 			}
-
+			
+			
 			bool returnHere = true;
 			while (returnHere)
 			{
 				returnHere = false;
 				wiilight(1);
 				 //__Disc_SetLowMem();
-				sprintf(text2, "%.2fGB", size);
+				//sprintf(text2, "%.2fGB", size);
 				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 				sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+				prompt:
+				sprintf(text2, "%.2fGB", size);
 				choice = GameWindowPrompt(
 				text2,
 				text,
@@ -2152,7 +2205,7 @@ static int MenuDiscList()
 				wiilight(0);
 
 				if(choice == 1)
-				{
+				{	direction = 0;
 					memcpy(id222, header->id, 6);
 					id222[6] = 0;
 
@@ -2181,7 +2234,7 @@ static int MenuDiscList()
 					}
 				}
 				else if (choice == 2)
-				{
+				{	direction = 0;
 					if (GameSettings(header) == 1) //if deleted
 					{
 						menu = MENU_DISCLIST;
@@ -2191,7 +2244,7 @@ static int MenuDiscList()
 				}
 
 				else if (choice == 3) //&& (CFG.godmode == 1))
-				{
+				{	direction = 0;
 					//enter new game title
 					char entered[40];
 					sprintf(entered,"%s",text);
@@ -2200,6 +2253,49 @@ static int MenuDiscList()
 					__Menu_GetEntries();
 					menu = MENU_DISCLIST;
 				}
+				
+				else if (choice == 4) 
+				{	direction = 2;
+					promptnumber--;
+					
+					if ((selectimg+promptnumber)<0){
+					selectimg = gameCnt-1;
+					promptnumber = 0;}
+					header = &gameList[selectimg+promptnumber];
+				snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
+				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
+				sprintf(text, "%s", get_title(header));
+				}
+				else {
+				strncpy(text, get_title(header),  MAX_CHARACTERS);
+				text[MAX_CHARACTERS] = '\0';
+				strncat(text, "...", 3);
+				}
+					goto prompt;
+				}
+				
+				else if (choice == 5) 
+				{	direction = 1;
+					promptnumber++;
+					//if ((selectimg+promptnumber)>(gameCnt-1)){
+					//selectimg = 0;
+					//promptnumber = 0;}
+					header = &gameList[selectimg+promptnumber];
+				snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
+				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
+				sprintf(text, "%s", get_title(header));
+				}
+				else {
+				strncpy(text, get_title(header),  MAX_CHARACTERS);
+				text[MAX_CHARACTERS] = '\0';
+				strncat(text, "...", 3);
+				}
+					goto prompt;
+				}
+				
+				
 				else if(choice == 0)
 					gameBrowser.SetFocus(1);
 			}
