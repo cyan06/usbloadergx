@@ -682,7 +682,6 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	diskImg.SetWidescreen(CFG.widescreen);
 	diskImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
     diskImg.SetAngle(angle);
-//    diskImg.Draw();
 
 	GuiButton btn1(160, 160);
     btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);

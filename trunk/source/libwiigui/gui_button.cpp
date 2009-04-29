@@ -26,6 +26,7 @@ GuiButton::GuiButton(int w, int h)
 	iconHold = NULL;
 	iconClick = NULL;
 	toolTip = NULL;
+	toolTipTxt = NULL;
 
 	for(int i=0; i < 3; i++)
 	{
@@ -123,16 +124,21 @@ void GuiButton::SetSoundClick(GuiSound * snd)
 	soundClick = snd;
 }
 
-//Needs still work
-void GuiButton::SetToolTip(GuiImage* img)
+//No delay for now
+void GuiButton::SetToolTip(GuiImage* img, GuiText * txt, int x, int y)
 {
-	toolTip = img;
 	if(img)
 	{ 
+		toolTip = img;
 		img->SetParent(this);
 		img->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
-		img->SetPosition(-65,-20);	
-		img->SetEffect(EFFECT_FADE, 10);	
+		img->SetPosition(x,y);	
+		img->SetEffect(EFFECT_FADE, 6);	
+		if(txt) 
+		{	
+			toolTipTxt = txt;
+			txt->SetParent(img);
+		}
 	}
 }
 /**
@@ -165,6 +171,10 @@ void GuiButton::Draw()
 	if((state == STATE_SELECTED  || state == STATE_HELD) && toolTip)
 	{
 		toolTip->Draw(); 
+		if (toolTipTxt)
+			{
+			toolTipTxt->Draw();
+			}
 	}
 
 	this->UpdateEffects();

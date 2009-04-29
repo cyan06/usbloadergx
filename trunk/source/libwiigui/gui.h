@@ -19,8 +19,8 @@
  * \section Contact
  * If you have any suggestions for the library or documentation, or want to
  * contribute, please visit the libwiigui website:
- * http://code.google.com/p/libwiigui/
 
+ * http://code.google.com/p/libwiigui/
  * \section Credits
  * This library was wholly designed and written by Tantric. Thanks to the
  * authors of PNGU and FreeTypeGX, of which this library makes use. Thanks
@@ -689,10 +689,10 @@ class GuiButton : public GuiElement
 		//!Sets the sound to play on click
 		//!\param s Pointer to GuiSound object
 		void SetSoundClick(GuiSound * s);
-		//!Constantly called to draw the GuiButton
+		//!Constantly called to draw the GuiButtons ToolTip
 		//!Sets the button's Tooltip on over
-		//!\param i Pointer to GuiImage object
-		void SetToolTip(GuiImage* i);
+		//!\param i Pointer to GuiImage object, t Pointer to GuiText, x & y Positioning
+		void SetToolTip(GuiImage* i, GuiText * t, int x, int y);
 		//!Constantly called to draw the GuiButton
 		void Draw();
 		//!Constantly called to allow the GuiButton to respond to updated input data
@@ -708,6 +708,7 @@ class GuiButton : public GuiElement
 		GuiImage * iconHold; //!< Button icon for STATE_HELD
 		GuiImage * iconClick; //!< Button icon for STATE_CLICKED
 		GuiImage * toolTip; //!< Tooltip for STATE_SELECTED
+		GuiText * toolTipTxt;//!< Tooltip Text
 		GuiText * label[3]; //!< Label(s) to display (default)
 		GuiText * labelOver[3]; //!< Label(s) to display for STATE_SELECTED
 		GuiText * labelHold[3]; //!< Label(s) to display for STATE_HELD
@@ -765,6 +766,7 @@ class GuiKeyboard : public GuiWindow
 		GuiSound * keySoundOver;
 		GuiSound * keySoundClick;
 		GuiTrigger * trigA;
+		GuiTrigger * trigB;
 };
 
 typedef struct _optionlist {
