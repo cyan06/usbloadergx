@@ -77,6 +77,10 @@ int width = 160;
 static int startat = 0;
 static int offset = 0;
 
+//downloadvariables
+static char missingFiles[100][12]; //fixed
+static int cntMissFiles = 0;
+
 int direction = 0; // direction the gameprompt slides in
 
 static char gameregion[7];
@@ -1090,7 +1094,7 @@ FormatingPartition(const char *title, partitionEntry *entry)
 
 	GuiText titleTxt(title, 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	titleTxt.SetPosition(0,0);
+	titleTxt.SetPosition(0,60);
 
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&titleTxt);
@@ -1114,6 +1118,104 @@ FormatingPartition(const char *title, partitionEntry *entry)
 	mainWindow->SetState(STATE_DEFAULT);
 	ResumeGui();
 	return ret;
+}
+
+
+/****************************************************************************
+ * NetworkInit
+ ***************************************************************************/
+char * NetworkInitPromp(void)
+{
+    char myIP [16];
+    char * IP = 0;
+	GuiWindow promptWindow(472,320);
+	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	promptWindow.SetPosition(0, -10);
+
+    GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
+
+	GuiImageData btnOutline(button_dialogue_box_png);
+	GuiTrigger trigA;
+	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+
+	GuiImageData dialogBox(dialogue_box_png);
+	GuiImage dialogBoxImg(&dialogBox);
+
+	GuiText titleTxt("Initialising Network", 26, (GXColor){0, 0, 0, 255});
+	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	titleTxt.SetPosition(0,60);
+
+	char msg[20] = " ";
+	GuiText msgTxt(msg, 22, (GXColor){0, 0, 0, 255});
+	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	msgTxt.SetPosition(0,-40);
+
+    GuiText btn1Txt("Cancel", 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn1Img(&btnOutline);
+	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
+    btn1.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+    btn1.SetPosition(0, -45);
+	btn1.SetLabel(&btn1Txt);
+	btn1.SetImage(&btn1Img);
+	btn1.SetSoundOver(&btnSoundOver);
+	btn1.SetSoundClick(&btnClick);
+	btn1.SetTrigger(&trigA);
+	btn1.SetState(STATE_SELECTED);
+	btn1.SetEffectGrow();
+
+	promptWindow.Append(&dialogBoxImg);
+	promptWindow.Append(&titleTxt);
+	promptWindow.Append(&msgTxt);
+	promptWindow.Append(&btn1);
+
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	HaltGui();
+	mainWindow->SetState(STATE_DISABLED);
+	mainWindow->Append(&promptWindow);
+	mainWindow->ChangeFocus(&promptWindow);
+	ResumeGui();
+
+	VIDEO_WaitVSync();
+
+    while (!IP) {
+
+    Net_Init(myIP);
+    IP = myIP;
+    if (IP) {
+        sprintf(msg, "IP: %s", IP);
+        msgTxt.SetText(msg);
+        cntMissFiles = 0;
+        u32 i = 0;
+        char filename[11];
+        bool found = false;
+        while (i < gameCnt)
+        {
+				snprintf(filename,11,"%s.png",GamesHDD[i]);
+				found = findfile(filename,"SD:/images/");
+				if (!found)
+				{
+				snprintf(missingFiles[cntMissFiles],11,"%s.png",filename);
+				cntMissFiles++;
+				}
+				i++;
+        }
+        break;
+    }
+
+    if(btn1.GetState() == STATE_CLICKED) {
+    IP = 0;
+    break;
+    }
+
+    }
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+	while(promptWindow.GetEffect() > 0) usleep(50);
+	HaltGui();
+	mainWindow->Remove(&promptWindow);
+	mainWindow->SetState(STATE_DEFAULT);
+	ResumeGui();
+	return IP;
 }
 
 /****************************************************************************
@@ -1248,6 +1350,113 @@ ProgressWindow(const char *title, const char *msg)
 	}
 	return 0;
 }
+
+/****************************************************************************
+ * ProgressWindow
+ *
+ * Opens a window, which displays progress to the user. Can either display a
+ * progress bar showing % completion, or a throbber that only shows that an
+ * action is in progress.
+ ***************************************************************************/
+int
+ProgressDownloadWindow(void)
+{
+
+    int i = 0;
+    char filename[11];
+
+	GuiWindow promptWindow(472,320);
+	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	promptWindow.SetPosition(0, -10);
+	GuiImageData btnOutline(button_dialogue_box_png);
+	GuiTrigger trigA;
+	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+
+	GuiImageData dialogBox(dialogue_box_png);
+	GuiImage dialogBoxImg(&dialogBox);
+
+	GuiImageData progressbarOutline(progressbar_outline_png);
+	GuiImage progressbarOutlineImg(&progressbarOutline);
+	progressbarOutlineImg.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+	progressbarOutlineImg.SetPosition(25, 40);
+
+	GuiImageData progressbarEmpty(progressbar_empty_png);
+	GuiImage progressbarEmptyImg(&progressbarEmpty);
+	progressbarEmptyImg.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+	progressbarEmptyImg.SetPosition(25, 40);
+	progressbarEmptyImg.SetTile(100);
+
+	GuiImageData progressbar(progressbar_png);
+
+	progressbarImg.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
+	progressbarImg.SetPosition(25, 40);
+
+	GuiText titleTxt("Downloading files...", 26, (GXColor){70, 70, 10, 255});
+	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	titleTxt.SetPosition(0,60);
+    char msg[10] = " ";
+	GuiText msgTxt(msg, 26, (GXColor){0, 0, 0, 255});
+	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	msgTxt.SetPosition(0,130);
+
+	prTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	prTxt.SetPosition(0, 40);
+
+	promptWindow.Append(&dialogBoxImg);
+	promptWindow.Append(&titleTxt);
+	promptWindow.Append(&msgTxt);
+    promptWindow.Append(&progressbarEmptyImg);
+    promptWindow.Append(&progressbarImg);
+    promptWindow.Append(&progressbarOutlineImg);
+    promptWindow.Append(&prTxt);
+
+	HaltGui();
+	mainWindow->SetState(STATE_DISABLED);
+	mainWindow->Append(&promptWindow);
+	mainWindow->ChangeFocus(&promptWindow);
+	ResumeGui();
+
+	while (i < cntMissFiles) {
+
+    snprintf(filename,sizeof(filename),"%s",missingFiles[i]);
+    //download boxart image
+    char imgPath[30];
+    char URLFile[62];
+    //sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s.png",filename); // For 3D Covers
+    sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s.png",filename);
+    sprintf(imgPath,"SD:/images/%s",filename);
+
+    struct block file = downloadfile(URLFile);
+
+    if(file.data != NULL)
+    {
+        // save png to sd card
+        FILE *pfile;
+        pfile = fopen(imgPath, "wb");
+        fwrite(file.data,1,file.size,pfile);
+        fclose (pfile);
+        free(file.data);
+
+    }
+
+    sprintf(prozent, "%i%%", 100*i/cntMissFiles);
+    prTxt.SetText(prozent);
+    progressbarImg.SetTile(100*i/cntMissFiles);
+
+    sprintf(msg, "%i files left", cntMissFiles - i);
+    msgTxt.SetText(msg);
+
+    i++;
+    }
+
+
+	HaltGui();
+	mainWindow->Remove(&promptWindow);
+	mainWindow->SetState(STATE_DEFAULT);
+	ResumeGui();
+	return 1;
+}
+
 
 /****************************************************************************
  * UpdateGUI
@@ -1974,12 +2183,12 @@ static int MenuDiscList()
 	GuiImage DownloadBtnImg(&btnInstall);
 	GuiImage DownloadBtnImgOver(&btnInstallOver);
 	GuiButton DownloadBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
-	DownloadBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
-	DownloadBtn.SetPosition(0, 355);
+	DownloadBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	DownloadBtn.SetPosition(20, 300);
 	DownloadBtn.SetImage(&DownloadBtnImg);
 	DownloadBtn.SetImageOver(&DownloadBtnImgOver);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
-	DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,-25,-25);
+	DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,180,-30);
 	DownloadBtn.SetTrigger(&trigA);
 	DownloadBtn.SetEffectGrow();
 
@@ -2047,7 +2256,7 @@ static int MenuDiscList()
     w.Append(&installBtn);
 	w.Append(&homeBtn);
     w.Append(&settingsBtn);
-	//w.Append(&DownloadBtn);
+	w.Append(&DownloadBtn);
 	//w.Append(CoverImg);
 	//if (THEME.showID)
 		//w.Append(GameIDTxt);
@@ -2219,72 +2428,34 @@ static int MenuDiscList()
 				snprintf(GamesHDD[cnt],sizeof(GamesHDD[cnt]),"%s",header->id);
 			}
 
-			char missingFiles[100][12]; //fixed
-			int cntMissFiles = 0;
-			char filename[11];
-			char myIP[16];
+			char * myIP;
 
-			if( !Net_Init(myIP) )
+			myIP = NetworkInitPromp();
+			if( !myIP )
 			{
-				printf("Net_Init error");
-				sleep(1);
-				netcheck = false;
+            WindowPrompt("Network init error", 0, "ok",0);
+            netcheck = false;
 			}
 			else netcheck = true;
 
 			if (netcheck)
 			{
-			i = 0;
-			bool found = false;
-			while ((u32)i < gameCnt)
-			{
-				snprintf(filename,11,"%s.png",GamesHDD[i]);
-				found = findfile(filename,"SD:/images/");
-				if (!found)
-				{
-				snprintf(missingFiles[cntMissFiles],11,"%s.png",filename);
-				cntMissFiles++;
-				}
-				i++;
-			}
-
-			if (missingFiles != NULL && (cntMissFiles < 60))
+			if (missingFiles != NULL && (cntMissFiles < 60) && (cntMissFiles > 0))
 			{
 			char tempCnt[40];
 			i = 0;
 
-			sprintf(tempCnt,"Downloading %i files",cntMissFiles);
-			WindowPrompt("Download Boxart image?",tempCnt,"Yes","No");
+			sprintf(tempCnt,"Missing %i files",cntMissFiles);
+			choice = WindowPrompt("Download Boxart image?",tempCnt,"Yes","No");
 			//WindowPrompt("Downloading","Please Wait Downloading Covers",0,0);
+            if (choice == 1) {
 
-			HaltGui();
-			while (i < cntMissFiles) {
+            ret = ProgressDownloadWindow();
+            WindowPrompt("Download finished",0,"OK",0);
 
-				snprintf(filename,sizeof(filename),"%s",missingFiles[i]);
-				//download boxart image
-					char imgPath[30];
-					char URLFile[62];
-					//sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s.png",filename); // For 3D Covers
-					sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s.png",filename);
-					sprintf(imgPath,"SD:/images/%s",filename);
-
-					struct block file = downloadfile(URLFile);
-
-					if(file.data != NULL)
-					{
-						// save png to sd card
-						FILE *pfile;
-						pfile = fopen(imgPath, "wb");
-						fwrite(file.data,1,file.size,pfile);
-						fclose (pfile);
-						free(file.data);
-
-					}
-				i++;
-				}
-				ResumeGui();
-				sprintf(tempCnt,"Downloaded %i files",i);
-				WindowPrompt("Download finished",tempCnt,"Back",0);
+			}
+			} else {
+            WindowPrompt("No file missing!",0,"OK",0);
 			}
 			}
 		}
