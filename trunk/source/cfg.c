@@ -229,6 +229,14 @@ void CFG_Default()
 	THEME.gameCnt_y = 350;
 	THEME.gameCntAlign = CFG_ALIGN_CENTRE;
 	THEME.showToolTip = 1;
+	THEME.battery1_x = 245;
+	THEME.battery1_y = 400;
+	THEME.battery2_x = 335;
+	THEME.battery2_y = 400;
+	THEME.battery3_x = 245;
+	THEME.battery3_y = 425;
+	THEME.battery4_x = 335;
+	THEME.battery4_y = 425;
 }
 
 
@@ -497,6 +505,38 @@ void theme_set(char *name, char *val)
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
 			THEME.install_x = x - (x % 4);
 			THEME.install_y = y;
+		}
+	}
+
+	else if (strcmp(cfg_name, "battery1_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.battery1_x = x - (x % 4);
+			THEME.battery1_y = y;
+		}
+	}
+
+	else if (strcmp(cfg_name, "battery2_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.battery2_x = x - (x % 4);
+			THEME.battery2_y = y;
+		}
+	}
+
+	else if (strcmp(cfg_name, "battery3_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.battery3_x = x - (x % 4);
+			THEME.battery3_y = y;
+		}
+	}
+
+	else if (strcmp(cfg_name, "battery4_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%d,%d", &x, &y) == 2) {
+			THEME.battery4_x = x - (x % 4);
+			THEME.battery4_y = y;
 		}
 	}
 	

@@ -73,7 +73,7 @@ static int startat = 0;
 static int offset = 0;
 
 static char gameregion[7];
-static u8 id222[6];
+static u8 id222[7];
 //power button fix
 extern u8 shutdown;
 
@@ -1393,16 +1393,16 @@ static int MenuInstall()
 		batteryBtn[i]->SetLabel(batteryTxt[i]);
 		batteryBtn[i]->SetImage(batteryBarImg[i]);
 		batteryBtn[i]->SetIcon(batteryImg[i]);
-		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+		batteryBtn[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 		batteryBtn[i]->SetRumble(false);
 		batteryBtn[i]->SetAlpha(70);
 	}
 
 
-	batteryBtn[0]->SetPosition(-55, 400);
-	batteryBtn[1]->SetPosition(35, 400);
-	batteryBtn[2]->SetPosition(-55, 425);
-	batteryBtn[3]->SetPosition(35, 425);
+	batteryBtn[0]->SetPosition(THEME.battery1_x, THEME.battery1_y);
+	batteryBtn[1]->SetPosition(THEME.battery2_x, THEME.battery2_y);
+	batteryBtn[2]->SetPosition(THEME.battery3_x, THEME.battery3_y);
+	batteryBtn[3]->SetPosition(THEME.battery4_x, THEME.battery4_y);
 	#endif
 
     HaltGui();
@@ -1523,7 +1523,7 @@ static int MenuInstall()
 					__Menu_GetEntries(); //get the entries again
 					wiilight(1);
 					WindowPrompt ("Successfully installed:",name,"OK",0);
-					menu = MENU_CHECK;
+					menu = MENU_DISCLIST;
 					wiilight(0);
 					break;
 				}
@@ -1543,7 +1543,7 @@ static int MenuInstall()
 				__Menu_GetEntries(); //get the entries again
 				wiilight(1);
 				WindowPrompt ("Successfully installed:",name,"OK",0);
-				menu = MENU_CHECK;
+				menu = MENU_DISCLIST;
 				wiilight(0);
 				break;
 			}
@@ -1811,15 +1811,15 @@ static int MenuDiscList()
 		batteryBtn[i]->SetLabel(batteryTxt[i]);
 		batteryBtn[i]->SetImage(batteryBarImg[i]);
 		batteryBtn[i]->SetIcon(batteryImg[i]);
-		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+		batteryBtn[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 		batteryBtn[i]->SetRumble(false);
 		batteryBtn[i]->SetAlpha(70);
 	}
 
-	batteryBtn[0]->SetPosition(-55, 400);
-	batteryBtn[1]->SetPosition(35, 400);
-	batteryBtn[2]->SetPosition(-55, 425);
-	batteryBtn[3]->SetPosition(35, 425);
+	batteryBtn[0]->SetPosition(THEME.battery1_x, THEME.battery1_y);
+	batteryBtn[1]->SetPosition(THEME.battery2_x, THEME.battery2_y);
+	batteryBtn[2]->SetPosition(THEME.battery3_x, THEME.battery3_y);
+	batteryBtn[3]->SetPosition(THEME.battery4_x, THEME.battery4_y);
 	#endif
 
 	GuiGameBrowser gameBrowser(THEME.selection_w, THEME.selection_h, gameList, gameCnt, CFG.theme_path, bg_options_png, startat, offset);
@@ -2153,10 +2153,9 @@ static int MenuDiscList()
 
 				if(choice == 1)
 				{
-					int i = 0;
-					for (i = 0; i<7; i++) {
-                    id222[i] = header->id[i];
-					}
+					memcpy(id222, header->id, 6);
+					id222[6] = 0;
+
 					/* Set USB mode */
 					ret = Disc_SetUSB(header->id);
 					if (ret < 0) {
@@ -2198,7 +2197,8 @@ static int MenuDiscList()
 					sprintf(entered,"%s",text);
 					OnScreenKeyboard(entered, 40);
 					WBFS_RenameGame(header->id,entered);
-					menu = MENU_CHECK;
+					__Menu_GetEntries();
+					menu = MENU_DISCLIST;
 				}
 				else if(choice == 0)
 					gameBrowser.SetFocus(1);
@@ -2347,15 +2347,15 @@ static int MenuFormat()
 		batteryBtn[i]->SetLabel(batteryTxt[i]);
 		batteryBtn[i]->SetImage(batteryBarImg[i]);
 		batteryBtn[i]->SetIcon(batteryImg[i]);
-		batteryBtn[i]->SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+		batteryBtn[i]->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 		batteryBtn[i]->SetRumble(false);
 		batteryBtn[i]->SetAlpha(70);
 	}
 
-	batteryBtn[0]->SetPosition(-55, 400);
-	batteryBtn[1]->SetPosition(35, 400);
-	batteryBtn[2]->SetPosition(-55, 425);
-	batteryBtn[3]->SetPosition(35, 425);
+	batteryBtn[0]->SetPosition(THEME.battery1_x, THEME.battery1_y);
+	batteryBtn[1]->SetPosition(THEME.battery2_x, THEME.battery2_y);
+	batteryBtn[2]->SetPosition(THEME.battery3_x, THEME.battery3_y);
+	batteryBtn[3]->SetPosition(THEME.battery4_x, THEME.battery4_y);
 	#endif
 
 	GuiOptionBrowser optionBrowser(THEME.selection_w, THEME.selection_h, &options, CFG.theme_path, bg_options_png, 1, 0);
@@ -2704,7 +2704,7 @@ int GameSettings(struct discHdr * header)
 	int retVal = 0;
 //	char imgPath[100];
 	char gameName[31];
-	bool saved = false;
+//	bool saved = false;
 
 	if (strlen(get_title(header)) < (27 + 3)) {
 		sprintf(gameName, "%s", get_title(header));
@@ -2805,7 +2805,7 @@ int GameSettings(struct discHdr * header)
 
 	if (game_cfg)
 	{
-		saved = true;
+		//saved = true;
 		//saveBtnTxt.SetText("Save Changes");
 		videoChoice = game_cfg->video;
 		languageChoice = game_cfg->language;
@@ -2815,7 +2815,7 @@ int GameSettings(struct discHdr * header)
 	}
 	else
 	{
-		saved = false;
+		//saved = false;
 		//saveBtnTxt.SetText("Save");
 		videoChoice = Settings.video;
 		languageChoice = Settings.language;
@@ -2901,7 +2901,7 @@ int GameSettings(struct discHdr * header)
 				if (CFG_save_game_opt(header->id))
 				{
 					WindowPrompt("Successfully Saved", 0, "OK", 0);
-					saved = true;
+					//saved = true;
 					//saveBtnTxt.SetText("Save");
 				}
 				else
@@ -3218,23 +3218,27 @@ int MainMenu(int menu)
 {
 
 	int currentMenu = menu;
+	char imgPath[100];
 
 	#ifdef HW_RVL
-	pointer[0] = new GuiImageData(player1_point_png);
-	pointer[1] = new GuiImageData(player2_point_png);
-	pointer[2] = new GuiImageData(player3_point_png);
-	pointer[3] = new GuiImageData(player4_point_png);
+	snprintf(imgPath, sizeof(imgPath), "%splayer1_point.png", CFG.theme_path);
+	pointer[0] = new GuiImageData(imgPath, player1_point_png);
+	snprintf(imgPath, sizeof(imgPath), "%splayer2_point.png", CFG.theme_path);
+	pointer[1] = new GuiImageData(imgPath, player2_point_png);
+	snprintf(imgPath, sizeof(imgPath), "%splayer3_point.png", CFG.theme_path);
+	pointer[2] = new GuiImageData(imgPath, player3_point_png);
+	snprintf(imgPath, sizeof(imgPath), "%splayer4_point.png", CFG.theme_path);
+	pointer[3] = new GuiImageData(imgPath, player4_point_png);
 	#endif
 
 	mainWindow = new GuiWindow(screenwidth, screenheight);
 
-	char bgPath[100];
 	if (CFG.widescreen)
-		snprintf(bgPath, sizeof(bgPath), "%swbackground.png", CFG.theme_path);
+		snprintf(imgPath, sizeof(imgPath), "%swbackground.png", CFG.theme_path);
 	else
-		snprintf(bgPath, sizeof(bgPath), "%sbackground.png", CFG.theme_path);
+		snprintf(imgPath, sizeof(imgPath), "%sbackground.png", CFG.theme_path);
 
-	background = new GuiImageData(bgPath, CFG.widescreen? wbackground_png : background_png);
+	background = new GuiImageData(imgPath, CFG.widescreen? wbackground_png : background_png);
 
     bgImg = new GuiImage(background);
 	mainWindow->Append(bgImg);
@@ -3277,42 +3281,39 @@ int MainMenu(int menu)
 	int ios2 = 0, ret = 0;
     switch(iosChoice)
     {
-                        case i249:
-                                ios2 = 0;
-                        break;
+		case i249:
+				ios2 = 0;
+		break;
 
-                        case i222:
-                                ios2 = 1;
-                        break;
+		case i222:
+				ios2 = 1;
+		break;
 
-						default:
-                                ios2 = 0;
-                        break;
+		default:
+				ios2 = 0;
+		break;
     }
 
-    if (ios2 == 1) {
-    ret = IOS_ReloadIOS(222);
-    if (ret < 0) {
-    ret = IOS_ReloadIOS(249);
-    }
-    ret = WBFS_Init(WBFS_DEVICE_USB);
-    if (ret >= 0)
-    ret = Disc_Init();
-    if (ret >= 0)
-    ret = WBFS_Open();
-    if (ret >= 0)
-    ret = Disc_SetUSB(id222);
-    if (ret >= 0)
-    ret = Disc_Open();
-    }
-
-    if (ret < 0) {
-    IOS_ReloadIOS(249);
-    WBFS_Init(WBFS_DEVICE_USB);
-    Disc_Init();
-    WBFS_Open();
-    Disc_SetUSB(id222);
-    Disc_Open();
+	if (ios2 == 1) {
+		ret = IOS_ReloadIOS(222);
+    
+		if (ret < 0) {
+			ret = IOS_ReloadIOS(249);
+		}
+		ret = WBFS_Init(WBFS_DEVICE_USB);
+		if (ret >= 0) {
+			ret = Disc_Init();
+			if (ret >= 0)
+			{
+				ret = WBFS_Open();
+				if (ret >= 0)
+				{
+					ret = Disc_SetUSB(id222);
+					if (ret >= 0)
+						ret = Disc_Open();
+				}
+			}
+		}
     }
 
     bgMusic->Stop();

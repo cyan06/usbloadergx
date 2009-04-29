@@ -85,6 +85,14 @@ struct THEME
 	int power_y;
 	int home_x;
 	int home_y;
+	int battery1_x;
+	int battery2_x;
+	int battery3_x;
+	int battery4_x;
+	int battery1_y;
+	int battery2_y;
+	int battery3_y;
+	int battery4_y;
 //	short showPower;
 //	short showHome;
 	int setting_x;
