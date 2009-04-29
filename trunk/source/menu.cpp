@@ -2278,9 +2278,10 @@ static int MenuDiscList()
 				else if (choice == 5) 
 				{	direction = 1;
 					promptnumber++;
-					//if ((selectimg+promptnumber)>(gameCnt-1)){
-					//selectimg = 0;
-					//promptnumber = 0;}
+					if ((selectimg+promptnumber)>(gameCnt-1)){
+					selectimg = 0;
+					promptnumber = 0;}
+					if ((selectimg == 0) && (promptnumber == 1)){selectimg = 1;}
 					header = &gameList[selectimg+promptnumber];
 				snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
 				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
