@@ -17,7 +17,7 @@
 #include <sdcard/wiisd_io.h>
 #include <stdio.h> //CLOCK
 #include <time.h> //CLOCK
-#include <dirent.h> 
+#include <dirent.h>
 
 #include "libwiigui/gui.h"
 #include "menu.h"
@@ -130,9 +130,9 @@ bool findfile(char * filename,char * path)
 DIR *dir;
 struct dirent *file;
 dir = opendir(path);
-  
+
 char temp[12];
-while ((file = readdir(dir))) 
+while ((file = readdir(dir)))
 {
 	snprintf(temp,sizeof(temp),"%s",file->d_name);
     if (!strncmp(temp,filename,12))
@@ -419,7 +419,7 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
     promptWindow.Append(&btn2);
     promptWindow.Append(&btn3);
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
-	
+
 	HaltGui();
 	mainWindow->SetState(STATE_DISABLED);
 	mainWindow->Append(&promptWindow);
@@ -852,7 +852,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btn3.SetSoundClick(&btnClick);
 	btn3.SetTrigger(&trigA);
 	btn3.SetEffectGrow();
-	
+
 	GuiImage btnLeftImg(&imgLeft);
 	GuiButton btnLeft(imgLeft.GetWidth(), imgLeft.GetHeight());
 	btnLeft.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
@@ -862,7 +862,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btnLeft.SetSoundClick(&btnClick);
 	btnLeft.SetTrigger(&trigA);
 	btnLeft.SetEffectGrow();
-	
+
 	GuiImage btnRightImg(&imgRight);
 	GuiButton btnRight(imgRight.GetWidth(), imgRight.GetHeight());
 	btnRight.SetAlignment(ALIGN_RIGHT, ALIGN_MIDDLE);
@@ -894,7 +894,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 50);}
 	if (direction ==2){
 	promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 50);}
-	
+
 	HaltGui();
 	mainWindow->SetState(STATE_DISABLED);
 	mainWindow->Append(&promptWindow);
@@ -1970,7 +1970,7 @@ static int MenuDiscList()
 	GuiText ttDownloadTxt("Download Covers", 22, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
 	GuiImageData ttDownload(tooltip_large_png);
 	GuiImage ttDownloadImg(&ttDownload);
-	
+
 	GuiImage DownloadBtnImg(&btnInstall);
 	GuiImage DownloadBtnImgOver(&btnInstallOver);
 	GuiButton DownloadBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
@@ -2028,9 +2028,13 @@ static int MenuDiscList()
 	gameBrowser.SetPosition(THEME.selection_x, THEME.selection_y);
 	gameBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 
+    GuiText clockTime(theTime, 30, (GXColor){138, 138, 138, 255});
+    clockTime.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+    clockTime.SetPosition(0,-120);
+
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
-	
+
 	if(Settings.hddinfo == HDDInfo)//CLOCK
 	{
 	if (THEME.showHDD)
@@ -2038,7 +2042,7 @@ static int MenuDiscList()
 	if (THEME.showGameCnt)
 		w.Append(&gamecntTxt);
 	}
-    
+
 	w.Append(&poweroffBtn);
     w.Append(&installBtn);
 	w.Append(&homeBtn);
@@ -2047,6 +2051,11 @@ static int MenuDiscList()
 	//w.Append(CoverImg);
 	//if (THEME.showID)
 		//w.Append(GameIDTxt);
+
+    if(Settings.hddinfo == Clock)
+    {
+			w.Append(&clockTime);
+    }
 
 	if (THEME.showBattery)
 	{
@@ -2065,19 +2074,16 @@ static int MenuDiscList()
 
 	while(menu == MENU_NONE)
 	{
-		//CLOCK
-		time_t rawtime = time(0);
-		timeinfo = localtime (&rawtime);
-		strftime(theTime, sizeof(theTime), "%H:%M", timeinfo);
-		GuiText clockTime(theTime, 30, (GXColor){138, 138, 138, 255});
-		clockTime.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-		clockTime.SetPosition(0,-120);
-		if(Settings.hddinfo == Clock)
-		{
-			w.Append(&clockTime);
-		}
-		
+
 	    VIDEO_WaitVSync ();
+
+        //CLOCK
+        if (Settings.hddinfo == Clock) {
+            time_t rawtime = time(0);
+            timeinfo = localtime (&rawtime);
+            strftime(theTime, sizeof(theTime), "%H:%M", timeinfo);
+            clockTime.SetText(theTime);
+        }
 
 	    #ifdef HW_RVL
 		for(i=0; i < 4; i++)
@@ -2204,29 +2210,29 @@ static int MenuDiscList()
 		else if(DownloadBtn.GetState() == STATE_CLICKED)
 		{
 		choice = DownloadWindowPrompt();
-		
+
 		if (choice == 1)
 			{
-			for (cnt = 0; cnt < gameCnt; cnt++) 
+			for (cnt = 0; cnt < gameCnt; cnt++)
 			{
 				struct discHdr *header = &gameList[cnt];
 				snprintf(GamesHDD[cnt],sizeof(GamesHDD[cnt]),"%s",header->id);
 			}
-			
+
 			char missingFiles[100][12]; //fixed
 			int cntMissFiles = 0;
 			char filename[11];
 			char myIP[16];
-			
+
 			if( !Net_Init(myIP) )
 			{
 				printf("Net_Init error");
 				sleep(1);
 				netcheck = false;
-			}	
+			}
 			else netcheck = true;
-			
-			if (netcheck)	
+
+			if (netcheck)
 			{
 			i = 0;
 			bool found = false;
@@ -2241,19 +2247,19 @@ static int MenuDiscList()
 				}
 				i++;
 			}
-			
-			if (missingFiles != NULL && (cntMissFiles < 60)) 
+
+			if (missingFiles != NULL && (cntMissFiles < 60))
 			{
 			char tempCnt[40];
 			i = 0;
-			
+
 			sprintf(tempCnt,"Downloading %i files",cntMissFiles);
 			WindowPrompt("Download Boxart image?",tempCnt,"Yes","No");
 			//WindowPrompt("Downloading","Please Wait Downloading Covers",0,0);
-			
+
 			HaltGui();
 			while (i < cntMissFiles) {
-				
+
 				snprintf(filename,sizeof(filename),"%s",missingFiles[i]);
 				//download boxart image
 					char imgPath[30];
@@ -2261,18 +2267,18 @@ static int MenuDiscList()
 					//sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s.png",filename); // For 3D Covers
 					sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s.png",filename);
 					sprintf(imgPath,"SD:/images/%s",filename);
-					
+
 					struct block file = downloadfile(URLFile);
-					
+
 					if(file.data != NULL)
 					{
-						// save png to sd card 
+						// save png to sd card
 						FILE *pfile;
-						pfile = fopen(imgPath, "wb");	
+						pfile = fopen(imgPath, "wb");
 						fwrite(file.data,1,file.size,pfile);
 						fclose (pfile);
 						free(file.data);
-						
+
 					}
 				i++;
 				}
@@ -2321,9 +2327,9 @@ static int MenuDiscList()
 		char IDfull[7];
 		selectimg = gameBrowser.GetSelectedOption();
 	    gameSelected = gameBrowser.GetClickedOption();
-		
-		
-		
+
+
+
 		if (gameSelected > 0) //if click occured
 			selectimg = gameSelected;
 
@@ -2433,8 +2439,8 @@ static int MenuDiscList()
 				text[MAX_CHARACTERS] = '\0';
 				strncat(text, "...", 3);
 			}
-			
-			
+
+
 			bool returnHere = true;
 			while (returnHere)
 			{
@@ -2505,11 +2511,11 @@ static int MenuDiscList()
 					__Menu_GetEntries();
 					menu = MENU_DISCLIST;
 				}
-				
-				else if (choice == 4) 
+
+				else if (choice == 4)
 				{	direction = 2;
 					promptnumber--;
-					
+
 					if ((selectimg+promptnumber)<0){
 					selectimg = gameCnt-1;
 					promptnumber = 0;}
@@ -2526,8 +2532,8 @@ static int MenuDiscList()
 				}
 					goto prompt;
 				}
-				
-				else if (choice == 5) 
+
+				else if (choice == 5)
 				{	direction = 1;
 					promptnumber++;
 					if ((u32)(selectimg+promptnumber)>(gameCnt-1)){
@@ -2547,14 +2553,12 @@ static int MenuDiscList()
 				}
 					goto prompt;
 				}
-				
-				
+
+
 				else if(choice == 0)
 					gameBrowser.SetFocus(1);
 			}
 		}
-		
-		w.Remove(&clockTime); //CLOCK
 	}
 
 	HaltGui();
@@ -2987,10 +2991,10 @@ static int MenuSettings()
 		else if (Settings.sinfo == GameRegion) sprintf (options2.value[4],"Game Region");
 		else if (Settings.sinfo == Both) sprintf (options2.value[4],"Both");
 		else if (Settings.sinfo == Neither) sprintf (options2.value[4],"Neither");
-		
+
 		if (Settings.hddinfo == HDDInfo) sprintf (options2.value[5],"Off");//CLOCK
 		else if (Settings.hddinfo == Clock) sprintf (options2.value[5],"On");
-		
+
 		if (Settings.rumble == RumbleOn) sprintf (options2.value[6],"On");//CLOCK
 		else if (Settings.rumble == RumbleOff) sprintf (options2.value[6],"Off");
 
@@ -3665,7 +3669,7 @@ int MainMenu(int menu)
 
 	if (ios2 == 1) {
 		ret = IOS_ReloadIOS(222);
-    
+
 		if (ret < 0) {
 			ret = IOS_ReloadIOS(249);
 		}
