@@ -129,17 +129,18 @@ void SDCARD_deInit()
     __io_wiisd.shutdown();
 }
 
-bool findfile(char * filename,char * path)
+bool findfile(char * filename, char * path)
 {
 DIR *dir;
 struct dirent *file;
+
 dir = opendir(path);
 
-char temp[12];
+char temp[100];
 while ((file = readdir(dir)))
 {
 	snprintf(temp,sizeof(temp),"%s",file->d_name);
-    if (!strncmp(temp,filename,12))
+    if (!strncmp(temp,filename,100))
 		{
 		//WindowPrompt(path, filename,"go" ,0);
 		closedir(dir);
@@ -624,8 +625,8 @@ DownloadWindowPrompt()
 	GuiText btn3Txt("Back", 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn3Img(&btnOutline);
 	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
-	btn3.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-    btn3.SetPosition(0, -65);
+	btn3.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+    btn3.SetPosition(-50, -65);
 	btn3.SetLabel(&btn3Txt);
 	btn3.SetImage(&btn3Img);
 	btn3.SetSoundOver(&btnSoundOver);
@@ -634,11 +635,24 @@ DownloadWindowPrompt()
 	btn3.SetTrigger(&trigA);
 	btn3.SetEffectGrow();
 
+    GuiText btn4Txt("Disc Images", 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn4Img(&btnOutline);
+	GuiButton btn4(btnOutline.GetWidth(), btnOutline.GetHeight());
+	btn4.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+    btn4.SetPosition(50, -65);
+	btn4.SetLabel(&btn4Txt);
+	btn4.SetImage(&btn4Img);
+	btn4.SetSoundOver(&btnSoundOver);
+	btn4.SetSoundClick(&btnClick);
+	btn4.SetTrigger(&trigA);
+	btn4.SetEffectGrow();
+
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&titleTxt);
 	promptWindow.Append(&btn1);
     promptWindow.Append(&btn2);
     promptWindow.Append(&btn3);
+    promptWindow.Append(&btn4);
 
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
 	HaltGui();
@@ -656,6 +670,9 @@ DownloadWindowPrompt()
 		else if(btn2.GetState() == STATE_CLICKED) {
 			choice = 1;
 		}
+        else if(btn4.GetState() == STATE_CLICKED) {
+            choice = 3;
+        }
         else if(btn3.GetState() == STATE_CLICKED) {
             choice = 0;
         }
@@ -1124,7 +1141,7 @@ FormatingPartition(const char *title, partitionEntry *entry)
 /****************************************************************************
  * NetworkInit
  ***************************************************************************/
-char * NetworkInitPromp(void)
+char * NetworkInitPromp(int choice2)
 {
     char myIP [16];
     char * IP = 0;
@@ -1188,21 +1205,35 @@ char * NetworkInitPromp(void)
         cntMissFiles = 0;
         u32 i = 0;
         char filename[11];
-        char filenameshort[7];
+        char filenameshort[10];
         bool found1 = false;
         bool found2 = false;
         while (i < gameCnt)
         {
+                if (choice2 != 3) {
                 snprintf(filenameshort, 4,"%s",GamesHDD[i]);
 				snprintf(filename, 8,"%s.png",filenameshort);
-				found2 = findfile(filename,"SD:/images/");
+				found2 = findfile(filename, "SD:/images/");
 				snprintf(filename,11,"%s.png",GamesHDD[i]);
-				found1 = findfile(filename,"SD:/images/");
+				found1 = findfile(filename, "SD:/images/");
 				if (!found1 && !found2)
 				{
 				snprintf(missingFiles[cntMissFiles],11,"%s.png",filename);
 				cntMissFiles++;
 				}
+				} else if (choice2 == 3) {
+                snprintf(filenameshort, 4,"%s",GamesHDD[i]);
+				snprintf(filename, 8,"%s.png",filenameshort);
+				found2 = findfile(filename, "SD:/images/disc/");
+				snprintf(filenameshort, 5,"%s",GamesHDD[i]);
+				snprintf(filename, 9, "%s.png",filenameshort);
+				found1 = findfile(filename,"SD:/images/disc/");
+				if (!found1 && !found2)
+				{
+				snprintf(missingFiles[cntMissFiles],11,"%s.png",filename);
+				cntMissFiles++;
+				}
+                }
 				i++;
         }
         break;
@@ -1364,7 +1395,7 @@ ProgressWindow(const char *title, const char *msg)
  * action is in progress.
  ***************************************************************************/
 int
-ProgressDownloadWindow(void)
+ProgressDownloadWindow(int choice2)
 {
 
     int i = 0;
@@ -1434,11 +1465,20 @@ ProgressDownloadWindow(void)
 
     snprintf(filename,sizeof(filename),"%s",missingFiles[i]);
     //download boxart image
-    char imgPath[30];
-    char URLFile[62];
-    //sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s.png",filename); // For 3D Covers
+    char imgPath[100];
+    char URLFile[100];
+    if (choice2 == 2) {
+    sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s.png",filename); // For 3D Covers
+    sprintf(imgPath,"SD:/images/%s",filename);
+    }
+    if(choice2 == 3) {
+    sprintf(URLFile,"http://www.theotherzone.com/wii/diskart/160/160/%s.png",filename);
+    sprintf(imgPath,"SD:/images/disc/%s",filename);
+    }
+    if(choice2 == 1) {
     sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s.png",filename);
     sprintf(imgPath,"SD:/images/%s",filename);
+    }
 
     struct block file = downloadfile(URLFile);
 
@@ -2427,7 +2467,7 @@ static int MenuDiscList()
 		{
 		choice = DownloadWindowPrompt();
 
-		if (choice == 1)
+		if (choice == 1 || choice == 2 || choice == 3)
 			{
 			for (cnt = 0; cnt < gameCnt; cnt++)
 			{
@@ -2436,8 +2476,9 @@ static int MenuDiscList()
 			}
 
 			char * myIP;
+			int choice2 = choice;
 
-			myIP = NetworkInitPromp();
+			myIP = NetworkInitPromp(choice2);
 			if( !myIP )
 			{
             WindowPrompt("Network init error", 0, "ok",0);
@@ -2457,7 +2498,7 @@ static int MenuDiscList()
 			//WindowPrompt("Downloading","Please Wait Downloading Covers",0,0);
             if (choice == 1) {
 
-            ret = ProgressDownloadWindow();
+            ret = ProgressDownloadWindow(choice2);
             WindowPrompt("Download finished",0,"OK",0);
 
 			}
@@ -2466,6 +2507,7 @@ static int MenuDiscList()
 			}
 			}
 		}
+		DownloadBtn.ResetState();
 		gameBrowser.SetFocus(1);
 		}
 		else if(settingsBtn.GetState() == STATE_CLICKED)
