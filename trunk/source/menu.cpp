@@ -1188,12 +1188,17 @@ char * NetworkInitPromp(void)
         cntMissFiles = 0;
         u32 i = 0;
         char filename[11];
-        bool found = false;
+        char filenameshort[7];
+        bool found1 = false;
+        bool found2 = false;
         while (i < gameCnt)
         {
+                snprintf(filenameshort, 4,"%s",GamesHDD[i]);
+				snprintf(filename, 8,"%s.png",filenameshort);
+				found2 = findfile(filename,"SD:/images/");
 				snprintf(filename,11,"%s.png",GamesHDD[i]);
-				found = findfile(filename,"SD:/images/");
-				if (!found)
+				found1 = findfile(filename,"SD:/images/");
+				if (!found1 && !found2)
 				{
 				snprintf(missingFiles[cntMissFiles],11,"%s.png",filename);
 				cntMissFiles++;
@@ -1418,6 +1423,15 @@ ProgressDownloadWindow(void)
 
 	while (i < cntMissFiles) {
 
+
+
+    sprintf(prozent, "%i%%", 100*i/cntMissFiles);
+    prTxt.SetText(prozent);
+    progressbarImg.SetTile(100*i/cntMissFiles);
+
+    sprintf(msg, "%i files left", cntMissFiles - i);
+    msgTxt.SetText(msg);
+
     snprintf(filename,sizeof(filename),"%s",missingFiles[i]);
     //download boxart image
     char imgPath[30];
@@ -1438,13 +1452,6 @@ ProgressDownloadWindow(void)
         free(file.data);
 
     }
-
-    sprintf(prozent, "%i%%", 100*i/cntMissFiles);
-    prTxt.SetText(prozent);
-    progressbarImg.SetTile(100*i/cntMissFiles);
-
-    sprintf(msg, "%i files left", cntMissFiles - i);
-    msgTxt.SetText(msg);
 
     i++;
     }
@@ -2459,6 +2466,7 @@ static int MenuDiscList()
 			}
 			}
 		}
+		gameBrowser.SetFocus(1);
 		}
 		else if(settingsBtn.GetState() == STATE_CLICKED)
 		{		startat = gameBrowser.GetSelectedOption();
