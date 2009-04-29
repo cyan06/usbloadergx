@@ -38,6 +38,18 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * *wiimote_poweroff.png* is the power button
 
   * *wiimote_poweroff_over.png* is the power button when you point over it
+  
+  * *player1_point.png* is the 1P pointer image
+  
+  * *player2_point.png* is the 2P pointer image
+  
+  * *player3_point.png* is the 3P pointer image
+  
+  * *player4_point.png* is the 4P pointer image
+  
+  * *dialogue_box_startgame.png* is the disc prompt image (size is 472 x 320)
+  
+  * *wdialogue_box_startgame.png* is the widescreen version disc prompt image (make a 590 x 320 image and shrink it to 472 x 320)  
 
   * *theme.txt* is the place you put the settings of the theme
 
@@ -63,6 +75,14 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
 
   * *home_coords = x, y* (x, y is the coordinate of your home buttons)
 
+  * *battery1_coords = x, y* (x, y is the coordinate of your 1P battery image)
+  
+  * *battery2_coords = x, y* (x, y is the coordinate of your 2P battery image)
+  
+  * *battery3_coords = x, y* (x, y is the coordinate of your 3P battery image)
+  
+  * *battery4_coords = x, y* (x, y is the coordinate of your 4P battery image)
+  
   * *show_hddinfo = 0 1* (0 means don't show, 1 otherwise)
 
   * *show_region = 0 1* (0 means don't show, 1 otherwise)
