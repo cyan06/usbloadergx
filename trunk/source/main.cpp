@@ -84,6 +84,7 @@ DefaultSettings()
 	Settings.ocarina = off;
 	Settings.hddinfo = HDDInfo;
 	Settings.sinfo = ((THEME.showID) ? GameID : Neither);
+	Settings.rumble = RumbleOn;
 	if (THEME.showRegion)
 	{
 		Settings.sinfo = ((Settings.sinfo == GameID) ? Both : GameRegion);

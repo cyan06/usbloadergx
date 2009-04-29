@@ -293,7 +293,9 @@ static void WindowCredits(void * ptr)
 			if(userInput[i].wpad.ir.valid)
 				Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
 					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
-			DoRumble(i);
+			if(Settings.rumble == RumbleOn){
+				DoRumble(i);
+				}
 			#endif
 		}
 
@@ -1148,7 +1150,10 @@ UpdateGUI (void *arg)
 				if(userInput[i].wpad.ir.valid)
 					Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
 						96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
+				if(Settings.rumble == RumbleOn)
+				{
 				DoRumble(i);
+				}
 			}
 			#endif
 
@@ -2617,13 +2622,14 @@ static int MenuSettings()
 	int ret;
 //	char imgPath[100];
 
-	customOptionList options2(6);
+	customOptionList options2(7);
 	sprintf(options2.name[0], "Video Mode");
 	sprintf(options2.name[1], "VIDTV Patch");
 	sprintf(options2.name[2], "Language");
 	sprintf(options2.name[3], "Ocarina");
 	sprintf(options2.name[4], "Display");
 	sprintf(options2.name[5], "Clock"); //CLOCK
+	sprintf(options2.name[6], "Rumble"); //RUMBLE
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
@@ -2724,6 +2730,8 @@ static int MenuSettings()
 			Settings.sinfo = 0;
 		if(Settings.hddinfo > 1)
 			Settings.hddinfo = 0; //CLOCK
+		if(Settings.rumble > 1)
+			Settings.rumble = 0; //RUMBLE
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
@@ -2757,6 +2765,9 @@ static int MenuSettings()
 		
 		if (Settings.hddinfo == HDDInfo) sprintf (options2.value[5],"Off");//CLOCK
 		else if (Settings.hddinfo == Clock) sprintf (options2.value[5],"On");
+		
+		if (Settings.rumble == RumbleOn) sprintf (options2.value[6],"On");//CLOCK
+		else if (Settings.rumble == RumbleOff) sprintf (options2.value[6],"Off");
 
 
 		ret = optionBrowser2.GetClickedOption();
@@ -2781,6 +2792,9 @@ static int MenuSettings()
 				break;
 			case 5:  //CLOCK
 				Settings.hddinfo++;
+				break;
+			case 6:
+				Settings.rumble++; //Rumble
 				break;
 		}
 

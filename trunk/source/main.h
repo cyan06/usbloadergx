@@ -55,6 +55,11 @@ enum {
 	Clock,
 };
 
+enum {
+	RumbleOn,
+	RumbleOff,
+};
+
 struct SSettings {
     int		video;
     int		language;
@@ -63,6 +68,7 @@ struct SSettings {
 	int		sinfo;
 	int		ios;
 	int		hddinfo;
+	int		rumble;
 };
 extern struct SSettings Settings;
 
