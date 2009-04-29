@@ -50,6 +50,10 @@ enum {
 	i222,
 };
 
+enum {
+	HDDInfo,
+	Clock,
+};
 
 struct SSettings {
     int		video;
@@ -58,6 +62,7 @@ struct SSettings {
     int     vpatch;
 	int		sinfo;
 	int		ios;
+	int		hddinfo;
 };
 extern struct SSettings Settings;
 

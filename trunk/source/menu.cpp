@@ -15,6 +15,8 @@
 #include <wiiuse/wpad.h>
 #include <fat.h>
 #include <sdcard/wiisd_io.h>
+#include <stdio.h> //CLOCK
+#include <time.h> //CLOCK
 
 #include "libwiigui/gui.h"
 #include "menu.h"
@@ -38,6 +40,7 @@
 
 #define MAX_CHARACTERS		38
 
+static GuiText * clockTime = NULL; //CLOCK
 static GuiImage * coverImg = NULL; //variable always start with lower case
 static GuiImageData * cover = NULL;
 //static GuiImage * diskImg = NULL;
@@ -1659,6 +1662,10 @@ static int MenuDiscList()
 	s32 ret;
 	time_t time1 = 0, time2 = 0; //TT
 
+	//CLOCK
+	struct tm * timeinfo;
+	char theTime[80];
+
 	WBFS_DiskSpace(&used, &free);
 
     if (!gameCnt) {
@@ -1876,14 +1883,17 @@ static int MenuDiscList()
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
+	
+	if(Settings.hddinfo == HDDInfo)//CLOCK
+	{
 	if (THEME.showHDD)
 		w.Append(&usedSpaceTxt);
 	if (THEME.showGameCnt)
 		w.Append(&gamecntTxt);
-    w.Append(&poweroffBtn);
+	}
+    
+	w.Append(&poweroffBtn);
     w.Append(&installBtn);
-
-
 	w.Append(&homeBtn);
     w.Append(&settingsBtn);
 	//w.Append(CoverImg);
@@ -1907,6 +1917,18 @@ static int MenuDiscList()
 
 	while(menu == MENU_NONE)
 	{
+		//CLOCK
+		time_t rawtime = time(0);
+		timeinfo = localtime (&rawtime);
+		strftime(theTime, sizeof(theTime), "%H:%M", timeinfo);
+		GuiText clockTime(theTime, 30, (GXColor){138, 138, 138, 255});
+		clockTime.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+		clockTime.SetPosition(0,-120);
+		if(Settings.hddinfo == Clock)
+		{
+			w.Append(&clockTime);
+		}
+		
 	    VIDEO_WaitVSync ();
 
 	    #ifdef HW_RVL
@@ -2301,6 +2323,8 @@ static int MenuDiscList()
 					gameBrowser.SetFocus(1);
 			}
 		}
+		
+		w.Remove(&clockTime); //CLOCK
 	}
 
 	HaltGui();
@@ -2593,12 +2617,13 @@ static int MenuSettings()
 	int ret;
 //	char imgPath[100];
 
-	customOptionList options2(5);
+	customOptionList options2(6);
 	sprintf(options2.name[0], "Video Mode");
 	sprintf(options2.name[1], "VIDTV Patch");
 	sprintf(options2.name[2], "Language");
 	sprintf(options2.name[3], "Ocarina");
 	sprintf(options2.name[4], "Display");
+	sprintf(options2.name[5], "Clock"); //CLOCK
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
@@ -2697,6 +2722,8 @@ static int MenuSettings()
 			Settings.vpatch = 0;
 		if(Settings.sinfo  > 3)
 			Settings.sinfo = 0;
+		if(Settings.hddinfo > 1)
+			Settings.hddinfo = 0; //CLOCK
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
@@ -2727,6 +2754,9 @@ static int MenuSettings()
 		else if (Settings.sinfo == GameRegion) sprintf (options2.value[4],"Game Region");
 		else if (Settings.sinfo == Both) sprintf (options2.value[4],"Both");
 		else if (Settings.sinfo == Neither) sprintf (options2.value[4],"Neither");
+		
+		if (Settings.hddinfo == HDDInfo) sprintf (options2.value[5],"Off");//CLOCK
+		else if (Settings.hddinfo == Clock) sprintf (options2.value[5],"On");
 
 
 		ret = optionBrowser2.GetClickedOption();
@@ -2748,6 +2778,9 @@ static int MenuSettings()
 				break;
 			case 4:
 				Settings.sinfo++;
+				break;
+			case 5:  //CLOCK
+				Settings.hddinfo++;
 				break;
 		}
 

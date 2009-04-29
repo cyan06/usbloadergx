@@ -82,6 +82,7 @@ DefaultSettings()
 	Settings.vpatch = off;
 	Settings.language = ConsoleLangDefault;
 	Settings.ocarina = off;
+	Settings.hddinfo = HDDInfo;
 	Settings.sinfo = ((THEME.showID) ? GameID : Neither);
 	if (THEME.showRegion)
 	{
