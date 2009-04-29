@@ -622,8 +622,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_png);
-	GuiImageData imgLeft(arrowleft_png);
-	GuiImageData imgRight(arrowright_png);
+	GuiImageData imgLeft(startgame_arrow_left_png);
+	GuiImageData imgRight(startgame_arrow_right_png);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
