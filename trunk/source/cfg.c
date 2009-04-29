@@ -237,6 +237,9 @@ void CFG_Default()
 	THEME.battery3_y = 425;
 	THEME.battery4_x = 335;
 	THEME.battery4_y = 425;
+	THEME.info_r = 63;
+	THEME.info_g = 154;
+	THEME.info_b = 192;
 }
 
 
@@ -537,6 +540,15 @@ void theme_set(char *name, char *val)
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
 			THEME.battery4_x = x - (x % 4);
 			THEME.battery4_y = y;
+		}
+	}
+	
+	else if (strcmp(cfg_name, "info_color") == 0) {
+		short x,y,z;
+		if (sscanf(val, "%hd,%hd, %hd", &x, &y, &z) == 3) {
+			THEME.info_r = x;
+			THEME.info_g = y;
+			THEME.info_b = z;
 		}
 	}
 	

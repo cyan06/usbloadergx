@@ -1379,7 +1379,7 @@ static int MenuInstall()
 		else
 			sprintf(txt, "P%d", i+1);
 
-		batteryTxt[i] = new GuiText(txt, 22, (GXColor){63, 154, 192, 255});
+		batteryTxt[i] = new GuiText(txt, 22, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
 		batteryTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		batteryImg[i] = new GuiImage(&battery);
 		batteryImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
@@ -1601,7 +1601,7 @@ static int MenuDiscList()
 {
 	int menu = MENU_NONE;
 	char imgPath[100];
-	__Disc_SetLowMem();
+	//__Disc_SetLowMem(); //if freezing come back, then uncomment all __Disc_SetLowMem
 
 //	GameBrowserList games(gameCnt);
 	f32 free, used, size = 0.0;
@@ -1666,13 +1666,13 @@ static int MenuDiscList()
 
     char spaceinfo[30];
 	sprintf(spaceinfo,"%.2fGB of %.2fGB free",free,(free+used));
-	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){63, 154, 192, 255});
+	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
 	usedSpaceTxt.SetAlignment(THEME.hddInfoAlign, ALIGN_TOP);
 	usedSpaceTxt.SetPosition(THEME.hddInfo_x, THEME.hddInfo_y);
 
 	char GamesCnt[15];
 	sprintf(GamesCnt,"Games: %i",gameCnt);
-	GuiText gamecntTxt(GamesCnt, 18, (GXColor){63, 154, 192, 255});
+	GuiText gamecntTxt(GamesCnt, 18, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
 	gamecntTxt.SetAlignment(THEME.gameCntAlign, ALIGN_TOP);
 	gamecntTxt.SetPosition(THEME.gameCnt_x,THEME.gameCnt_y);
 
@@ -1797,7 +1797,7 @@ static int MenuDiscList()
 		else
 			sprintf(txt, "P%d", i+1);
 
-		batteryTxt[i] = new GuiText(txt, 22, (GXColor){63, 154, 192, 255});
+		batteryTxt[i] = new GuiText(txt, 22, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
 		batteryTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		batteryImg[i] = new GuiImage(&battery);
 		batteryImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
@@ -2090,7 +2090,7 @@ static int MenuDiscList()
 					delete coverImg;
 					coverImg = NULL;
 				}
-				__Disc_SetLowMem();
+				//__Disc_SetLowMem();
 				coverImg = new GuiImage(cover);
 				coverImg->SetWidescreen(CFG.widescreen);
 				coverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
@@ -2099,7 +2099,7 @@ static int MenuDiscList()
 				w.Append(coverImg);
 
 				if ((Settings.sinfo == GameID) || (Settings.sinfo == Both)){
-					GameIDTxt = new GuiText(IDfull, 22, (GXColor){63, 154, 192, 255});
+					GameIDTxt = new GuiText(IDfull, 22, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
 					GameIDTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 					GameIDTxt->SetPosition(THEME.id_x,THEME.id_y);
 					GameIDTxt->SetEffect(EFFECT_FADE, 20);
@@ -2107,7 +2107,7 @@ static int MenuDiscList()
 				}
 
 				if ((Settings.sinfo == GameRegion) || (Settings.sinfo == Both)){
-					GameRegionTxt = new GuiText(gameregion, 22, (GXColor){63, 154, 192, 255});
+					GameRegionTxt = new GuiText(gameregion, 22, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
 					GameRegionTxt->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 					GameRegionTxt->SetPosition(THEME.region_x, THEME.region_y);
 					//GameRegionTxt->SetPosition(THEME.id_x,THEME.id_y);
@@ -2116,13 +2116,13 @@ static int MenuDiscList()
 				}
 			}
 		}
-		__Disc_SetLowMem();
+		//__Disc_SetLowMem();
 
 		if ((gameSelected >= 0) && (gameSelected < (s32)gameCnt))
 		{
 			struct discHdr *header = &gameList[gameSelected];
 			WBFS_GameSize(header->id, &size);
-			__Disc_SetLowMem();
+			//__Disc_SetLowMem();
 			if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
 				sprintf(text, "%s", get_title(header));
 			}
@@ -2137,7 +2137,7 @@ static int MenuDiscList()
 			{
 				returnHere = false;
 				wiilight(1);
-				 __Disc_SetLowMem();
+				 //__Disc_SetLowMem();
 				sprintf(text2, "%.2fGB", size);
 				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 				sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
@@ -2333,7 +2333,7 @@ static int MenuFormat()
 		else
 			sprintf(txt, "P%d", i+1);
 
-		batteryTxt[i] = new GuiText(txt, 22, (GXColor){63, 154, 192, 255});
+		batteryTxt[i] = new GuiText(txt, 22, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
 		batteryTxt[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 		batteryImg[i] = new GuiImage(&battery);
 		batteryImg[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
@@ -2491,7 +2491,7 @@ static int MenuFormat()
 
 static int MenuSettings()
 {
-    __Disc_SetLowMem();
+    //__Disc_SetLowMem();
 	int menu = MENU_NONE;
 	int ret;
 //	char imgPath[100];

@@ -110,6 +110,10 @@ struct THEME
 	short showRegion;
 	short showBattery;
 	short showToolTip;
+	//color
+	short info_r;
+	short info_g;
+	short info_b;
 };
 
 extern struct CFG CFG;

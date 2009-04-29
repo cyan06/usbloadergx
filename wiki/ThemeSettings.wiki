@@ -98,5 +98,7 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * *hddinfo_align = left center right* (set the x-axis alignment of hdd info text. The text is default to center aligned)
 
   * *gamecount_align = left center right* (set the x-axis alignment of game count text. The text is default to center aligned)
+  
+  * *info_color = r, g, b* (r, g, b is the rgb color code. This is the color of the information text, such as the hdd info)
 
   * more to add later
