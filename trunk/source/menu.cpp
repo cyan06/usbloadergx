@@ -17,6 +17,7 @@
 #include <sdcard/wiisd_io.h>
 #include <stdio.h> //CLOCK
 #include <time.h> //CLOCK
+#include <dirent.h> 
 
 #include "libwiigui/gui.h"
 #include "menu.h"
@@ -40,11 +41,12 @@
 
 #define MAX_CHARACTERS		38
 
-static GuiText * clockTime = NULL; //CLOCK
 static GuiImage * coverImg = NULL; //variable always start with lower case
 static GuiImageData * cover = NULL;
 //static GuiImage * diskImg = NULL;
 //static GuiImageData * diskCover = NULL;
+
+char GamesHDD[320][14];
 
 static struct discHdr *gameList = NULL;
 static GuiImageData * pointer[4];
@@ -121,6 +123,27 @@ void SDCARD_deInit()
     fatUnmount ("SD");
     //...and then shutdown em!
     __io_wiisd.shutdown();
+}
+
+bool findfile(char * filename,char * path)
+{
+DIR *dir;
+struct dirent *file;
+dir = opendir(path);
+  
+char temp[12];
+while ((file = readdir(dir))) 
+{
+	snprintf(temp,sizeof(temp),"%s",file->d_name);
+    if (!strncmp(temp,filename,12))
+		{
+		//WindowPrompt(path, filename,"go" ,0);
+		closedir(dir);
+		return true;
+		}
+	}
+  closedir(dir);
+  return false;
 }
 
 /****************************************************************************
@@ -530,6 +553,108 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 		else if(btn2.GetState() == STATE_CLICKED) {
 			choice = 0;
 		}
+	}
+
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+	while(promptWindow.GetEffect() > 0) usleep(50);
+	HaltGui();
+	mainWindow->Remove(&promptWindow);
+	mainWindow->SetState(STATE_DEFAULT);
+	ResumeGui();
+	return choice;
+}
+
+/****************************************************************************
+ * DownloadWindowPrompt
+ * Display download
+ ***************************************************************************/
+int
+DownloadWindowPrompt()
+{
+	int choice = -1;
+
+	GuiWindow promptWindow(472,320);
+	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	promptWindow.SetPosition(0, -10);
+	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
+	GuiImageData btnOutline(button_dialogue_box_png);
+
+	GuiTrigger trigA;
+	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
+	GuiTrigger trigB;
+	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+
+	GuiImageData dialogBox(dialogue_box_png);
+	GuiImage dialogBoxImg(&dialogBox);
+
+	GuiText titleTxt("Cover Download", 26, (GXColor){0, 0, 0, 255});
+	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	titleTxt.SetPosition(0,55);
+
+	GuiText btn1Txt("3D Covers", 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn1Img(&btnOutline);
+	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
+    btn1.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
+	btn1.SetPosition(-50, -120);
+	btn1.SetImage(&btn1Img);
+	btn1.SetLabel(&btn1Txt);
+	btn1.SetSoundOver(&btnSoundOver);
+	btn1.SetSoundClick(&btnClick);
+	btn1.SetTrigger(&trigA);
+	btn1.SetState(STATE_SELECTED);
+	btn1.SetEffectGrow();
+
+	GuiText btn2Txt("Normal Covers", 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn2Img(&btnOutline);
+	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
+	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+	btn2.SetPosition(50, -120);
+	btn2.SetLabel(&btn2Txt);
+	btn2.SetImage(&btn2Img);
+	btn2.SetSoundOver(&btnSoundOver);
+	btn2.SetSoundClick(&btnClick);
+	btn2.SetTrigger(&trigA);
+	btn2.SetEffectGrow();
+
+	GuiText btn3Txt("Back", 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn3Img(&btnOutline);
+	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
+	btn3.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+    btn3.SetPosition(0, -65);
+	btn3.SetLabel(&btn3Txt);
+	btn3.SetImage(&btn3Img);
+	btn3.SetSoundOver(&btnSoundOver);
+	btn3.SetSoundClick(&btnClick);
+	btn3.SetTrigger(&trigB);
+	btn3.SetTrigger(&trigA);
+	btn3.SetEffectGrow();
+
+	promptWindow.Append(&dialogBoxImg);
+	promptWindow.Append(&titleTxt);
+	promptWindow.Append(&btn1);
+    promptWindow.Append(&btn2);
+    promptWindow.Append(&btn3);
+
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	HaltGui();
+	mainWindow->SetState(STATE_DISABLED);
+	mainWindow->Append(&promptWindow);
+	mainWindow->ChangeFocus(&promptWindow);
+	ResumeGui();
+
+	while(choice == -1)
+	{
+		VIDEO_WaitVSync();
+		if(btn1.GetState() == STATE_CLICKED) {
+			choice = 2;
+		}
+		else if(btn2.GetState() == STATE_CLICKED) {
+			choice = 1;
+		}
+        else if(btn3.GetState() == STATE_CLICKED) {
+            choice = 0;
+        }
 	}
 
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
@@ -1556,16 +1681,16 @@ static int MenuInstall()
 			break;
 			}
 
-		f32 free, used;
+		f32 freespace, used;
 
-		WBFS_DiskSpace(&used, &free);
+		WBFS_DiskSpace(&used, &freespace);
 		u32 estimation = wbfs_estimate_disc(hdd, __WBFS_ReadDVD, NULL, ONLY_GAME_PARTITION);
 		f32 gamesize = ((f32) estimation)/1073741824;
 		char gametxt[50];
 		sprintf(gametxt, "Installing game %.2fGB:", gamesize);
-		if (gamesize > free) {
+		if (gamesize > freespace) {
 			char errortxt[50];
-			sprintf(errortxt, "Game Size: %.2fGB, Free Space: %.2fGB", gamesize, free);
+			sprintf(errortxt, "Game Size: %.2fGB, Free Space: %.2fGB", gamesize, freespace);
 			choice = WindowPrompt("Not enough free space!",errortxt,"Go on", "Return");
 			if (choice == 1) {
 				ret = ProgressWindow(gametxt, name);
@@ -1659,7 +1784,8 @@ static int MenuDiscList()
 	//__Disc_SetLowMem(); //if freezing come back, then uncomment all __Disc_SetLowMem
 
 //	GameBrowserList games(gameCnt);
-	f32 free, used, size = 0.0;
+	u32 cnt = 0;
+	f32 freespace, used, size = 0.0;
 	u32 nolist;
 	char text[MAX_CHARACTERS + 4], text2[20];
 	int choice = 0, selectedold = 100;
@@ -1670,7 +1796,7 @@ static int MenuDiscList()
 	struct tm * timeinfo;
 	char theTime[80];
 
-	WBFS_DiskSpace(&used, &free);
+	WBFS_DiskSpace(&used, &freespace);
 
     if (!gameCnt) {
         nolist = 1;
@@ -1678,7 +1804,7 @@ static int MenuDiscList()
 	/*else {
         for (cnt = 0; cnt < gameCnt; cnt++) {
             struct discHdr *header = &gameList[cnt];
-
+			//snprintf(GamesHDD[cnt],sizeof(GamesHDD[cnt]),"%s",header->id);
             if (strlen(get_title(header)) < (MAX_CHARACTERS + 3))
 			{
                 sprintf(games.name[cnt], "%s", get_title(header));
@@ -1686,8 +1812,8 @@ static int MenuDiscList()
 			else
 			{
                 sprintf(games.name[cnt], get_title(header),  MAX_CHARACTERS);
-				games.name[cnt][MAX_CHARACTERS] = '\0';
-                strncat(games.name[cnt], "...", 3);
+				//games.name[cnt][MAX_CHARACTERS] = '\0';
+                //strncat(games.name[cnt], "...", 3);
             }
         }
     }*/
@@ -1724,7 +1850,7 @@ static int MenuDiscList()
 	trigHome.SetButtonOnlyTrigger(-1, WPAD_BUTTON_HOME | WPAD_CLASSIC_BUTTON_HOME, 0);
 
     char spaceinfo[30];
-	sprintf(spaceinfo,"%.2fGB of %.2fGB free",free,(free+used));
+	sprintf(spaceinfo,"%.2fGB of %.2fGB free",freespace,(freespace+used));
 	GuiText usedSpaceTxt(spaceinfo, 18, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
 	usedSpaceTxt.SetAlignment(THEME.hddInfoAlign, ALIGN_TOP);
 	usedSpaceTxt.SetPosition(THEME.hddInfo_x, THEME.hddInfo_y);
@@ -1840,6 +1966,23 @@ static int MenuDiscList()
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
 
+	//Downloading Covers
+	GuiText ttDownloadTxt("Download Covers", 22, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
+	GuiImageData ttDownload(tooltip_large_png);
+	GuiImage ttDownloadImg(&ttDownload);
+	
+	GuiImage DownloadBtnImg(&btnInstall);
+	GuiImage DownloadBtnImgOver(&btnInstallOver);
+	GuiButton DownloadBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
+	DownloadBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	DownloadBtn.SetPosition(0, 355);
+	DownloadBtn.SetImage(&DownloadBtnImg);
+	DownloadBtn.SetImageOver(&DownloadBtnImgOver);
+	DownloadBtn.SetSoundOver(&btnSoundOver);
+	DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,-25,-25);
+	DownloadBtn.SetTrigger(&trigA);
+	DownloadBtn.SetEffectGrow();
+
 	#ifdef HW_RVL
 	int i = 0, level;
 	char txt[3];
@@ -1900,6 +2043,7 @@ static int MenuDiscList()
     w.Append(&installBtn);
 	w.Append(&homeBtn);
     w.Append(&settingsBtn);
+	//w.Append(&DownloadBtn);
 	//w.Append(CoverImg);
 	//if (THEME.showID)
 		//w.Append(GameIDTxt);
@@ -2056,6 +2200,88 @@ static int MenuDiscList()
 
 			if(installBtn.GetState() == STATE_SELECTED) {
 			}
+		}
+		else if(DownloadBtn.GetState() == STATE_CLICKED)
+		{
+		choice = DownloadWindowPrompt();
+		
+		if (choice == 1)
+			{
+			for (cnt = 0; cnt < gameCnt; cnt++) 
+			{
+				struct discHdr *header = &gameList[cnt];
+				snprintf(GamesHDD[cnt],sizeof(GamesHDD[cnt]),"%s",header->id);
+			}
+			
+			char missingFiles[100][12]; //fixed
+			int cntMissFiles = 0;
+			char filename[11];
+			char myIP[16];
+			
+			if( !Net_Init(myIP) )
+			{
+				printf("Net_Init error");
+				sleep(1);
+				netcheck = false;
+			}	
+			else netcheck = true;
+			
+			if (netcheck)	
+			{
+			i = 0;
+			bool found = false;
+			while ((u32)i < gameCnt)
+			{
+				snprintf(filename,11,"%s.png",GamesHDD[i]);
+				found = findfile(filename,"SD:/images/");
+				if (!found)
+				{
+				snprintf(missingFiles[cntMissFiles],11,"%s.png",filename);
+				cntMissFiles++;
+				}
+				i++;
+			}
+			
+			if (missingFiles != NULL && (cntMissFiles < 60)) 
+			{
+			char tempCnt[40];
+			i = 0;
+			
+			sprintf(tempCnt,"Downloading %i files",cntMissFiles);
+			WindowPrompt("Download Boxart image?",tempCnt,"Yes","No");
+			//WindowPrompt("Downloading","Please Wait Downloading Covers",0,0);
+			
+			HaltGui();
+			while (i < cntMissFiles) {
+				
+				snprintf(filename,sizeof(filename),"%s",missingFiles[i]);
+				//download boxart image
+					char imgPath[30];
+					char URLFile[62];
+					//sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s.png",filename); // For 3D Covers
+					sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s.png",filename);
+					sprintf(imgPath,"SD:/images/%s",filename);
+					
+					struct block file = downloadfile(URLFile);
+					
+					if(file.data != NULL)
+					{
+						// save png to sd card 
+						FILE *pfile;
+						pfile = fopen(imgPath, "wb");	
+						fwrite(file.data,1,file.size,pfile);
+						fclose (pfile);
+						free(file.data);
+						
+					}
+				i++;
+				}
+				ResumeGui();
+				sprintf(tempCnt,"Downloaded %i files",i);
+				WindowPrompt("Download finished",tempCnt,"Back",0);
+			}
+			}
+		}
 		}
 		else if(settingsBtn.GetState() == STATE_CLICKED)
 		{		startat = gameBrowser.GetSelectedOption();
@@ -2304,7 +2530,7 @@ static int MenuDiscList()
 				else if (choice == 5) 
 				{	direction = 1;
 					promptnumber++;
-					if ((selectimg+promptnumber)>(gameCnt-1)){
+					if ((u32)(selectimg+promptnumber)>(gameCnt-1)){
 					selectimg = 0;
 					promptnumber = 0;}
 					if ((selectimg == 0) && (promptnumber == 1)){selectimg = 1;}

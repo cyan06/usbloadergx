@@ -76,5 +76,6 @@ void ExitApp();
 extern int ExitRequested;
 extern FreeTypeGX *fontSystem;
 extern bool netcheck;
+extern int Net_Init(char *ip);
 
 #endif
