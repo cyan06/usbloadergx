@@ -2043,7 +2043,7 @@ static int MenuDiscList()
 	u32 cnt = 0;
 	f32 freespace, used, size = 0.0;
 	u32 nolist;
-	char text[MAX_CHARACTERS + 4], text2[20];
+	char text[MAX_CHARACTERS + 4], text2[20];	
 	int choice = 0, selectedold = 100;
 	s32 ret;
 	time_t time1 = 0, time2 = 0; //TT
@@ -2673,7 +2673,9 @@ static int MenuDiscList()
 				//sprintf(text2, "%.2fGB", size);
 				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 				sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-				prompt:
+				prompt:// set marker for prompt
+				sprintf(text, "%s", get_title(header));
+				WBFS_GameSize(header->id, &size);
 				sprintf(text2, "%.2fGB", size);
 				choice = GameWindowPrompt(
 				text2,
@@ -2747,6 +2749,7 @@ static int MenuDiscList()
 				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
 				sprintf(text, "%s", get_title(header));
+				sprintf(text2, "%.2fGB", size);
 				}
 				else {
 				strncpy(text, get_title(header),  MAX_CHARACTERS);
@@ -2768,6 +2771,7 @@ static int MenuDiscList()
 				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
 				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
 				sprintf(text, "%s", get_title(header));
+				sprintf(text2, "%.2fGB", size);
 				}
 				else {
 				strncpy(text, get_title(header),  MAX_CHARACTERS);
