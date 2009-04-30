@@ -74,6 +74,7 @@ int height = 224;
 int width = 160;
 static int startat = 0;
 static int offset = 0;
+int vol = 100;
 
 //downloadvariables
 static char missingFiles[100][12]; //fixed
@@ -3076,7 +3077,7 @@ static int MenuSettings()
 	int ret;
 //	char imgPath[100];
 
-	customOptionList options2(7);
+	customOptionList options2(8);
 	sprintf(options2.name[0], "Video Mode");
 	sprintf(options2.name[1], "VIDTV Patch");
 	sprintf(options2.name[2], "Language");
@@ -3084,6 +3085,7 @@ static int MenuSettings()
 	sprintf(options2.name[4], "Display");
 	sprintf(options2.name[5], "Clock"); //CLOCK
 	sprintf(options2.name[6], "Rumble"); //RUMBLE
+	sprintf(options2.name[7], "Volume");
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
@@ -3186,6 +3188,8 @@ static int MenuSettings()
 			Settings.hddinfo = 0; //CLOCK
 		if(Settings.rumble > 1)
 			Settings.rumble = 0; //RUMBLE
+		if(Settings.volume > 10)
+			Settings.volume = 0;
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
@@ -3222,7 +3226,18 @@ static int MenuSettings()
 
 		if (Settings.rumble == RumbleOn) sprintf (options2.value[6],"On");//CLOCK
 		else if (Settings.rumble == RumbleOff) sprintf (options2.value[6],"Off");
-
+		
+		if (Settings.volume == v10) sprintf (options2.value[7],"10");//volume
+		else if (Settings.volume == v20) sprintf (options2.value[7],"20");
+		else if (Settings.volume == v30) sprintf (options2.value[7],"30");
+		else if (Settings.volume == v40) sprintf (options2.value[7],"40");
+		else if (Settings.volume == v50) sprintf (options2.value[7],"50");
+		else if (Settings.volume == v60) sprintf (options2.value[7],"60");
+		else if (Settings.volume == v70) sprintf (options2.value[7],"70");
+		else if (Settings.volume == v80) sprintf (options2.value[7],"80");
+		else if (Settings.volume == v90) sprintf (options2.value[7],"90");
+		else if (Settings.volume == v100) sprintf (options2.value[7],"100");
+		else if (Settings.volume == v0) sprintf (options2.value[7],"Off");
 
 		ret = optionBrowser2.GetClickedOption();
 
@@ -3249,6 +3264,9 @@ static int MenuSettings()
 				break;
 			case 6:
 				Settings.rumble++; //Rumble
+				break;
+			case 7:
+				Settings.volume++;
 				break;
 		}
 
@@ -3874,6 +3892,47 @@ int MainMenu(int menu)
 				currentMenu = MenuCheck();
 				break;
 		}
+		
+		switch (Settings.volume)
+		{
+			case v10:
+				bgMusic->SetVolume(10);
+				break;
+			case v20:
+				bgMusic->SetVolume(20);
+				break;
+			case v30:
+				bgMusic->SetVolume(30);
+				break;
+			case v40:
+				bgMusic->SetVolume(40);
+				break;
+			case v50:
+				bgMusic->SetVolume(50);
+				break;
+			case v60:
+				bgMusic->SetVolume(60);
+				break;
+			case v70:
+				bgMusic->SetVolume(70);
+				break;
+			case v80:
+				bgMusic->SetVolume(80);
+				break;
+			case v90:
+				bgMusic->SetVolume(90);
+				break;
+			case v100:
+				bgMusic->SetVolume(100);bgMusic->Play();
+				break;
+			case v0:
+				bgMusic->SetVolume(0);bgMusic->Play();
+				break;
+			default:
+				bgMusic->SetVolume(80);
+				break;
+		}
+		
 	}
 
 	int ios2 = 0, ret = 0;

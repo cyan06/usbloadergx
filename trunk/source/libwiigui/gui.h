@@ -806,6 +806,7 @@ class GuiOptionBrowser : public GuiElement
 		GuiButton * scrollbarBoxBtn;
 
 		GuiImage * bgOptionsImg;
+		GuiImage * bgOptionsOverImg;
 		GuiImage * scrollbarImg;
 		GuiImage * arrowDownImg;
 		GuiImage * arrowDownOverImg;
@@ -815,6 +816,7 @@ class GuiOptionBrowser : public GuiElement
 		GuiImage * scrollbarBoxOverImg;
 
 		GuiImageData * bgOptions;
+		GuiImageData * bgOptionsOver;
 		GuiImageData * bgOptionsEntry;
 		GuiImageData * scrollbar;
 		GuiImageData * arrowDown;

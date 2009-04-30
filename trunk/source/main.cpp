@@ -89,6 +89,7 @@ DefaultSettings()
 	{
 		Settings.sinfo = ((Settings.sinfo == GameID) ? Both : GameRegion);
 	}
+	Settings.volume = v80;
 }
 
 

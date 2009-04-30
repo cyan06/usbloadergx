@@ -413,7 +413,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 
         } else {
             arrowDownBtn->ResetState();
-
+		
         }
 
 	}

@@ -50,7 +50,7 @@ void DoRumble(int i)
 	}
 	else if(rumbleRequest[i])
 	{
-		rumbleCount[i] = 12;
+		rumbleCount[i] = 20;
 		rumbleRequest[i] = 0;
 	}
 	else

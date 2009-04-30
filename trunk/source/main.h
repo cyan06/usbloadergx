@@ -60,6 +60,20 @@ enum {
 	RumbleOff,
 };
 
+enum {
+	v10,
+	v20,
+	v30,
+	v40,
+	v50,
+	v60,
+	v70,
+	v80,
+	v90,
+	v100,
+	v0,
+};
+
 struct SSettings {
     int		video;
     int		language;
@@ -69,6 +83,7 @@ struct SSettings {
 	int		ios;
 	int		hddinfo;
 	int		rumble;
+	int		volume;
 };
 extern struct SSettings Settings;
 
