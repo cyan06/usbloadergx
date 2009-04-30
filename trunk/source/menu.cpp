@@ -771,7 +771,7 @@ int
 GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, char * ID, char * IDfull)
 {
 	int choice = -1, angle = 0;
-
+	
 	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
@@ -967,12 +967,14 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 			choice = 0;
 			direction =0;
 			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+			mainWindow->SetState(STATE_DEFAULT);
+			wiilight(0);
 		}
         else if(btn3.GetState() == STATE_CLICKED) {
             choice = 2;
 			direction =0;
 			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
-        }
+		}
 		else if(nameBtn.GetState() == STATE_CLICKED) {
             choice = 3;
 			direction =0;
@@ -997,7 +999,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	while(promptWindow.GetEffect() > 0) usleep(50);
 	HaltGui();
 	mainWindow->Remove(&promptWindow);
-	mainWindow->SetState(STATE_DEFAULT);
+	//mainWindow->SetState(STATE_DEFAULT);
 	ResumeGui();
 
 	delete diskCover;
@@ -2414,6 +2416,7 @@ static int MenuDiscList()
 				//exit(0);
 			} else {
 			    poweroffBtn.ResetState();
+			    gameBrowser.SetFocus(1);
 			}
 
 		}
@@ -2447,6 +2450,7 @@ static int MenuDiscList()
 				//exit(0); //Back to HBC
 			} else {
 			homeBtn.ResetState();
+			gameBrowser.SetFocus(1);
 			}
 
         }
@@ -2475,6 +2479,7 @@ static int MenuDiscList()
 				else
 				{
 					installBtn.ResetState();
+					gameBrowser.SetFocus(1);
 				}
 		}
 		else if((installBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
@@ -2510,7 +2515,9 @@ static int MenuDiscList()
 
 				if (netcheck)
 				{
+
 					if (missingFiles != NULL && (cntMissFiles < 500) && (cntMissFiles > 0))
+
 					{
 						char tempCnt[40];
 						i = 0;
@@ -2531,6 +2538,7 @@ static int MenuDiscList()
 				}
 			}
 			DownloadBtn.ResetState();
+			gameBrowser.SetFocus(1);
 		}//end download
 
 		else if(settingsBtn.GetState() == STATE_CLICKED)
@@ -2697,7 +2705,6 @@ static int MenuDiscList()
 				//sprintf(text2, "%.2fGB", size);
 				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 				sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-				w.SetState(STATE_DISABLED);
 				prompt:// set marker for prompt
 				sprintf(text, "%s", get_title(header));
 				WBFS_GameSize(header->id, &size);
@@ -2710,13 +2717,12 @@ static int MenuDiscList()
 				"Settings",
 				ID,
 				IDfull);
-				wiilight(0);
-
+				
 				if(choice == 1)
 				{	direction = 0;
 					memcpy(id222, header->id, 6);
 					id222[6] = 0;
-
+					wiilight(0);
 					/* Set USB mode */
 					ret = Disc_SetUSB(header->id);
 					if (ret < 0) {
@@ -2743,6 +2749,7 @@ static int MenuDiscList()
 				}
 				else if (choice == 2)
 				{	direction = 0;
+					wiilight(0);
 					if (GameSettings(header) == 1) //if deleted
 					{
 						menu = MENU_DISCLIST;
@@ -2752,7 +2759,8 @@ static int MenuDiscList()
 				}
 
 				else if (choice == 3) //&& (CFG.godmode == 1))
-				{	direction = 0;
+				{	wiilight(0);
+					direction = 0;
 					//enter new game title
 					char entered[40];
 					sprintf(entered,"%s",text);
@@ -2790,7 +2798,9 @@ static int MenuDiscList()
 					if ((u32)(selectimg+promptnumber)>(gameCnt-1)){
 					selectimg = 0;
 					promptnumber = 0;}
-					if ((selectimg == 0) && (promptnumber == 1)){selectimg = 1;}
+					//if ((selectimg == 0) && (promptnumber == 1)){selectimg = 1;}
+					//header = &gameList[selectimg+promptnumber];
+					if (selectimg == -1 && promptnumber == 1){promptnumber++;}
 					header = &gameList[selectimg+promptnumber];
 				snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
 				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
@@ -2806,8 +2816,9 @@ static int MenuDiscList()
 					goto prompt;
 				}
 
+
 				else if(choice == 0)
-					w.SetState(STATE_DEFAULT);
+					gameBrowser.SetFocus(1);
 			}
 		}
 	}
