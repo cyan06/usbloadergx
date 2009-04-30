@@ -2702,6 +2702,7 @@ static int MenuDiscList()
 				//sprintf(text2, "%.2fGB", size);
 				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
 				sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+				w.SetState(STATE_DISABLED);
 				prompt:// set marker for prompt
 				sprintf(text, "%s", get_title(header));
 				WBFS_GameSize(header->id, &size);
