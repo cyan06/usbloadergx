@@ -2414,7 +2414,6 @@ static int MenuDiscList()
 				//exit(0);
 			} else {
 			    poweroffBtn.ResetState();
-			    gameBrowser.SetFocus(1);
 			}
 
 		}
@@ -2448,7 +2447,6 @@ static int MenuDiscList()
 				//exit(0); //Back to HBC
 			} else {
 			homeBtn.ResetState();
-			gameBrowser.SetFocus(1);
 			}
 
         }
@@ -2477,7 +2475,6 @@ static int MenuDiscList()
 				else
 				{
 					installBtn.ResetState();
-					gameBrowser.SetFocus(1);
 				}
 		}
 		else if((installBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
@@ -2534,7 +2531,6 @@ static int MenuDiscList()
 				}
 			}
 			DownloadBtn.ResetState();
-			gameBrowser.SetFocus(1);
 		}//end download
 
 		else if(settingsBtn.GetState() == STATE_CLICKED)
@@ -2810,9 +2806,8 @@ static int MenuDiscList()
 					goto prompt;
 				}
 
-
 				else if(choice == 0)
-					gameBrowser.SetFocus(1);
+					w.SetState(STATE_DEFAULT);
 			}
 		}
 	}
