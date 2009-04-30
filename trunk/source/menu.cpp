@@ -366,6 +366,8 @@ WiiMenuWindowPrompt(const char *title, const char *btn1Label, const char *btn2La
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_png);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -475,6 +477,8 @@ WindowPrompt(const char *title, const char *msg, const char *btn1Label, const ch
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_png);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -583,6 +587,8 @@ DownloadWindowPrompt()
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_png);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -773,7 +779,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
 	GuiImageData btnOutline(button_dialogue_box_png);
 	GuiImageData imgLeft(startgame_arrow_left_png);
-	GuiImageData imgRight(startgame_arrow_right_png);
+	GuiImageData imgRight(startgame_arrow_right_png);btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1006,6 +1013,8 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
@@ -1150,6 +1159,8 @@ char * NetworkInitPromp(int choice2)
 
     GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 
 	GuiImageData btnOutline(button_dialogue_box_png);
 	GuiTrigger trigA;
@@ -1680,6 +1691,8 @@ static void OnScreenKeyboard(char * var, u16 maxlen)
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 	GuiImageData btnOutline(button_dialogue_box_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1761,6 +1774,7 @@ static int MenuInstall()
 //	char imgPath[100];
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	btnSoundOver.SetVolume(vol);
 /*
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
@@ -2077,6 +2091,8 @@ static int MenuDiscList()
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 
 	snprintf(imgPath, sizeof(imgPath), "%sbutton_install.png", CFG.theme_path);
 	GuiImageData btnInstall(imgPath, button_install_png);
@@ -2844,6 +2860,8 @@ static int MenuFormat()
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
 	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
@@ -3089,6 +3107,8 @@ static int MenuSettings()
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM);
+	btnClick.SetVolume(vol);
+	btnSoundOver.SetVolume(vol);
 	GuiImageData btnOutline(settings_menu_button_png);
 	GuiImageData settingsbg(settings_background_png);
 
@@ -3339,6 +3359,7 @@ int GameSettings(struct discHdr * header)
 	sprintf(options3.name[4], "IOS");
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM);
+	btnSoundOver.SetVolume(vol);
 	GuiImageData btnOutline(settings_menu_button_png);
 	GuiImageData settingsbg(settings_background_png);
 
@@ -3896,40 +3917,40 @@ int MainMenu(int menu)
 		switch (Settings.volume)
 		{
 			case v10:
-				bgMusic->SetVolume(10);
+				bgMusic->SetVolume(10); vol = 10; 
 				break;
 			case v20:
-				bgMusic->SetVolume(20);
+				bgMusic->SetVolume(20); vol = 20;
 				break;
 			case v30:
-				bgMusic->SetVolume(30);
+				bgMusic->SetVolume(30); vol = 30;
 				break;
 			case v40:
-				bgMusic->SetVolume(40);
+				bgMusic->SetVolume(40); vol = 40;
 				break;
 			case v50:
-				bgMusic->SetVolume(50);
+				bgMusic->SetVolume(50); vol = 50;
 				break;
 			case v60:
-				bgMusic->SetVolume(60);
+				bgMusic->SetVolume(60); vol = 60;
 				break;
 			case v70:
-				bgMusic->SetVolume(70);
+				bgMusic->SetVolume(70); vol = 70;
 				break;
 			case v80:
-				bgMusic->SetVolume(80);
+				bgMusic->SetVolume(80); vol = 80;
 				break;
 			case v90:
-				bgMusic->SetVolume(90);
+				bgMusic->SetVolume(90); vol = 90;
 				break;
 			case v100:
-				bgMusic->SetVolume(100);bgMusic->Play();
+				bgMusic->SetVolume(100); vol = 100;
 				break;
 			case v0:
-				bgMusic->SetVolume(0);bgMusic->Play();
+				bgMusic->SetVolume(0); vol = 0;
 				break;
 			default:
-				bgMusic->SetVolume(80);
+				bgMusic->SetVolume(80); vol = 80;
 				break;
 		}
 		
