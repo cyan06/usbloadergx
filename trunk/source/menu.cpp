@@ -2562,6 +2562,7 @@ static int MenuDiscList()
 				struct discHdr *header = &gameList[selectimg];
 				snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
 				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+				w.Remove(&DownloadBtn);
 				w.Remove(coverImg);
 
 				if (GameIDTxt)
@@ -2625,7 +2626,7 @@ static int MenuDiscList()
 				//coverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 				//coverImg->SetPosition(THEME.cover_x,THEME.cover_y);
 				//coverImg->SetEffect(EFFECT_FADE, 20);
-				w.Remove(&DownloadBtn);
+				//w.Remove(&DownloadBtn);
 				DownloadBtn.SetImage(coverImg);
 				w.Append(&DownloadBtn);
 
