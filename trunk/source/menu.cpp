@@ -1219,7 +1219,7 @@ char * NetworkInitPromp(int choice2)
 					found1 = findfile(filename, "SD:/images/");
 					if (!found1 && !found2) //if could not find any image
 					{
-						snprintf(missingFiles[cntMissFiles],11,"%s.png",filename);
+						snprintf(missingFiles[cntMissFiles],11,"%s",filename);
 						cntMissFiles++;
 					}
 				} 
@@ -1231,7 +1231,7 @@ char * NetworkInitPromp(int choice2)
 					found1 = findfile(filename,"SD:/images/disc/");
 					if (!found1 && !found2)
 					{
-						snprintf(missingFiles[cntMissFiles],11,"%s.png",filename);
+						snprintf(missingFiles[cntMissFiles],11,"%s",filename);
 						cntMissFiles++;
 					}
 				}
@@ -1468,15 +1468,15 @@ ProgressDownloadWindow(int choice2)
     char imgPath[100];
     char URLFile[100];
     if (choice2 == 2) {
-		sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s.png",missingFiles[i]); // For 3D Covers
+		sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s",missingFiles[i]); // For 3D Covers
 		sprintf(imgPath,"SD:/images/%s",missingFiles[i]);
     }
     if(choice2 == 3) {
-		sprintf(URLFile,"http://www.theotherzone.com/wii/diskart/160/160/%s.png",missingFiles[i]);
+		sprintf(URLFile,"http://www.theotherzone.com/wii/diskart/160/160/%s",missingFiles[i]);
 		sprintf(imgPath,"SD:/images/disc/%s",missingFiles[i]);
     }
     if(choice2 == 1) {
-		sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s.png",missingFiles[i]);
+		sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s",missingFiles[i]);
 		sprintf(imgPath,"SD:/images/%s",missingFiles[i]);
     }
 
