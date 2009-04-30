@@ -77,7 +77,7 @@ static int offset = 0;
 int vol = 100;
 
 //downloadvariables
-static char missingFiles[100][12]; //fixed
+static char missingFiles[500][12]; //fixed
 static int cntMissFiles = 0;
 
 int direction = 0; // direction the gameprompt slides in
@@ -952,7 +952,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		if (speedup < 1){speedup=1;}
         diskImg.SetAngle(angle);
 //		diskImg.Draw();
-		
+
         if(shutdown == 1)
 		{
 			wiilight(0);
@@ -979,7 +979,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
         }
 		else if(btnRight.GetState() == STATE_CLICKED) {
-			
+
             choice = 5;
 			promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_OUT, 50);
         }
@@ -987,9 +987,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
             choice = 4;
 			promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_OUT, 50);
         }
-		
-        
-        
+
+
+
 	}
 
 
@@ -1217,7 +1217,7 @@ char * NetworkInitPromp(int choice2)
 
 	VIDEO_WaitVSync();
 
-    while (!IP) 
+    while (!IP)
 	{
 
 		Net_Init(myIP);
@@ -1231,11 +1231,11 @@ char * NetworkInitPromp(int choice2)
 	//        char filenameshort[10];
 			bool found1 = false;
 			bool found2 = false;
-			for (i = 0; i < gameCnt && cntMissFiles < 100; i++)
+			for (i = 0; i < gameCnt && cntMissFiles < 500; i++)
 			{
 				struct discHdr* header = &gameList[i];
 				if (choice2 != 3) {
-				
+
 					snprintf (filename,sizeof(filename),"%c%c%c.png", header->id[0], header->id[1], header->id[2]);
 					found2 = findfile(filename, "SD:/images/");
 					snprintf(filename,sizeof(filename),"%c%c%c%c%c%c.png",header->id[0], header->id[1], header->id[2],
@@ -1246,7 +1246,7 @@ char * NetworkInitPromp(int choice2)
 						snprintf(missingFiles[cntMissFiles],11,"%s",filename);
 						cntMissFiles++;
 					}
-				} 
+				}
 				else if (choice2 == 3) {
 					snprintf (filename,sizeof(filename),"%c%c%c.png", header->id[0], header->id[1], header->id[2]);
 					found2 = findfile(filename, "SD:/images/disc/");
@@ -2067,10 +2067,9 @@ static int MenuDiscList()
 	char imgPath[100];
 	//__Disc_SetLowMem(); //if freezing come back, then uncomment all __Disc_SetLowMem
 
-	u32 cnt = 0;
 	f32 freespace, used, size = 0.0;
 	u32 nolist;
-	char text[MAX_CHARACTERS + 4], text2[20];	
+	char text[MAX_CHARACTERS + 4], text2[20];
 	int choice = 0, selectedold = 100;
 	s32 ret;
 	time_t time1 = 0, time2 = 0; //TT
@@ -2266,7 +2265,7 @@ static int MenuDiscList()
 	//DownloadBtn.SetImageOver(&DownloadBtnImgOver);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
 	if (THEME.showToolTip)
-		DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,180,-30);
+		DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,205,-30);
 	DownloadBtn.SetTrigger(&trigA);
 	//DownloadBtn.SetEffectGrow();
 
@@ -2354,8 +2353,8 @@ static int MenuDiscList()
 		#endif
 	}
 
-    mainWindow->Append(&w);
     mainWindow->Append(&gameBrowser);
+    mainWindow->Append(&w);
 
 	ResumeGui();
 
@@ -2514,7 +2513,7 @@ static int MenuDiscList()
 
 				if (netcheck)
 				{
-					if (missingFiles != NULL && (cntMissFiles < 60) && (cntMissFiles > 0))
+					if (missingFiles != NULL && (cntMissFiles < 500) && (cntMissFiles > 0))
 					{
 						char tempCnt[40];
 						i = 0;
@@ -2522,13 +2521,13 @@ static int MenuDiscList()
 						sprintf(tempCnt,"Missing %i files",cntMissFiles);
 						choice = WindowPrompt("Download Boxart image?",tempCnt,"Yes","No");
 						//WindowPrompt("Downloading","Please Wait Downloading Covers",0,0);
-						if (choice == 1) 
+						if (choice == 1)
 						{
 							ret = ProgressDownloadWindow(choice2);
 							WindowPrompt("Download finished",0,"OK",0);
 						}
-					} 
-					else 
+					}
+					else
 					{
 						WindowPrompt("No file missing!",0,"OK",0);
 					}
@@ -2537,7 +2536,7 @@ static int MenuDiscList()
 			DownloadBtn.ResetState();
 			gameBrowser.SetFocus(1);
 		}//end download
-		
+
 		else if(settingsBtn.GetState() == STATE_CLICKED)
 		{		startat = gameBrowser.GetSelectedOption();
 				offset = gameBrowser.GetOffset();
@@ -2545,7 +2544,7 @@ static int MenuDiscList()
 			    break;
 
 		}
-		
+
 		else if((settingsBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
 		{
 
@@ -3261,7 +3260,7 @@ static int MenuSettings()
 
 		if (Settings.rumble == RumbleOn) sprintf (options2.value[6],"On");//CLOCK
 		else if (Settings.rumble == RumbleOff) sprintf (options2.value[6],"Off");
-		
+
 		if (Settings.volume == v10) sprintf (options2.value[7],"10");//volume
 		else if (Settings.volume == v20) sprintf (options2.value[7],"20");
 		else if (Settings.volume == v30) sprintf (options2.value[7],"30");
@@ -3928,11 +3927,11 @@ int MainMenu(int menu)
 				currentMenu = MenuCheck();
 				break;
 		}
-		
+
 		switch (Settings.volume)
 		{
 			case v10:
-				bgMusic->SetVolume(10); vol = 10; 
+				bgMusic->SetVolume(10); vol = 10;
 				break;
 			case v20:
 				bgMusic->SetVolume(20); vol = 20;
@@ -3968,7 +3967,7 @@ int MainMenu(int menu)
 				bgMusic->SetVolume(80); vol = 80;
 				break;
 		}
-		
+
 	}
 
 	int ios2 = 0, ret = 0;
