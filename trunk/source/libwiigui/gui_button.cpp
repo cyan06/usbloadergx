@@ -9,6 +9,7 @@
  ***************************************************************************/
 
 #include "gui.h"
+
 /**
  * Constructor for the GuiButton class.
  */
@@ -128,17 +129,18 @@ void GuiButton::SetSoundClick(GuiSound * snd)
 void GuiButton::SetToolTip(GuiImage* img, GuiText * txt, int x, int y)
 {
 	if(img)
-	{ 
+	{
+
 		toolTip = img;
 		img->SetParent(this);
 		img->SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
-		img->SetPosition(x,y);	
-		img->SetEffect(EFFECT_FADE, 6);	
-		if(txt) 
-		{	
+		img->SetPosition(x,y);
+		if(txt)
+		{
 			toolTipTxt = txt;
 			txt->SetParent(img);
 		}
+
 	}
 }
 /**
@@ -167,14 +169,22 @@ void GuiButton::Draw()
 		else if(label[i])
 			label[i]->Draw();
 	}
-	//draw ToolTip
-	if((state == STATE_SELECTED  || state == STATE_HELD) && toolTip)
+
+    //draw ToolTip
+	if(state == STATE_SELECTED && toolTip)
 	{
-		toolTip->Draw(); 
+	    if (time2 == 0)
+		    time(&time2);
+
+		    time(&time1);
+
+        if (difftime(time1, time2) >= 2) {
+		toolTip->Draw();
 		if (toolTipTxt)
-			{
+        {
 			toolTipTxt->Draw();
-			}
+        }
+        }
 	}
 
 	this->UpdateEffects();
@@ -186,6 +196,11 @@ void GuiButton::Update(GuiTrigger * t)
 		return;
 	else if(parentElement && parentElement->GetState() == STATE_DISABLED)
 		return;
+
+    if(state != STATE_SELECTED && toolTip) {
+    time2 = 0;
+    }
+
 
 	#ifdef HW_RVL
 	// cursor

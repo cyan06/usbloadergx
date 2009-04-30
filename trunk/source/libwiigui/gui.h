@@ -710,6 +710,7 @@ class GuiButton : public GuiElement
 		GuiImage * iconClick; //!< Button icon for STATE_CLICKED
 		GuiImage * toolTip; //!< Tooltip for STATE_SELECTED
 		GuiText * toolTipTxt;//!< Tooltip Text
+		time_t time1, time2;//!< Tooltip timeconstants
 		GuiText * label[3]; //!< Label(s) to display (default)
 		GuiText * labelOver[3]; //!< Label(s) to display for STATE_SELECTED
 		GuiText * labelHold[3]; //!< Label(s) to display for STATE_HELD
