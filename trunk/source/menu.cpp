@@ -1159,7 +1159,7 @@ char * NetworkInitPromp(int choice2)
 	GuiImageData dialogBox(dialogue_box_png);
 	GuiImage dialogBoxImg(&dialogBox);
 
-	GuiText titleTxt("Initialising Network", 26, (GXColor){0, 0, 0, 255});
+	GuiText titleTxt("Initializing Network", 26, (GXColor){0, 0, 0, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,60);
 
@@ -2223,21 +2223,21 @@ static int MenuDiscList()
 	poweroffBtn.SetEffectGrow();
 
 	//Downloading Covers
-	GuiText ttDownloadTxt("Download Covers", 22, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
+	GuiText ttDownloadTxt("Click to Download Covers", 20, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
 	GuiImageData ttDownload(tooltip_large_png);
 	GuiImage ttDownloadImg(&ttDownload);
 
-	GuiImage DownloadBtnImg(&btnInstall);
-	GuiImage DownloadBtnImgOver(&btnInstallOver);
-	GuiButton DownloadBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
+	//GuiImage DownloadBtnImg(&btnInstall);
+	//GuiImage DownloadBtnImgOver(&btnInstallOver);
+	GuiButton DownloadBtn(160,224);
 	DownloadBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	DownloadBtn.SetPosition(20, 300);
-	DownloadBtn.SetImage(&DownloadBtnImg);
-	DownloadBtn.SetImageOver(&DownloadBtnImgOver);
+	DownloadBtn.SetPosition(THEME.cover_x,THEME.cover_y);//(20, 300);
+	//DownloadBtn.SetImage(&DownloadBtnImg);
+	//DownloadBtn.SetImageOver(&DownloadBtnImgOver);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
 	DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,180,-30);
 	DownloadBtn.SetTrigger(&trigA);
-	DownloadBtn.SetEffectGrow();
+	//DownloadBtn.SetEffectGrow();
 
 	#ifdef HW_RVL
 	int i = 0, level;
@@ -2622,10 +2622,12 @@ static int MenuDiscList()
 				//__Disc_SetLowMem();
 				coverImg = new GuiImage(cover);
 				coverImg->SetWidescreen(CFG.widescreen);
-				coverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-				coverImg->SetPosition(THEME.cover_x,THEME.cover_y);
-				coverImg->SetEffect(EFFECT_FADE, 20);
-				w.Append(coverImg);
+				//coverImg->SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+				//coverImg->SetPosition(THEME.cover_x,THEME.cover_y);
+				//coverImg->SetEffect(EFFECT_FADE, 20);
+				w.Remove(&DownloadBtn);
+				DownloadBtn.SetImage(coverImg);
+				w.Append(&DownloadBtn);
 
 				if ((Settings.sinfo == GameID) || (Settings.sinfo == Both)){
 					GameIDTxt = new GuiText(IDfull, 22, (GXColor){THEME.info_r, THEME.info_g, THEME.info_b, 255});
