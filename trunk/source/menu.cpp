@@ -1239,10 +1239,10 @@ char * NetworkInitPromp(int choice2)
 				if (choice2 != 3) {
 
 					snprintf (filename,sizeof(filename),"%c%c%c.png", header->id[0], header->id[1], header->id[2]);
-					found2 = findfile(filename, "SD:/images/");
+					found2 = findfile(filename, CFG.cover_path);
 					snprintf(filename,sizeof(filename),"%c%c%c%c%c%c.png",header->id[0], header->id[1], header->id[2],
 																		header->id[3], header->id[4], header->id[5]); //full id
-					found1 = findfile(filename, "SD:/images/");
+					found1 = findfile(filename, CFG.cover_path);
 					if (!found1 && !found2) //if could not find any image
 					{
 						snprintf(missingFiles[cntMissFiles],11,"%s",filename);
@@ -1495,7 +1495,7 @@ ProgressDownloadWindow(int choice2)
     char URLFile[100];
     if (choice2 == 2) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s",missingFiles[i]); // For 3D Covers
-		sprintf(imgPath,"SD:/images/%s",missingFiles[i]);
+		sprintf(imgPath,"%s%s", CFG.cover_path, missingFiles[i]);
     }
     if(choice2 == 3) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/diskart/160/160/%s",missingFiles[i]);
@@ -1503,7 +1503,7 @@ ProgressDownloadWindow(int choice2)
     }
     if(choice2 == 1) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s",missingFiles[i]);
-		sprintf(imgPath,"SD:/images/%s",missingFiles[i]);
+		sprintf(imgPath,"%s%s", CFG.cover_path, missingFiles[i]);
     }
 
     struct block file = downloadfile(URLFile);
