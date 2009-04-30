@@ -2235,7 +2235,8 @@ static int MenuDiscList()
 	//DownloadBtn.SetImage(&DownloadBtnImg);
 	//DownloadBtn.SetImageOver(&DownloadBtnImgOver);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
-	DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,180,-30);
+	if (THEME.showToolTip)
+		DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,180,-30);
 	DownloadBtn.SetTrigger(&trigA);
 	//DownloadBtn.SetEffectGrow();
 
