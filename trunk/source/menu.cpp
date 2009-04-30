@@ -2066,6 +2066,7 @@ static int MenuDiscList()
 	//CLOCK
 	struct tm * timeinfo;
 	char theTime[80];
+	int counter = 0;
 
 	WBFS_DiskSpace(&used, &freespace);
 
@@ -2352,12 +2353,13 @@ static int MenuDiscList()
 	    VIDEO_WaitVSync ();
 
         //CLOCK
-        if (Settings.hddinfo == Clock) {
+        if ((Settings.hddinfo == Clock)&&(counter % 2000 == 0)) {
             time_t rawtime = time(0);
             timeinfo = localtime (&rawtime);
             strftime(theTime, sizeof(theTime), "%H:%M", timeinfo);
             clockTime.SetText(theTime);
         }
+		counter++;
 
 	    #ifdef HW_RVL
 		for(i=0; i < 4; i++)
