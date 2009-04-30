@@ -786,6 +786,10 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
 	GuiTrigger trigB;
 	trigB.SetButtonOnlyTrigger(-1, WPAD_BUTTON_B | WPAD_CLASSIC_BUTTON_B, PAD_BUTTON_B);
+	GuiTrigger trigL;
+	trigL.SetButtonOnlyTrigger(-1, WPAD_BUTTON_LEFT | WPAD_CLASSIC_BUTTON_LEFT, PAD_BUTTON_LEFT);
+	GuiTrigger trigR;
+	trigR.SetButtonOnlyTrigger(-1, WPAD_BUTTON_RIGHT | WPAD_CLASSIC_BUTTON_RIGHT, PAD_BUTTON_RIGHT);
 
 	char imgPath[100];
 
@@ -888,6 +892,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btnLeft.SetSoundOver(&btnSoundOver);
 	btnLeft.SetSoundClick(&btnClick);
 	btnLeft.SetTrigger(&trigA);
+	btnLeft.SetTrigger(&trigL);
 	btnLeft.SetEffectGrow();
 
 	GuiImage btnRightImg(&imgRight);
@@ -898,6 +903,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btnRight.SetSoundOver(&btnSoundOver);
 	btnRight.SetSoundClick(&btnClick);
 	btnRight.SetTrigger(&trigA);
+	btnRight.SetTrigger(&trigR);
 	btnRight.SetEffectGrow();
 
 	promptWindow.Append(&dialogBoxImg);
@@ -945,8 +951,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 		if (speedup < 1){speedup=1;}
         diskImg.SetAngle(angle);
 //		diskImg.Draw();
-
-		if(shutdown == 1)
+		
+        if(shutdown == 1)
 		{
 			wiilight(0);
 			Sys_Shutdown();
@@ -972,6 +978,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
         }
 		else if(btnRight.GetState() == STATE_CLICKED) {
+			
             choice = 5;
 			promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_OUT, 50);
         }
@@ -979,7 +986,11 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
             choice = 4;
 			promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_OUT, 50);
         }
+		
+        
+        
 	}
+
 
 	//promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
 	while(promptWindow.GetEffect() > 0) usleep(50);
@@ -4113,7 +4124,7 @@ int MainMenu(int menu)
                                 videoselected = 5;
                         break;
                         default:
-                                videoselected = 0;
+                                videoselected = 3;
                         break;
     }
 

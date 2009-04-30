@@ -384,6 +384,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 	arrowDownBtn->GetState() == STATE_CLICKED || ////////////////////////////////////////////down
 	arrowDownBtn->GetState() == STATE_HELD)
 	{
+	
 
 		next = this->FindMenuItem(gameIndex[selectedItem], 1);
 
