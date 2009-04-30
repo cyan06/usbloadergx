@@ -771,7 +771,7 @@ int
 GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, char * ID, char * IDfull)
 {
 	int choice = -1, angle = 0;
-	
+
 	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
@@ -1239,10 +1239,10 @@ char * NetworkInitPromp(int choice2)
 				if (choice2 != 3) {
 
 					snprintf (filename,sizeof(filename),"%c%c%c.png", header->id[0], header->id[1], header->id[2]);
-					found2 = findfile(filename, CFG.cover_path);
+					found2 = findfile(filename, CFG.covers_path);
 					snprintf(filename,sizeof(filename),"%c%c%c%c%c%c.png",header->id[0], header->id[1], header->id[2],
 																		header->id[3], header->id[4], header->id[5]); //full id
-					found1 = findfile(filename, CFG.cover_path);
+					found1 = findfile(filename, CFG.covers_path);
 					if (!found1 && !found2) //if could not find any image
 					{
 						snprintf(missingFiles[cntMissFiles],11,"%s",filename);
@@ -1251,10 +1251,10 @@ char * NetworkInitPromp(int choice2)
 				}
 				else if (choice2 == 3) {
 					snprintf (filename,sizeof(filename),"%c%c%c.png", header->id[0], header->id[1], header->id[2]);
-					found2 = findfile(filename, "SD:/images/disc/");
+					found2 = findfile(filename, CFG.disc_path);
 					snprintf(filename,sizeof(filename),"%c%c%c%c%c%c.png",header->id[0], header->id[1], header->id[2],
 																		header->id[3], header->id[4], header->id[5]); //full id
-					found1 = findfile(filename,"SD:/images/disc/");
+					found1 = findfile(filename,CFG.disc_path);
 					if (!found1 && !found2)
 					{
 						snprintf(missingFiles[cntMissFiles],11,"%s",filename);
@@ -1495,18 +1495,37 @@ ProgressDownloadWindow(int choice2)
     char URLFile[100];
     if (choice2 == 2) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s",missingFiles[i]); // For 3D Covers
-		sprintf(imgPath,"%s%s", CFG.cover_path, missingFiles[i]);
+		sprintf(imgPath,"%s%s", CFG.covers_path, missingFiles[i]);
     }
     if(choice2 == 3) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/diskart/160/160/%s",missingFiles[i]);
-		sprintf(imgPath,"SD:/images/disc/%s",missingFiles[i]);
+		sprintf(imgPath,"%s%s", CFG.disc_path, missingFiles[i]);
     }
     if(choice2 == 1) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s",missingFiles[i]);
-		sprintf(imgPath,"%s%s", CFG.cover_path, missingFiles[i]);
+		sprintf(imgPath,"%s%s", CFG.covers_path, missingFiles[i]);
     }
 
     struct block file = downloadfile(URLFile);
+
+    //check if directory exist and if not create one
+    struct stat st;
+    if(stat(CFG.covers_path, &st) != 0) {
+        char * dircovers = NULL;
+        snprintf(dircovers,strlen(CFG.covers_path),"%s",CFG.covers_path);
+        if (mkdir(dircovers, 0777) == -1) {
+        WindowPrompt("Error:","Can't create directory","OK",0);
+        break;
+        }
+    }
+    if(stat(CFG.disc_path,&st) != 0) {
+        char * dirdiscs = NULL;
+        snprintf(dirdiscs,strlen(CFG.disc_path),"%s",CFG.disc_path);
+        if (mkdir(dirdiscs, 0777) == -1) {
+        WindowPrompt("Error:","Can't create directory","OK",0);
+        break;
+        }
+    }
 
     if(file.data != NULL)
     {
@@ -2717,7 +2736,7 @@ static int MenuDiscList()
 				"Settings",
 				ID,
 				IDfull);
-				
+
 				if(choice == 1)
 				{	direction = 0;
 					memcpy(id222, header->id, 6);
