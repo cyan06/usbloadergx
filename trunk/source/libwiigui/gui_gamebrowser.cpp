@@ -14,7 +14,7 @@
 #include "cfg.h"
 
 #define GAMESELECTSIZE      30
-
+extern const int vol;
 /**
  * Constructor for the GuiGameBrowser class.
  */
@@ -36,7 +36,7 @@ GuiGameBrowser::GuiGameBrowser(int w, int h, struct discHdr * l, int gameCnt, co
 	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     trigHeldA = new GuiTrigger;
 	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A, PAD_BUTTON_A);
-	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
+	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM, vol);
 
 	snprintf(imgPath, sizeof(imgPath), "%sbg_options.png", themePath);
 	bgGames = new GuiImageData(imgPath, imagebg);

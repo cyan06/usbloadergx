@@ -126,6 +126,7 @@ class GuiSound
 		//!\param l Length of sound data
 		//!\param t Sound format type (SOUND_PCM or SOUND_OGG)
 		GuiSound(const u8 * s, int l, int t);
+		GuiSound(const u8 * s, int l, int t, int v);
 		//!Destructor
 		~GuiSound();
 		//!Start sound playback

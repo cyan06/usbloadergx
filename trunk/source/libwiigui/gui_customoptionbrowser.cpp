@@ -16,7 +16,8 @@
 #define GAMESELECTSIZE      30
 
 static int scrollbaron = 0;
-
+//int vol;
+extern const int vol;
 /**
  * Constructor for the GuiCustomOptionBrowser class.
  */
@@ -37,7 +38,7 @@ GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * 
 	trigA->SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
     trigHeldA = new GuiTrigger;
 	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A, PAD_BUTTON_A);
-	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM);
+	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM, vol);
 
 	snprintf(imgPath, sizeof(imgPath), "%sbg_options.png", themePath);
 	bgOptions = new GuiImageData(imgPath, imagebg);

@@ -23,6 +23,16 @@ GuiSound::GuiSound(const u8 * snd, s32 len, int t)
 	loop = false;
 }
 
+GuiSound::GuiSound(const u8 * snd, s32 len, int t, int v)
+{
+	sound = snd;
+	length = len;
+	type = t;
+	voice = -1;
+	volume = v;
+	loop = false;
+}
+
 /**
  * Destructor for the GuiSound class.
  */
