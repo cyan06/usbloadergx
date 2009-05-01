@@ -3993,40 +3993,40 @@ int MainMenu(int menu)
 		switch (Settings.volume)
 		{
 			case v10:
-				bgMusic->SetVolume(10); vol = 10;
+				vol = 10;
 				break;
 			case v20:
-				bgMusic->SetVolume(20); vol = 20;
+				vol = 20;
 				break;
 			case v30:
-				bgMusic->SetVolume(30); vol = 30;
+				vol = 30;
 				break;
 			case v40:
-				bgMusic->SetVolume(40); vol = 40;
+				vol = 40;
 				break;
 			case v50:
-				bgMusic->SetVolume(50); vol = 50;
+				vol = 50;
 				break;
 			case v60:
-				bgMusic->SetVolume(60); vol = 60;
+				vol = 60;
 				break;
 			case v70:
-				bgMusic->SetVolume(70); vol = 70;
+				vol = 70;
 				break;
 			case v80:
-				bgMusic->SetVolume(80); vol = 80;
+				vol = 80;
 				break;
 			case v90:
-				bgMusic->SetVolume(90); vol = 90;
+				vol = 90;
 				break;
 			case v100:
-				bgMusic->SetVolume(100); vol = 100;
+				vol = 100;
 				break;
 			case v0:
-				bgMusic->SetVolume(0); vol = 0;
+				vol = 0;
 				break;
 			default:
-				bgMusic->SetVolume(80); vol = 80;
+				vol = 80;
 				break;
 		}
 

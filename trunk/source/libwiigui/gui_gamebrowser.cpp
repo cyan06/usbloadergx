@@ -135,14 +135,9 @@ GuiGameBrowser::GuiGameBrowser(int w, int h, struct discHdr * l, int gameCnt, co
 
 		gameBg[i] = new GuiImage(bgGamesEntry);
 
-//		optionVal[i] = new GuiText(NULL, 20, (GXColor){0, 0, 0, 0xff});
-//		optionVal[i]->SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
-//		optionVal[i]->SetPosition(250,0);
-
 		game[i] = new GuiButton(width-28,GAMESELECTSIZE);
 		game[i]->SetParent(this);
 		game[i]->SetLabel(gameTxt[i]);
-//		game[i]->SetLabel(optionVal[i], 1);
 		game[i]->SetImageOver(gameBg[i]);
 		game[i]->SetPosition(5,GAMESELECTSIZE*i+4);
 		game[i]->SetRumble(false);
@@ -384,7 +379,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 	arrowDownBtn->GetState() == STATE_CLICKED || ////////////////////////////////////////////down
 	arrowDownBtn->GetState() == STATE_HELD)
 	{
-	
+
 
 		next = this->FindMenuItem(gameIndex[selectedItem], 1);
 
@@ -414,7 +409,7 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 
         } else {
             arrowDownBtn->ResetState();
-		
+
         }
 
 	}
@@ -471,8 +466,8 @@ void GuiGameBrowser::Update(GuiTrigger * t)
         buttons |= WPAD_ButtonsHeld(cnt);
 
     if (buttons == WPAD_BUTTON_B && position1 > 0) {
+        scrollbarBoxBtn->ScrollIsOn(1);
         if (position2 > position1) {
-
 
 		prev = this->FindMenuItem(gameIndex[selectedItem], -1);
 
@@ -519,7 +514,9 @@ void GuiGameBrowser::Update(GuiTrigger * t)
 
 		}
         }
+
     } else if (!buttons) {
+    scrollbarBoxBtn->ScrollIsOn(0);
     position2 = 0;
     }
 

@@ -10,6 +10,8 @@
 
 #include "gui.h"
 
+static int scrollison;
+
 /**
  * Constructor for the GuiButton class.
  */
@@ -190,6 +192,11 @@ void GuiButton::Draw()
 	this->UpdateEffects();
 }
 
+void GuiButton::ScrollIsOn(int f)
+{
+    scrollison = f;
+}
+
 void GuiButton::Update(GuiTrigger * t)
 {
 	if(state == STATE_CLICKED || state == STATE_DISABLED || !t)
@@ -210,15 +217,17 @@ void GuiButton::Update(GuiTrigger * t)
 		{
 			if(state == STATE_DEFAULT) // we weren't on the button before!
 			{
+			    if(scrollison == 0) {
 				this->SetState(STATE_SELECTED, t->chan);
+			    }
 
-				if(this->Rumble())
+				if(this->Rumble() && scrollison == 0)
 					rumbleRequest[t->chan] = 1;
 
-				if(soundOver)
+				if(soundOver && scrollison == 0)
 					soundOver->Play();
 
-				if(effectsOver && !effects)
+				if(effectsOver && !effects && scrollison == 0)
 				{
 					// initiate effects
 					effects = effectsOver;
@@ -244,7 +253,7 @@ void GuiButton::Update(GuiTrigger * t)
 	#endif
 
 	// button triggers
-	if(this->IsClickable())
+	if(this->IsClickable() && scrollison == 0)
 	{
 		s32 wm_btns, wm_btns_trig, cc_btns, cc_btns_trig;
 		for(int i=0; i<6; i++)

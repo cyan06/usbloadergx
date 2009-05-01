@@ -699,6 +699,8 @@ class GuiButton : public GuiElement
 		//!Constantly called to allow the GuiButton to respond to updated input data
 		//!\param t Pointer to a GuiTrigger, containing the current input data from PAD/WPAD
 		void Update(GuiTrigger * t);
+		//!Deactivate/Activate pointing on Games while B scrolling
+		void ScrollIsOn(int f);
 	protected:
 		GuiImage * image; //!< Button image (default)
 		GuiImage * imageOver; //!< Button image for STATE_SELECTED
