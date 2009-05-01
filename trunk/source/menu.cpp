@@ -135,11 +135,11 @@ struct dirent *file;
 
 dir = opendir(path);
 
-char temp[100];
+char temp[11];
 while ((file = readdir(dir)))
 {
 	snprintf(temp,sizeof(temp),"%s",file->d_name);
-    if (!strncmp(temp,filename,100))
+    if (!strncmp(temp,filename,11))
 		{
 		//WindowPrompt(path, filename,"go" ,0);
 		closedir(dir);
@@ -795,6 +795,10 @@ int GameWindowPrompt()
 	trigL.SetButtonOnlyTrigger(-1, WPAD_BUTTON_LEFT | WPAD_CLASSIC_BUTTON_LEFT, PAD_BUTTON_LEFT);
 	GuiTrigger trigR;
 	trigR.SetButtonOnlyTrigger(-1, WPAD_BUTTON_RIGHT | WPAD_CLASSIC_BUTTON_RIGHT, PAD_BUTTON_RIGHT);
+    GuiTrigger trigPlus;
+	trigL.SetButtonOnlyTrigger(-1, WPAD_BUTTON_PLUS | WPAD_CLASSIC_BUTTON_PLUS, PAD_BUTTON_LEFT);
+	GuiTrigger trigMinus;
+	trigR.SetButtonOnlyTrigger(-1, WPAD_BUTTON_MINUS | WPAD_CLASSIC_BUTTON_MINUS, PAD_BUTTON_RIGHT);
 
 	char imgPath[100];
 
@@ -814,7 +818,7 @@ int GameWindowPrompt()
 	nameBtn.SetPosition(0,-122);
 	nameBtn.SetSoundOver(&btnSoundOver);
 	nameBtn.SetSoundClick(&btnClick);
-	
+
 	if (CFG.godmode == 1){
 		nameBtn.SetTrigger(&trigA);
 		nameBtn.SetEffectGrow();
@@ -823,12 +827,12 @@ int GameWindowPrompt()
     GuiText sizeTxt("", 22, (GXColor){50, 50, 50, 255}); //TODO: get the size here
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
 	sizeTxt.SetPosition(-60,70);
-	
+
 	GuiImage diskImg;
 	diskImg.SetWidescreen(CFG.widescreen);
 	diskImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	diskImg.SetAngle(angle);
-	
+
 	GuiButton btn1(160, 160);
 	btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	btn1.SetPosition(0, -20);
@@ -848,7 +852,7 @@ int GameWindowPrompt()
 	{
 		btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
 		btn2.SetPosition(40, -40);
-	} 
+	}
 	else
 	{
 		btn2.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
@@ -884,6 +888,7 @@ int GameWindowPrompt()
 	btnLeft.SetSoundClick(&btnClick);
 	btnLeft.SetTrigger(&trigA);
 	btnLeft.SetTrigger(&trigL);
+	btnLeft.SetTrigger(&trigMinus);
 	btnLeft.SetEffectGrow();
 
 	GuiImage btnRightImg(&imgRight);
@@ -895,6 +900,7 @@ int GameWindowPrompt()
 	btnRight.SetSoundClick(&btnClick);
 	btnRight.SetTrigger(&trigA);
 	btnRight.SetTrigger(&trigR);
+	btnRight.SetTrigger(&trigPlus);
 	btnRight.SetEffectGrow();
 
 	promptWindow.Append(&dialogBoxImg);
@@ -915,7 +921,7 @@ int GameWindowPrompt()
 	GuiImageData * diskCover = NULL;
 
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
-	
+
 	while (changed)
 	{
 		if (changed == 1){
@@ -924,17 +930,17 @@ int GameWindowPrompt()
 		if (changed == 2){
 			promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 50);
 		}
-		
+
 		changed = 0;
-		
+
 		struct discHdr * header = &gameList[gameSelected];
 		WBFS_GameSize(header->id, &size);
-		
+
 		snprintf(sizeText, sizeof(sizeText), "%.2fGB", size); //set size text
-		
+
 		snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
 		snprintf (IDFull,sizeof(IDFull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-		
+
 		//set name
 		if (strlen(get_title(header)) < (u32)(CFG.maxcharacters + 3)) {
 			sprintf(gameName, "%s", get_title(header));
@@ -946,10 +952,10 @@ int GameWindowPrompt()
 		}
 
 		snprintf(imgPath,sizeof(imgPath),"%s%s.png", CFG.disc_path, ID); //changed to current id
-		
+
 		if (diskCover)
 			delete diskCover;
-		
+
 		diskCover = new GuiImageData(imgPath,0);
 
 		if (!diskCover->GetImage())
@@ -1003,29 +1009,29 @@ int GameWindowPrompt()
 				wiilight(0);
 				Sys_Shutdown();
 			}
-			
+
 			if(btn1.GetState() == STATE_CLICKED) { //boot
 				choice = 1;
 				SDCARD_deInit();
 			}
-			
+
 			else if(btn2.GetState() == STATE_CLICKED) { //back
 				choice = 0;
 				promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
 				mainWindow->SetState(STATE_DEFAULT);
 				wiilight(0);
 			}
-			
+
 			else if(btn3.GetState() == STATE_CLICKED) { //settings
 				choice = 2;
 				promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
 			}
-			
+
 			else if(nameBtn.GetState() == STATE_CLICKED) { //rename
 				choice = 3;
 				promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
 			}
-		
+
 			else if(btnRight.GetState() == STATE_CLICKED) {
 				promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_OUT, 50);
 				changed = 1;
@@ -1033,7 +1039,7 @@ int GameWindowPrompt()
 				btnRight.ResetState();
 				break;
 			}
-			
+
 			else if(btnLeft.GetState() == STATE_CLICKED) {
 				promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_OUT, 50);
 				changed = 2;
@@ -1221,8 +1227,6 @@ char * NetworkInitPromp(int choice2)
 
     GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM, vol);
-	//btnClick.SetVolume(vol);
-	//btnSoundOver.SetVolume(vol);
 
 	GuiImageData btnOutline(button_dialogue_box_png);
 	GuiTrigger trigA;
@@ -1472,12 +1476,16 @@ int
 ProgressDownloadWindow(int choice2)
 {
 
-    int i = 0;
+    int i = 0, cntNotFound = 0;
 //    char filename[11];
 
 	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
+
+    GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
+	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM, vol);
+
 	GuiImageData btnOutline(button_dialogue_box_png);
 	GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -1512,6 +1520,19 @@ ProgressDownloadWindow(int choice2)
 	prTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	prTxt.SetPosition(0, 40);
 
+    GuiText btn1Txt("Cancel", 22, (GXColor){0, 0, 0, 255});
+	GuiImage btn1Img(&btnOutline);
+	GuiButton btn1(btnOutline.GetWidth(), btnOutline.GetHeight());
+    btn1.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+    btn1.SetPosition(0, -45);
+	btn1.SetLabel(&btn1Txt);
+	btn1.SetImage(&btn1Img);
+	btn1.SetSoundOver(&btnSoundOver);
+	btn1.SetSoundClick(&btnClick);
+	btn1.SetTrigger(&trigA);
+	btn1.SetState(STATE_SELECTED);
+	btn1.SetEffectGrow();
+
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&titleTxt);
 	promptWindow.Append(&msgTxt);
@@ -1519,12 +1540,32 @@ ProgressDownloadWindow(int choice2)
     promptWindow.Append(&progressbarImg);
     promptWindow.Append(&progressbarOutlineImg);
     promptWindow.Append(&prTxt);
+    promptWindow.Append(&btn1);
 
 	HaltGui();
 	mainWindow->SetState(STATE_DISABLED);
 	mainWindow->Append(&promptWindow);
 	mainWindow->ChangeFocus(&promptWindow);
 	ResumeGui();
+
+    //check if directory exist and if not create one
+    struct stat st;
+    if(stat(CFG.covers_path, &st) != 0) {
+        char dircovers[100];
+        snprintf(dircovers,strlen(CFG.covers_path),"%s",CFG.covers_path);
+        if (mkdir(dircovers, 0777) == -1) {
+        WindowPrompt("Error:","Can't create directory","OK",0);
+        cntMissFiles = 0;
+        }
+    }
+    if(stat(CFG.disc_path,&st) != 0) {
+        char dirdiscs[100];
+        snprintf(dirdiscs,strlen(CFG.disc_path),"%s",CFG.disc_path);
+        if (mkdir(dirdiscs, 0777) == -1) {
+        WindowPrompt("Error:","Can't create directory","OK",0);
+        cntMissFiles = 0;
+        }
+    }
 
 	while (i < cntMissFiles) {
 
@@ -1556,24 +1597,10 @@ ProgressDownloadWindow(int choice2)
 
     struct block file = downloadfile(URLFile);
 
-    //check if directory exist and if not create one
-    struct stat st;
-    if(stat(CFG.covers_path, &st) != 0) {
-        char * dircovers = NULL;
-        snprintf(dircovers,strlen(CFG.covers_path),"%s",CFG.covers_path);
-        if (mkdir(dircovers, 0777) == -1) {
-        WindowPrompt("Error:","Can't create directory","OK",0);
-        break;
-        }
-    }
-    if(stat(CFG.disc_path,&st) != 0) {
-        char * dirdiscs = NULL;
-        snprintf(dirdiscs,strlen(CFG.disc_path),"%s",CFG.disc_path);
-        if (mkdir(dirdiscs, 0777) == -1) {
-        WindowPrompt("Error:","Can't create directory","OK",0);
-        break;
-        }
-    }
+    if (file.size == 36864 || file.size == 184 || file.size == 7386) {
+        cntNotFound++;
+        i++;
+    } else {
 
     if(file.data != NULL)
     {
@@ -1590,12 +1617,24 @@ ProgressDownloadWindow(int choice2)
     i++;
     }
 
+    if(btn1.GetState() == STATE_CLICKED) {
+        cntNotFound = cntMissFiles-i+cntNotFound;
+        break;
+    }
+
+	}
+
 
 	HaltGui();
 	mainWindow->Remove(&promptWindow);
 	mainWindow->SetState(STATE_DEFAULT);
 	ResumeGui();
-	return 1;
+
+	if (cntNotFound != 0) {
+	    return cntNotFound;
+	} else {
+	return 0;
+	}
 }
 
 
@@ -2596,7 +2635,12 @@ static int MenuDiscList()
 						if (choice == 1)
 						{
 							ret = ProgressDownloadWindow(choice2);
+							if (ret == 0) {
 							WindowPrompt("Download finished",0,"OK",0);
+							} else {
+                            sprintf(tempCnt,"%i files not found on the server!",ret);
+                            WindowPrompt("Download finished",tempCnt,"OK",0);
+							}
 						}
 					}
 					else
@@ -2773,14 +2817,14 @@ static int MenuDiscList()
 				//sprintf(text2, "%.2fGB", size);
 				choice = GameWindowPrompt();
 				header = &gameList[gameSelected]; //reset header
-				
+
 				if(choice == 1)
-				{	
+				{
 					memcpy(id222, header->id, 6);
 					id222[6] = 0;
-					
+
 					wiilight(0);
-					
+
 					/* Set USB mode */
 					ret = Disc_SetUSB(header->id);
 					if (ret < 0) {
@@ -2817,7 +2861,7 @@ static int MenuDiscList()
 				}
 
 				else if (choice == 3) //&& (CFG.godmode == 1))
-				{	
+				{
 					wiilight(0);
 					//enter new game title
 					char entered[40];
