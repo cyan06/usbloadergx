@@ -886,9 +886,9 @@ int GameWindowPrompt()
 	btnLeft.SetImage(&btnLeftImg);
 	btnLeft.SetSoundOver(&btnSoundOver);
 	btnLeft.SetSoundClick(&btnClick);
+	btnLeft.SetTrigger(&trigA);
 	btnLeft.SetTrigger(&trigL);
 	btnLeft.SetTrigger(&trigMinus);
-	btnLeft.SetTrigger(&trigA);
 	btnLeft.SetEffectGrow();
 
 	GuiImage btnRightImg(&imgRight);
@@ -898,9 +898,9 @@ int GameWindowPrompt()
 	btnRight.SetImage(&btnRightImg);
 	btnRight.SetSoundOver(&btnSoundOver);
 	btnRight.SetSoundClick(&btnClick);
+	btnRight.SetTrigger(&trigA);
 	btnRight.SetTrigger(&trigR);
 	btnRight.SetTrigger(&trigPlus);
-	btnRight.SetTrigger(&trigA);
 	btnRight.SetEffectGrow();
 
 	promptWindow.Append(&dialogBoxImg);
