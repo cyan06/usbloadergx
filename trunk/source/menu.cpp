@@ -1578,7 +1578,6 @@ ProgressDownloadWindow(int choice2)
     sprintf(msg, "%i files left", cntMissFiles - i);
     msgTxt.SetText(msg);
 
-//    snprintf(filename,sizeof(filename),"%s",missingFiles[i]);
     //download boxart image
     char imgPath[100];
     char URLFile[100];
@@ -1597,7 +1596,7 @@ ProgressDownloadWindow(int choice2)
 
     struct block file = downloadfile(URLFile);
 
-    if (file.size == 36864 || file.size == 184 || file.size == 7386) {
+    if (file.size == 36864 || file.size == 184 || file.size == 7386 || file.data == NULL) {
         cntNotFound++;
         i++;
     } else {
@@ -2623,7 +2622,7 @@ static int MenuDiscList()
 				if (netcheck)
 				{
 
-					if (missingFiles != NULL && (cntMissFiles < 500) && (cntMissFiles > 0))
+					if (missingFiles != NULL && cntMissFiles > 0)
 
 					{
 						char tempCnt[40];

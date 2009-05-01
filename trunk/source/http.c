@@ -43,7 +43,7 @@ static s32 server_connect(u32 ipaddress, u32 socket_port) {
 	connect_addr.sin_family = AF_INET;
 	connect_addr.sin_port = socket_port;
 	connect_addr.sin_addr.s_addr= ipaddress;
-	
+
 	//Attemt to open the socket
 	if (net_connect(connection, (struct sockaddr*)&connect_addr, sizeof(connect_addr)) == -1) {
 		net_close(connection);
@@ -53,7 +53,7 @@ static s32 server_connect(u32 ipaddress, u32 socket_port) {
 }
 
 //The amount of memory in bytes reserved initially to store the HTTP response in
-//Be careful in increasing this number, reading from a socket on the Wii 
+//Be careful in increasing this number, reading from a socket on the Wii
 //will fail if you request more than 20k or so
 #define HTTP_BUFFER_SIZE 1024 * 5
 
@@ -77,39 +77,39 @@ struct block read_message(s32 connection)
 	if(buffer.data == NULL) {
 		return emptyblock;
 	}
-	
+
 	//The offset variable always points to the first byte of memory that is free in the buffer
 	u32 offset = 0;
-	
+
 	while(1)
 	{
 		//Fill the buffer with a new batch of bytes from the connection,
 		//starting from where we left of in the buffer till the end of the buffer
 		s32 bytes_read = net_read(connection, buffer.data + offset, buffer.size - offset);
-		
+
 		//Anything below 0 is an error in the connection
 		if(bytes_read < 0)
 		{
-			printf("Connection error from net_read()  Errorcode: %i\n", bytes_read);
+			//printf("Connection error from net_read()  Errorcode: %i\n", bytes_read);
 			return emptyblock;
 		}
-		
+
 		//No more bytes were read into the buffer,
 		//we assume this means the HTTP response is done
 		if(bytes_read == 0)
 		{
 			break;
 		}
-		
+
 		offset += bytes_read;
-		
+
 		//Check if we have enough buffer left over,
 		//if not expand it with an additional HTTP_BUFFER_GROWTH worth of bytes
 		if(offset >= buffer.size)
 		{
 			buffer.size += HTTP_BUFFER_GROWTH;
 			buffer.data = realloc(buffer.data, buffer.size);
-			
+
 			if(buffer.data == NULL)
 			{
 				return emptyblock;
@@ -119,10 +119,10 @@ struct block read_message(s32 connection)
 
 	//At the end of above loop offset should be precisely the amount of bytes that were read from the connection
 	buffer.size = offset;
-		
+
 	//Shrink the size of the buffer so the data fits exactly in it
 	realloc(buffer.data, buffer.size);
-	
+
 	return buffer;
 }
 
@@ -135,50 +135,50 @@ struct block downloadfile(const char *url)
 	//Check if the url starts with "http://", if not it is not considered a valid url
 	if(strncmp(url, "http://", strlen("http://")) != 0)
 	{
-		printf("URL '%s' doesn't start with 'http://'\n", url);
+		//printf("URL '%s' doesn't start with 'http://'\n", url);
 		return emptyblock;
 	}
-	
+
 	//Locate the path part of the url by searching for '/' past "http://"
 	char *path = strchr(url + strlen("http://"), '/');
-	
+
 	//At the very least the url has to end with '/', ending with just a domain is invalid
 	if(path == NULL)
 	{
-		printf("URL '%s' has no PATH part\n", url);
+		//printf("URL '%s' has no PATH part\n", url);
 		return emptyblock;
 	}
-	
+
 	//Extract the domain part out of the url
 	int domainlength = path - url - strlen("http://");
-	
+
 	if(domainlength == 0)
 	{
-		printf("No domain part in URL '%s'\n", url);
+		//printf("No domain part in URL '%s'\n", url);
 		return emptyblock;
 	}
-	
+
 	char domain[domainlength + 1];
 	strncpy(domain, url + strlen("http://"), domainlength);
 	domain[domainlength] = '\0';
-	
+
 	//Parsing of the URL is done, start making an actual connection
 	u32 ipaddress = getipbynamecached(domain);
-	
+
 	if(ipaddress == 0)
 	{
-		printf("\ndomain %s could not be resolved", domain);
+		//printf("\ndomain %s could not be resolved", domain);
 		return emptyblock;
 	}
 
 
 	s32 connection = server_connect(ipaddress, 80);
-	
+
 	if(connection < 0) {
-		printf("Error establishing connection");
+		//printf("Error establishing connection");
 		return emptyblock;
 	}
-	
+
 	//Form a nice request header to send to the webserver
 	char* headerformat = "GET %s HTTP/1.0\r\nHost: %s\r\nUser-Agent: WiiEarthh 1.0\r\n\r\n";;
 	char header[strlen(headerformat) + strlen(domain) + strlen(path)];
@@ -205,30 +205,30 @@ struct block downloadfile(const char *url)
 			break;
 		}
 	}
-	
+
 	if(filestart == NULL)
 	{
-		printf("HTTP Response was without a file\n");
+		//printf("HTTP Response was without a file\n");
 		free(response.data);
 		return emptyblock;
 	}
-	
+
 	//Copy the file part of the response into a new memoryblock to return
 	struct block file;
 	file.data = malloc(filesize);
 	file.size = filesize;
-	
+
 	if(file.data == NULL)
 	{
-		printf("No more memory to copy file from HTTP response\n");
+		//printf("No more memory to copy file from HTTP response\n");
 		free(response.data);
 		return emptyblock;
 	}
-	
+
 	memcpy(file.data, filestart, filesize);
 
 	//Dispose of the original response
 	free(response.data);
-	
+
 	return file;
 }
