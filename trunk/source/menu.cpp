@@ -74,7 +74,7 @@ int height = 224;
 int width = 160;
 static int startat = 0;
 static int offset = 0;
-int vol = 100;
+int vol = Settings.volume;
 
 //downloadvariables
 static char missingFiles[500][12]; //fixed
