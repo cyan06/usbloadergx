@@ -20,6 +20,12 @@ extern const u32	bg_music_ogg_size;
 extern const u8		credits_music_ogg[];
 extern const u32	credits_music_ogg_size;
 
+extern const u8		credits_button_png[];
+extern const u32	credits_button_png_size;
+
+extern const u8		credits_button_over_png[];
+extern const u32	credits_button_over_png_size;
+
 extern const u8		button_over_pcm[];
 extern const u32	button_over_pcm_size;
 
@@ -28,9 +34,6 @@ extern const u32	button_click_pcm_size;
 
 extern const u8		button_click2_pcm[];
 extern const u32	button_click2_pcm_size;
-
-extern const u8		logo_png[];
-extern const u32	logo_png_size;
 
 extern const u8     tooltip_png[];
 extern const u32    tooltip_png_size;

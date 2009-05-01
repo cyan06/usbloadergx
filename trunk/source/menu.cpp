@@ -3232,13 +3232,13 @@ static int MenuSettings()
 	lockBtn.SetTrigger(&trigA);
 	lockBtn.SetEffectGrow();
 
-	GuiImageData logo(logo_png);
+	GuiImageData logo(credits_button_png);
 	GuiImage logoImg(&logo);
-	GuiImageData logoOver(logo_png);
+	GuiImageData logoOver(credits_button_over_png);
 	GuiImage logoImgOver(&logoOver);
 	btnLogo = new GuiButton(logoImg.GetWidth(), logoImg.GetHeight());
 	btnLogo->SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-	btnLogo->SetPosition(0, -45);
+	btnLogo->SetPosition(0, -35);
 	btnLogo->SetImage(&logoImg);
 	btnLogo->SetImageOver(&logoImgOver);
 	btnLogo->SetEffectGrow();
