@@ -767,10 +767,14 @@ DeviceWait(const char *title, const char *msg, const char *btn1Label, const char
  * Displays a prompt window to user, with information, an error message, or
  * presenting a user with a choice
  ***************************************************************************/
-int
-GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, char * ID, char * IDfull)
+int GameWindowPrompt()
 {
 	int choice = -1, angle = 0;
+	char sizeText[15];
+	f32 size = 0.0;
+	char ID[4];
+	char IDFull[7];
+	char gameName[CFG.maxcharacters + 4];
 
 	GuiWindow promptWindow(472,320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
@@ -801,9 +805,8 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 
 	GuiImageData dialogBox(imgPath, CFG.widescreen ? wdialogue_box_startgame_png : dialogue_box_startgame_png);
 	GuiImage dialogBoxImg(&dialogBox);
-//	dialogBoxImg.SetWidescreen(CFG.widescreen);
 
-	GuiText msgTxt(msg, 22, (GXColor){50, 50, 50, 255});
+	GuiText msgTxt("", 22, (GXColor){50, 50, 50, 255});
 	GuiButton nameBtn(120,50);
 	nameBtn.SetLabel(&msgTxt);
 	nameBtn.SetLabelOver(&msgTxt);
@@ -811,58 +814,45 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	nameBtn.SetPosition(0,-122);
 	nameBtn.SetSoundOver(&btnSoundOver);
 	nameBtn.SetSoundClick(&btnClick);
+	
 	if (CFG.godmode == 1){
-	nameBtn.SetTrigger(&trigA);
-	nameBtn.SetEffectGrow();
-					}
+		nameBtn.SetTrigger(&trigA);
+		nameBtn.SetEffectGrow();
+	}
 
-    GuiText sizeTxt(size, 22, (GXColor){50, 50, 50, 255});
+    GuiText sizeTxt("", 22, (GXColor){50, 50, 50, 255}); //TODO: get the size here
 	sizeTxt.SetAlignment(ALIGN_RIGHT, ALIGN_TOP);
 	sizeTxt.SetPosition(-60,70);
-
-	snprintf(imgPath,sizeof(imgPath),"%s%s.png", CFG.disc_path, ID);
-    GuiImageData * diskCover = new GuiImageData(imgPath,0);
-
-	if (!diskCover->GetImage())
-		{
-		delete diskCover;
-		snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.disc_path, IDfull);
-		diskCover = new GuiImageData(imgPath, 0);
-		if (!diskCover->GetImage())
-			{
-			delete diskCover;
-			diskCover = new GuiImageData(imgPath,nodisc_png);
-			}
-		}
-
-	GuiImage diskImg(diskCover);
+	
+	GuiImage diskImg;
 	diskImg.SetWidescreen(CFG.widescreen);
 	diskImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-    diskImg.SetAngle(angle);
-
+	diskImg.SetAngle(angle);
+	
 	GuiButton btn1(160, 160);
-    btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
-    btn1.SetPosition(0, -20);
+	btn1.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
+	btn1.SetPosition(0, -20);
 	btn1.SetImage(&diskImg);
-//	btn1.SetImageOver(diskImg);
+
 	btn1.SetSoundOver(&btnSoundOver);
 	btn1.SetSoundClick(&btnClick);
 	btn1.SetTrigger(&trigA);
 	btn1.SetState(STATE_SELECTED);
 	//btn1.SetEffectGrow(); just commented it out if anybody wants to use it again.
 
-	GuiText btn2Txt(btn2Label, 22, (GXColor){0, 0, 0, 255});
+	GuiText btn2Txt("Back", 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn2Img(&btnOutline);
 	GuiButton btn2(btnOutline.GetWidth(), btnOutline.GetHeight());
 	//check if unlocked
 	if (CFG.godmode == 1)
 	{
-	btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
-	btn2.SetPosition(40, -40);
-	} else
+		btn2.SetAlignment(ALIGN_LEFT, ALIGN_BOTTOM);
+		btn2.SetPosition(40, -40);
+	} 
+	else
 	{
-	btn2.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-	btn2.SetPosition(0, -40);
+		btn2.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
+		btn2.SetPosition(0, -40);
 	}
 
 	btn2.SetLabel(&btn2Txt);
@@ -873,7 +863,7 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	btn2.SetTrigger(&trigA);
 	btn2.SetEffectGrow();
 
-	GuiText btn3Txt(btn3Label, 22, (GXColor){0, 0, 0, 255});
+	GuiText btn3Txt("Settings", 22, (GXColor){0, 0, 0, 255});
 	GuiImage btn3Img(&btnOutline);
 	GuiButton btn3(btnOutline.GetWidth(), btnOutline.GetHeight());
 	btn3.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
@@ -911,10 +901,9 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
 	promptWindow.Append(&nameBtn);
 	promptWindow.Append(&sizeTxt);
 	promptWindow.Append(&btn1);
-    promptWindow.Append(&btn2);
+	promptWindow.Append(&btn2);
 	promptWindow.Append(&btnLeft);
 	promptWindow.Append(&btnRight);
-
 
 	//check if unlocked
 	if (CFG.godmode == 1)
@@ -922,86 +911,145 @@ GameWindowPrompt(const char *size, const char *msg, const char *btn1Label, const
     promptWindow.Append(&btn3);
 	}
 
-	if (direction ==0){
-	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);}
-	if (direction ==1){
-	promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 50);}
-	if (direction ==2){
-	promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 50);}
+	short changed = 3;
+	GuiImageData * diskCover = NULL;
 
-	HaltGui();
-	mainWindow->SetState(STATE_DISABLED);
-	mainWindow->Append(&promptWindow);
-	mainWindow->ChangeFocus(&promptWindow);
-	ResumeGui();
-
-	float speedup = 1; //speedup increases while disc is selected
-
-	while(choice == -1)
+	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
+	
+	while (changed)
 	{
-		VIDEO_WaitVSync();
-		//angle++;
-		angle = int(angle+speedup) % 360;
-		//disc speedup and slowdown
-		if (btn1.GetState() == STATE_SELECTED) {
-				if (speedup < 11) {speedup = (speedup+0.20);}
-				}
-		else 	{
-				if (speedup > 1) {speedup = (speedup-0.05);}
-				}
-		if (speedup < 1){speedup=1;}
-        diskImg.SetAngle(angle);
-//		diskImg.Draw();
+		if (changed == 1){
+			promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_IN, 50);
+		}
+		if (changed == 2){
+			promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_IN, 50);
+		}
+		
+		changed = 0;
+		
+		struct discHdr * header = &gameList[gameSelected];
+		WBFS_GameSize(header->id, &size);
+		
+		snprintf(sizeText, sizeof(sizeText), "%.2fGB", size); //set size text
+		
+		snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
+		snprintf (IDFull,sizeof(IDFull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+		
+		//set name
+		if (strlen(get_title(header)) < (u32)(CFG.maxcharacters + 3)) {
+			sprintf(gameName, "%s", get_title(header));
+		}
+		else {
+			strncpy(gameName, get_title(header), CFG.maxcharacters);
+			gameName[CFG.maxcharacters] = '\0';
+			strncat(gameName, "...", 3);
+		}
 
-        if(shutdown == 1)
+		snprintf(imgPath,sizeof(imgPath),"%s%s.png", CFG.disc_path, ID); //changed to current id
+		
+		if (diskCover)
+			delete diskCover;
+		
+		diskCover = new GuiImageData(imgPath,0);
+
+		if (!diskCover->GetImage())
 		{
-			wiilight(0);
-			Sys_Shutdown();
+			delete diskCover;
+			snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.disc_path, IDFull); //changed to current full id
+			diskCover = new GuiImageData(imgPath, 0);
+			if (!diskCover->GetImage())
+			{
+				delete diskCover;
+				diskCover = new GuiImageData(imgPath,nodisc_png);
+			}
 		}
-		if(btn1.GetState() == STATE_CLICKED) {
-			choice = 1;
-			direction =0;
-			SDCARD_deInit();
+
+		diskImg.SetImage(diskCover);
+		sizeTxt.SetText(sizeText);
+		msgTxt.SetText(gameName);
+
+		HaltGui();
+		mainWindow->SetState(STATE_DISABLED);
+		mainWindow->Append(&promptWindow);
+		mainWindow->ChangeFocus(&promptWindow);
+		ResumeGui();
+
+		float speedup = 1; //speedup increases while disc is selected
+
+		while(choice == -1)
+		{
+			VIDEO_WaitVSync();
+			//angle++;
+			angle = int(angle+speedup) % 360;
+			//disc speedup and slowdown
+			if (btn1.GetState() == STATE_SELECTED) { //if mouse over
+				if (speedup < 11) // speed up
+				{
+					speedup = (speedup+0.20);
+				}
+			}
+			else //if not mouse over
+			{
+				if (speedup > 1) {speedup = (speedup-0.05);} //slow down
+			}
+			if (speedup < 1)
+			{
+				speedup = 1;
+			}
+			diskImg.SetAngle(angle);
+
+			if(shutdown == 1) //for power button
+			{
+				wiilight(0);
+				Sys_Shutdown();
+			}
+			
+			if(btn1.GetState() == STATE_CLICKED) { //boot
+				choice = 1;
+				SDCARD_deInit();
+			}
+			
+			else if(btn2.GetState() == STATE_CLICKED) { //back
+				choice = 0;
+				promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+				mainWindow->SetState(STATE_DEFAULT);
+				wiilight(0);
+			}
+			
+			else if(btn3.GetState() == STATE_CLICKED) { //settings
+				choice = 2;
+				promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+			}
+			
+			else if(nameBtn.GetState() == STATE_CLICKED) { //rename
+				choice = 3;
+				promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+			}
+		
+			else if(btnRight.GetState() == STATE_CLICKED) {
+				promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_OUT, 50);
+				changed = 1;
+				gameSelected = (gameSelected + 1) % gameCnt;
+				btnRight.ResetState();
+				break;
+			}
+			
+			else if(btnLeft.GetState() == STATE_CLICKED) {
+				promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_OUT, 50);
+				changed = 2;
+				gameSelected = (gameSelected - 1 + gameCnt) % gameCnt;
+				btnLeft.ResetState();
+				break;
+			}
 		}
-		else if(btn2.GetState() == STATE_CLICKED) {
-			choice = 0;
-			direction =0;
-			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
-			mainWindow->SetState(STATE_DEFAULT);
-			wiilight(0);
-		}
-        else if(btn3.GetState() == STATE_CLICKED) {
-            choice = 2;
-			direction =0;
-			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
-		}
-		else if(nameBtn.GetState() == STATE_CLICKED) {
-            choice = 3;
-			direction =0;
-			promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
-        }
-		else if(btnRight.GetState() == STATE_CLICKED) {
 
-            choice = 5;
-			promptWindow.SetEffect(EFFECT_SLIDE_RIGHT | EFFECT_SLIDE_OUT, 50);
-        }
-		else if(btnLeft.GetState() == STATE_CLICKED) {
-            choice = 4;
-			promptWindow.SetEffect(EFFECT_SLIDE_LEFT | EFFECT_SLIDE_OUT, 50);
-        }
-
-
-
+		//promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
+		while(promptWindow.GetEffect() > 0) usleep(50);
+		HaltGui();
+		mainWindow->Remove(&promptWindow);
+		//mainWindow->SetState(STATE_DEFAULT);
+		ResumeGui();
 	}
-
-
-	//promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
-	while(promptWindow.GetEffect() > 0) usleep(50);
-	HaltGui();
-	mainWindow->Remove(&promptWindow);
-	//mainWindow->SetState(STATE_DEFAULT);
-	ResumeGui();
-
 	delete diskCover;
 
 	return choice;
@@ -2090,7 +2138,7 @@ static int MenuDiscList()
 
 	f32 freespace, used, size = 0.0;
 	u32 nolist;
-	char text[MAX_CHARACTERS + 4], text2[20];
+	char text[MAX_CHARACTERS + 4]; //text2[20];
 	int choice = 0, selectedold = 100;
 	s32 ret;
 	time_t time1 = 0, time2 = 0; //TT
@@ -2723,26 +2771,16 @@ static int MenuDiscList()
 				wiilight(1);
 				 //__Disc_SetLowMem();
 				//sprintf(text2, "%.2fGB", size);
-				sprintf (ID,"%c%c%c", header->id[0], header->id[1], header->id[2]);
-				sprintf (IDfull,"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-				prompt:// set marker for prompt
-				sprintf(text, "%s", get_title(header));
-				WBFS_GameSize(header->id, &size);
-				sprintf(text2, "%.2fGB", size);
-				choice = GameWindowPrompt(
-				text2,
-				text,
-				"Boot",
-				"Back",
-				"Settings",
-				ID,
-				IDfull);
-
+				choice = GameWindowPrompt();
+				header = &gameList[gameSelected]; //reset header
+				
 				if(choice == 1)
-				{	direction = 0;
+				{	
 					memcpy(id222, header->id, 6);
 					id222[6] = 0;
+					
 					wiilight(0);
+					
 					/* Set USB mode */
 					ret = Disc_SetUSB(header->id);
 					if (ret < 0) {
@@ -2768,7 +2806,7 @@ static int MenuDiscList()
 					}
 				}
 				else if (choice == 2)
-				{	direction = 0;
+				{
 					wiilight(0);
 					if (GameSettings(header) == 1) //if deleted
 					{
@@ -2779,61 +2817,16 @@ static int MenuDiscList()
 				}
 
 				else if (choice == 3) //&& (CFG.godmode == 1))
-				{	wiilight(0);
-					direction = 0;
+				{	
+					wiilight(0);
 					//enter new game title
 					char entered[40];
-					sprintf(entered,"%s",text);
+					snprintf(entered, sizeof(entered), "%s", get_title(header));
+					entered[39] = '\0';
 					OnScreenKeyboard(entered, 40);
-					WBFS_RenameGame(header->id,entered);
+					WBFS_RenameGame(header->id, entered);
 					__Menu_GetEntries();
 					menu = MENU_DISCLIST;
-				}
-
-				else if (choice == 4)
-				{	direction = 2;
-					promptnumber--;
-
-					if ((selectimg+promptnumber)<0){
-					selectimg = gameCnt-1;
-					promptnumber = 0;}
-					header = &gameList[selectimg+promptnumber];
-				snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
-				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
-				sprintf(text, "%s", get_title(header));
-				sprintf(text2, "%.2fGB", size);
-				}
-				else {
-				strncpy(text, get_title(header),  MAX_CHARACTERS);
-				text[MAX_CHARACTERS] = '\0';
-				strncat(text, "...", 3);
-				}
-					goto prompt;
-				}
-
-				else if (choice == 5)
-				{	direction = 1;
-					promptnumber++;
-					if ((u32)(selectimg+promptnumber)>(gameCnt-1)){
-					selectimg = 0;
-					promptnumber = 0;}
-					//if ((selectimg == 0) && (promptnumber == 1)){selectimg = 1;}
-					//header = &gameList[selectimg+promptnumber];
-					if (selectimg == -1 && promptnumber == 1){promptnumber++;}
-					header = &gameList[selectimg+promptnumber];
-				snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
-				snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-				if (strlen(get_title(header)) < (MAX_CHARACTERS + 3)) {
-				sprintf(text, "%s", get_title(header));
-				sprintf(text2, "%.2fGB", size);
-				}
-				else {
-				strncpy(text, get_title(header),  MAX_CHARACTERS);
-				text[MAX_CHARACTERS] = '\0';
-				strncat(text, "...", 3);
-				}
-					goto prompt;
 				}
 
 
