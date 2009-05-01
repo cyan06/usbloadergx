@@ -109,7 +109,7 @@ struct THEME
 	int gameCnt_y;
 	short showRegion;
 	short showBattery;
-	short showToolTip;
+	//short showToolTip;
 	//color
 	short info_r;
 	short info_g;
@@ -143,6 +143,93 @@ void CFG_Load(int argc, char **argv);
 struct Game_CFG* CFG_get_game_opt(u8 *id);
 bool CFG_save_game_opt(u8 *id);
 bool CFG_forget_game_opt(u8 *id);
+
+//Astidof - Begin of modification
+enum {
+	ConsoleLangDefault,
+	jap,
+	eng,
+	ger,
+	fren,
+	esp,
+	it,
+	dut,
+	schin,
+	tchin,
+	kor
+};
+
+enum {
+    systemdefault,
+    discdefault,
+	patch,
+	pal50,
+	pal60,
+	ntsc
+};
+
+enum {
+    off,
+	on,
+};
+
+enum {
+    GameID,
+	GameRegion,
+	Both,
+	Neither,
+};
+
+enum {
+	i249,
+	i222,
+};
+
+enum {
+	HDDInfo,
+	Clock,
+};
+
+enum {
+	RumbleOn,
+	RumbleOff,
+};
+
+enum {
+	TooltipsOn,
+	TooltipsOff,
+};
+
+enum {
+	v10,
+	v20,
+	v30,
+	v40,
+	v50,
+	v60,
+	v70,
+	v80,
+	v90,
+	v100,
+	v0,
+};
+
+struct SSettings {
+    int		video;
+    int		language;
+    int     ocarina;
+    int     vpatch;
+	int		sinfo;
+	int		ios;
+	int		hddinfo;
+	int		rumble;
+	int		volume;
+	int             tooltips;
+};
+
+bool cfg_load_global(void);
+bool cfg_save_global(void);
+//Astidof - End of modification
 
 char *get_title(struct discHdr *header);
 u8 get_block(struct discHdr *header);

@@ -1802,7 +1802,7 @@ err:
  * Opens an on-screen keyboard window, with the data entered being stored
  * into the specified variable.
  ***************************************************************************/
-static void OnScreenKeyboard(char * var, u16 maxlen)
+static int OnScreenKeyboard(char * var, u16 maxlen)
 {
 	int save = -1;
 
@@ -1873,6 +1873,7 @@ static void OnScreenKeyboard(char * var, u16 maxlen)
 	mainWindow->Remove(&keyboard);
 	mainWindow->SetState(STATE_DEFAULT);
 	ResumeGui();
+	return save;
 }
 
 
@@ -2371,7 +2372,7 @@ static int MenuDiscList()
 	//DownloadBtn.SetImage(&DownloadBtnImg);
 	//DownloadBtn.SetImageOver(&DownloadBtnImgOver);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
-	if (THEME.showToolTip)
+	if (Settings.tooltips == TooltipsOn)
 		DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,205,-30);
 	DownloadBtn.SetTrigger(&trigA);
 	//DownloadBtn.SetEffectGrow();
@@ -2534,7 +2535,7 @@ static int MenuDiscList()
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2 && THEME.showToolTip)
+            if (difftime(time1,time2) == 2 && (Settings.tooltips == TooltipsOn))
             w.Append(&ttpoweroffBtn);
 
 			if(poweroffBtn.GetState() == STATE_SELECTED) {
@@ -2560,7 +2561,7 @@ static int MenuDiscList()
 			}
 
         }
-		else if((homeBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
+		else if((homeBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn)) //TT
 		{
 
 		    if (time2 == 0)
@@ -2588,7 +2589,7 @@ static int MenuDiscList()
 					gameBrowser.SetFocus(1);
 				}
 		}
-		else if((installBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
+		else if((installBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn)) //TT
 		{
 
 		    if (time2 == 0)
@@ -2660,7 +2661,7 @@ static int MenuDiscList()
 
 		}
 
-		else if((settingsBtn.GetState() == STATE_SELECTED) && (THEME.showToolTip)) //TT
+		else if((settingsBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn)) //TT
 		{
 
 		    if (time2 == 0)
@@ -3171,7 +3172,7 @@ static int MenuSettings()
 	int ret;
 //	char imgPath[100];
 
-	customOptionList options2(8);
+	customOptionList options2(9);
 	sprintf(options2.name[0], "Video Mode");
 	sprintf(options2.name[1], "VIDTV Patch");
 	sprintf(options2.name[2], "Language");
@@ -3180,6 +3181,7 @@ static int MenuSettings()
 	sprintf(options2.name[5], "Clock"); //CLOCK
 	sprintf(options2.name[6], "Rumble"); //RUMBLE
 	sprintf(options2.name[7], "Volume");
+    sprintf(options2.name[8], "Tooltips");
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM, vol);
@@ -3219,7 +3221,10 @@ static int MenuSettings()
 	backBtn.SetTrigger(&trigB);
 	backBtn.SetEffectGrow();
 
-	GuiText lockBtnTxt("Lock", 22, (GXColor){0, 0, 0, 255});
+        const char * text = "Unlock";
+        if (CFG.godmode == 1)
+                text = "Lock";
+	GuiText lockBtnTxt(text, 22, (GXColor){0, 0, 0, 255});
 	lockBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage lockBtnImg(&btnOutline);
 	GuiButton lockBtn(btnOutline.GetWidth(), btnOutline.GetHeight());
@@ -3286,6 +3291,8 @@ static int MenuSettings()
 			Settings.rumble = 0; //RUMBLE
 		if(Settings.volume > 10)
 			Settings.volume = 0;
+                if(Settings.tooltips > 1)
+			Settings.tooltips = 0;
 
 		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
 		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
@@ -3335,6 +3342,9 @@ static int MenuSettings()
 		else if (Settings.volume == v100) sprintf (options2.value[7],"100");
 		else if (Settings.volume == v0) sprintf (options2.value[7],"Off");
 
+        if (Settings.tooltips == TooltipsOn) sprintf (options2.value[8],"On");
+		else if (Settings.tooltips == TooltipsOff) sprintf (options2.value[8],"Off");
+
 		ret = optionBrowser2.GetClickedOption();
 
 		switch (ret)
@@ -3364,35 +3374,56 @@ static int MenuSettings()
 			case 7:
 				Settings.volume++;
 				break;
-		}
+			case 8:
+				Settings.tooltips++;
+				break;		}
 
 		if(shutdown == 1)
 			Sys_Shutdown();
 
 		if(backBtn.GetState() == STATE_CLICKED)
 		{
+			//Add the procedure call to save the global configuration
+			cfg_save_global();
 			menu = MENU_DISCLIST;
 			break;
 		}
 
 		if(lockBtn.GetState() == STATE_CLICKED)
 		{
-			//password check to un/lock Install,Delete and Format
-			char entered[8] = "";
-			OnScreenKeyboard(entered, 8);
-			if (!strcmp(entered, CFG.unlockCode))
-			{
-			if (CFG.godmode == 0)
-				{
-				WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
-				CFG.godmode = 1;
-				}
-				else
-				{
-				WindowPrompt("Correct Password","Install, Rename, and Delete are locked.","OK",0);
-				CFG.godmode = 0;
-				}
+		        if ( CFG.godmode == 0 )
+		        {
+			        //password check to unlock Install,Delete and Format
+			        char entered[8] = "";
+			        int result = OnScreenKeyboard(entered, 8);
+			        if ( result == 1 )
+			        {
+			                if (!strcmp(entered, CFG.unlockCode))
+			                {
+			                        if (CFG.godmode == 0)
+				                {
+				                        WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
+				                        CFG.godmode = 1;
+				                        lockBtnTxt.SetText("Lock");
+				                }
+			                }
+			                else
+			                {
+			                                WindowPrompt("Wrong Password","USB Loader is protected.","OK",0);
+	                                }
+	                        }
 			}
+			else
+	                {
+                                int choice = WindowPrompt ("Lock Console","Are you sure?","Yes","No");
+			        if(choice == 1)
+			        {
+                                        WindowPrompt("Console Locked","USB Loader is now protected.","OK",0);
+                                        CFG.godmode = 0;
+                                        lockBtnTxt.SetText("Unlock");
+                                }
+                        }
+                        lockBtn.ResetState();
 		}
 	}
 
@@ -3962,12 +3993,13 @@ int MainMenu(int menu)
 	ResumeGui();
 
     bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, SOUND_OGG, vol);
-	//bgMusic->SetVolume(vol);
+    bgMusic->SetVolume(vol);
 	bgMusic->SetLoop(1); //loop music
 	bgMusic->Play(); // startup music
 
 	while(currentMenu != MENU_EXIT)
 	{
+	    bgMusic->SetVolume(vol);
 		switch (currentMenu)
 		{
 			case MENU_CHECK:

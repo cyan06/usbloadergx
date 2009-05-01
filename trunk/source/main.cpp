@@ -42,8 +42,6 @@
 #define CONSOLE_HEIGHT		218
 
 FreeTypeGX *fontSystem;
-struct SSettings Settings;
-//struct SSettings2 Settings2;
 int ExitRequested = 0;
 bool netcheck = false;
 
@@ -90,15 +88,16 @@ DefaultSettings()
 		Settings.sinfo = ((Settings.sinfo == GameID) ? Both : GameRegion);
 	}
 	Settings.volume = v80;
+	Settings.tooltips = TooltipsOn;
 }
 
 
 int
 main(int argc, char *argv[])
 {
-    __Disc_SetLowMem();
-    s32 ret2;
-    /* Load Custom IOS */
+        __Disc_SetLowMem();
+        s32 ret2;
+        /* Load Custom IOS */
 	ret2 = IOS_ReloadIOS(249);
 	if (ret2 < 0) {
 		printf("ERROR: cIOS could not be loaded!");
@@ -113,6 +112,8 @@ main(int argc, char *argv[])
 	__io_wiisd.startup();
 	fatMountSimple("SD", &__io_wiisd);
 
+	DefaultSettings();
+	
 	//load config file
 	CFG_Load(argc, argv);
 
@@ -125,7 +126,7 @@ main(int argc, char *argv[])
 	}
 	else netcheck = true;*/
 
-    PAD_Init();
+        PAD_Init();
 	InitVideo(); // Initialise video
 	InitAudio(); // Initialize audio
 
@@ -139,7 +140,6 @@ main(int argc, char *argv[])
 	fontSystem->setCompatibilityMode(FTGX_COMPATIBILITY_DEFAULT_TEVOP_GX_PASSCLR | FTGX_COMPATIBILITY_DEFAULT_VTXDESC_GX_NONE);
 
 	InitGUIThreads();
-	DefaultSettings();
 	MainMenu(MENU_CHECK);
 	return 0;
 }

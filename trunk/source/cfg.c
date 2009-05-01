@@ -7,6 +7,10 @@
 #include <ogcsys.h>
 #include "cfg.h"
 
+struct SSettings Settings;
+//struct SSettings2 Settings2;
+
+
 char *cfg_path = "SD:/apps/usbloader/";
 //char *setting_path = "SD:/apps/usbloader/settings.cfg";
 char current_path[100];
@@ -155,10 +159,10 @@ void cfg_int(char *name, short *var, int count)
 {
 	char tmp[5];
 	short i;
-	
+
 	if (count > 10) //avoid overflow
 		return;
-		
+
 	for (i = 0; i < count; i++)
 	{
 		sprintf(tmp, "%d", i);
@@ -173,7 +177,7 @@ void cfg_int(char *name, short *var, int count)
 void CFG_Default()
 {
 	CFG.widescreen = CONF_GetAspectRatio();
-	
+
 	if (CFG.widescreen) {
 		snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
 	}
@@ -197,7 +201,7 @@ void CFG_Default()
 	snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
 	snprintf(CFG.disc_path, sizeof(CFG.disc_path), "SD:/images/disc/");
 	snprintf(CFG.unlockCode, sizeof(CFG.unlockCode), "ab121b");
-	
+
 	//all alignments are left top here
 	THEME.selection_x = 200;
 	THEME.selection_y = 40;
@@ -228,7 +232,6 @@ void CFG_Default()
 	THEME.gameCnt_x = 0;
 	THEME.gameCnt_y = 350;
 	THEME.gameCntAlign = CFG_ALIGN_CENTRE;
-	THEME.showToolTip = 1;
 	THEME.battery1_x = 245;
 	THEME.battery1_y = 400;
 	THEME.battery2_x = 335;
@@ -344,7 +347,7 @@ void widescreen_set(char *name, char *val)
 {
 	cfg_name = name;
 	cfg_val = val;
-	
+
 	if (cfg_bool("widescreen", &CFG.widescreen)) //reset default
 	{
 		if (CFG.widescreen) {
@@ -380,14 +383,14 @@ void cfg_set(char *name, char *val)
 
 	if (cfg_map_auto("video", map_video, &CFG.video))
 		return;
-	
+
 	if (cfg_map_auto("language", map_language, &CFG.language))
 		return;
 
 	if (cfg_map_auto("layout", map_layout, &CFG.layout)) {
 		cfg_layout();
 	}
-	
+
 	cfg_bool("ocarina", &CFG.ocarina);
 	cfg_bool("covers", &CFG.covers);
 	cfg_bool("download",  &CFG.download);
@@ -407,20 +410,20 @@ void cfg_set(char *name, char *val)
 		strcopy(CFG.theme_path, val, sizeof(CFG.theme_path));
 		return;
 	}
-	
+
 	if (strcmp(name, "cover_path") == 0) {
 		strcopy(CFG.covers_path, val, sizeof(CFG.covers_path));
 		return;
 	}
-	
+
 	if (strcmp(name, "disc_path") == 0) {
 		strcopy(CFG.disc_path, val, sizeof(CFG.disc_path));
 		return;
 	}
-	
+
 	cfg_int("parentalcontrol", &CFG.parentalcontrol, 4);
 	cfg_bool("godmode", &CFG.godmode);
-	
+
 	if (strcmp(name, "unlock_code") == 0) {
 		strcopy(CFG.unlockCode, val, sizeof(CFG.unlockCode));
 		return;
@@ -449,7 +452,7 @@ void theme_set(char *name, char *val)
 			THEME.cover_y = y;
 		}
 	}
-	
+
 	else if (strcmp(cfg_name, "id_coords") == 0) {
 		int x,y;
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
@@ -465,7 +468,7 @@ void theme_set(char *name, char *val)
 			THEME.hddInfo_y = y;
 		}
 	}
-	
+
 	else if (strcmp(cfg_name, "gamecount_coords") == 0) {
 		int x,y;
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
@@ -481,7 +484,7 @@ void theme_set(char *name, char *val)
 			THEME.region_y = y;
 		}
 	}
-	
+
 	else if (strcmp(cfg_name, "power_coords") == 0) {
 		int x,y;
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
@@ -489,7 +492,7 @@ void theme_set(char *name, char *val)
 			THEME.power_y = y;
 		}
 	}
-	
+
 	else if (strcmp(cfg_name, "home_coords") == 0) {
 		int x,y;
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
@@ -497,7 +500,7 @@ void theme_set(char *name, char *val)
 			THEME.home_y = y;
 		}
 	}
-	
+
 	else if (strcmp(cfg_name, "setting_coords") == 0) {
 		int x,y;
 		if (sscanf(val, "%d,%d", &x, &y) == 2) {
@@ -547,13 +550,13 @@ void theme_set(char *name, char *val)
 	}
 
 	else if (strcmp(cfg_name, "clock_coords") == 0) {
-		int x,y;
+		short x,y;
 		if (sscanf(val, "%hd,%hd", &x, &y) == 2) {
 			THEME.clock_x = x - (x % 4);
 			THEME.clock_y = y;
 		}
 	}
-	
+
 	else if (strcmp(cfg_name, "info_color") == 0) {
 		short x,y,z;
 		if (sscanf(val, "%hd,%hd, %hd", &x, &y, &z) == 3) {
@@ -562,17 +565,16 @@ void theme_set(char *name, char *val)
 			THEME.info_b = z;
 		}
 	}
-	
+
 	cfg_bool("show_id", &THEME.showID);
 	cfg_bool("show_hddinfo", &THEME.showHDD);
 	cfg_bool("show_gamecount", &THEME.showGameCnt);
 	cfg_bool("show_region", &THEME.showRegion);
 	cfg_bool("show_battery", &THEME.showBattery);
-	cfg_bool("show_tooltip", &THEME.showToolTip);
 	cfg_map_auto("hddinfo_align", map_alignment, &THEME.hddInfoAlign);
 	cfg_map_auto("gamecount_align", map_alignment, &THEME.gameCntAlign);
 	cfg_map_auto("clock_align", map_alignment, &THEME.clockAlign);
-	
+
 	/*
 	else if (strcmp(cfg_name, "entry_lines") == 0) {
 		int x;
@@ -580,7 +582,7 @@ void theme_set(char *name, char *val)
 			ENTRIES_PER_PAGE = x;
 		}
 	}
-	
+
 	else if (strcmp(cfg_name, "max_characters") == 0) {
 		int x;
 		if (sscanf(val, "%d", &x) == 1) {
@@ -589,8 +591,78 @@ void theme_set(char *name, char *val)
 	}*/
 }
 
+void global_cfg_set(char *name, char *val)
+{
+	cfg_name = name;
+	cfg_val = val;
 
-// split line to part1 delimiter part2 
+	if (strcmp(name, "video") == 0) {
+	        int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.video = i;
+		}
+		return;
+	}
+	else if (strcmp(name, "vpatch") == 0) {
+		int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.vpatch =i;
+		}
+		return;
+	}
+
+	else if (strcmp(name, "language") == 0) {
+		int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.language = i;
+		}
+		return;
+	}
+	else if (strcmp(name, "ocarina") == 0) {
+		int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.ocarina = i;
+		}
+		return;
+	}
+	else if (strcmp(name, "hddinfo") == 0) {
+		int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.hddinfo = i;
+		}
+		return;
+	}
+	else if (strcmp(name, "sinfo") == 0) {
+		int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.sinfo = i;
+		}
+		return;
+	}
+	else if (strcmp(name, "rumble") == 0) {
+		int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.rumble = i;
+		}
+		return;
+	}
+	else if (strcmp(name, "volume") == 0) {
+		int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.volume = i;
+		}
+		return;
+	}
+	else if (strcmp(name, "tooltips") == 0) {
+		int i;
+		if (sscanf(val, "%d", &i) == 1) {
+			Settings.tooltips = i;
+		}
+		return;
+	}
+}
+
+// split line to part1 delimiter part2
 bool trimsplit(char *line, char *part1, char *part2, char delim, int size)
 {
 	char *eq = strchr(line, delim);
@@ -623,12 +695,12 @@ void cfg_parsetitleline(char *line, void (*set_func)(char*, char*, u8))
 	if (!eq) return;
 	*eq = 0;
 	trimcopy(name, tmp, sizeof(name));
-	
+
 	char *blockpos = strrchr(eq+1, '=');
-	
+
 	if (!blockpos)
 		trimcopy(val, eq+1, sizeof(val));
-		
+
 	else
 	{
 		*blockpos = 0;
@@ -640,7 +712,7 @@ void cfg_parsetitleline(char *line, void (*set_func)(char*, char*, u8))
 	}
 	set_func(name, val, block);
 }
-	
+
 bool cfg_parsefile(char *fname, void (*set_func)(char*, char*))
 {
 	FILE *f;
@@ -735,7 +807,7 @@ void game_set(char *name, char *val)
 	u8 id[8];
 	struct Game_CFG *game;
 	if (strncmp(name, "game:", 5) != 0) return;
-	trimcopy((char*)id, name+5, sizeof(id)); 
+	trimcopy((char*)id, name+5, sizeof(id));
 	game = cfg_get_game(id);
 	// set id and current options as default
 	cfg_set_game_opt(game, id);
@@ -820,6 +892,53 @@ bool cfg_save_games()
 	return true;
 }
 
+bool cfg_load_global()
+{
+	//Default values defined by dev team
+	Settings.video = discdefault;
+	Settings.vpatch = off;
+	Settings.language = ConsoleLangDefault;
+	Settings.ocarina = off;
+	Settings.hddinfo = HDDInfo;
+	Settings.sinfo = ((THEME.showID) ? GameID : Neither);
+	Settings.rumble = RumbleOn;
+	if (THEME.showRegion)
+	{
+		Settings.sinfo = ((Settings.sinfo == GameID) ? Both : GameRegion);
+	}
+	Settings.volume = v80;
+
+	return cfg_parsefile("SD:/config/global_settings.cfg", &global_cfg_set);
+}
+
+bool cfg_save_global()
+{
+    struct stat st;
+    if(stat("SD:/config/", &st) != 0) {
+        mkdir("SD:/config", 0777);
+    }
+    FILE *f;
+	f = fopen("SD:/config/global_settings.cfg", "wb");
+	if (!f) {
+		printf("Error saving %s\n", "global_settings.cfg");
+		sleep(1);
+		return false;
+	}
+	fprintf(f, "# USB Loader global settings file\n");
+	fprintf(f, "# Note: This file is automatically generated\n");
+	fprintf(f, "video = %d\n ", Settings.video);
+	fprintf(f, "vpatch = %d\n ", Settings.vpatch);
+	fprintf(f, "language = %d\n ", Settings.language);
+	fprintf(f, "ocarina = %d\n ", Settings.ocarina);
+	fprintf(f, "hddinfo = %d\n ", Settings.hddinfo);
+	fprintf(f, "sinfo = %d\n ", Settings.sinfo);
+	fprintf(f, "rumble = %d\n ", Settings.rumble);
+	fprintf(f, "volume = %d\n ", Settings.volume);
+	fprintf(f, "tooltips = %d\n ", Settings.tooltips);
+	fclose(f);
+	return true;
+}
+
 struct Game_CFG* CFG_get_game_opt(u8 *id)
 {
 	int i;
@@ -860,31 +979,33 @@ void CFG_Load(int argc, char **argv)
 
 	//set app path
 //	chdir_app(argv[0]);
-	
+
 	CFG_Default();
-	
+
+	cfg_parsefile("SD:/config/global_settings.cfg", &global_cfg_set);
+
 	snprintf(pathname, sizeof(pathname), "SD:/config/config.txt");
-	
+
 	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
 	cfg_parsefile(pathname, &cfg_set); //then set config and layout options
-	
+
 	snprintf(pathname, sizeof(pathname), "%stheme.txt", CFG.theme_path);
-	cfg_parsefile(pathname, &theme_set); //finally set console information 
-	
+	cfg_parsefile(pathname, &theme_set); //finally set console information
+
 //	if (!ret)
 //	{
 //		cfg_parsefile("SD:/config.txt", &widescreen_set);
 //		cfg_parsefile("SD:/config.txt", &cfg_set);
 //		cfg_parsefile("SD:/config.txt", &console_set);
 //	}
-	
+
 	snprintf(pathname, sizeof(pathname), "SD:/config/titles.txt");
 	cfg_parsetitlefile(pathname, &title_set);
-	
+
 	// load per-game settings
 	cfg_load_games();
-		
-	
+
+
 //	cfg_parsearg(argc, argv);
 }
 
