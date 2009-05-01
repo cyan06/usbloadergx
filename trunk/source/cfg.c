@@ -222,6 +222,7 @@ void CFG_Default()
 	THEME.setting_y = 367;
 	THEME.showHDD = -1; //default, non-force mode
 	THEME.showGameCnt = -1; //default, non-force mode
+	THEME.showToolTip = 1; //1 means use settings, 0 means force turn off
 	THEME.install_x = 16;//-280
 	THEME.install_y = 355;
 	THEME.showBattery = 1;
@@ -567,6 +568,7 @@ void theme_set(char *name, char *val)
 	}
 
 	cfg_bool("show_id", &THEME.showID);
+	cfg_bool("show_tooltip", &THEME.showToolTip);
 	cfg_bool("show_hddinfo", &THEME.showHDD);
 	cfg_bool("show_gamecount", &THEME.showGameCnt);
 	cfg_bool("show_region", &THEME.showRegion);
@@ -982,8 +984,6 @@ void CFG_Load(int argc, char **argv)
 
 	CFG_Default();
 
-	cfg_parsefile("SD:/config/global_settings.cfg", &global_cfg_set);
-
 	snprintf(pathname, sizeof(pathname), "SD:/config/config.txt");
 
 	cfg_parsefile(pathname, &widescreen_set); //first set widescreen
@@ -1007,6 +1007,11 @@ void CFG_Load(int argc, char **argv)
 
 
 //	cfg_parsearg(argc, argv);
+}
+
+void CFG_LoadGlobal(void)
+{
+	cfg_parsefile("SD:/config/global_settings.cfg", &global_cfg_set);
 }
 
 void CFG_Cleanup(void)

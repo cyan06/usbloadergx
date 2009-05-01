@@ -109,7 +109,7 @@ struct THEME
 	int gameCnt_y;
 	short showRegion;
 	short showBattery;
-	//short showToolTip;
+	short showToolTip;
 	//color
 	short info_r;
 	short info_g;
@@ -191,13 +191,13 @@ enum {
 };
 
 enum {
-	RumbleOn,
 	RumbleOff,
+	RumbleOn,
 };
 
 enum {
-	TooltipsOn,
 	TooltipsOff,
+	TooltipsOn,
 };
 
 enum {
@@ -227,7 +227,7 @@ struct SSettings {
 	int             tooltips;
 };
 
-bool cfg_load_global(void);
+void CFG_LoadGlobal(void);
 bool cfg_save_global(void);
 //Astidof - End of modification
 

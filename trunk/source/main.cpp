@@ -89,6 +89,8 @@ DefaultSettings()
 	}
 	Settings.volume = v80;
 	Settings.tooltips = TooltipsOn;
+	
+	CFG_LoadGlobal();
 }
 
 
@@ -111,11 +113,11 @@ main(int argc, char *argv[])
 
 	__io_wiisd.startup();
 	fatMountSimple("SD", &__io_wiisd);
-
-	DefaultSettings();
 	
 	//load config file
 	CFG_Load(argc, argv);
+	
+	DefaultSettings();
 
 	//Init Network
 /*	char myIP[16];

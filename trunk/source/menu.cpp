@@ -2372,7 +2372,7 @@ static int MenuDiscList()
 	//DownloadBtn.SetImage(&DownloadBtnImg);
 	//DownloadBtn.SetImageOver(&DownloadBtnImgOver);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
-	if (Settings.tooltips == TooltipsOn)
+	if (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)
 		DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,205,-30);
 	DownloadBtn.SetTrigger(&trigA);
 	//DownloadBtn.SetEffectGrow();
@@ -2535,7 +2535,7 @@ static int MenuDiscList()
 
 		    time(&time1);
 
-            if (difftime(time1,time2) == 2 && (Settings.tooltips == TooltipsOn))
+            if (difftime(time1,time2) == 2 && (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0))
             w.Append(&ttpoweroffBtn);
 
 			if(poweroffBtn.GetState() == STATE_SELECTED) {
@@ -2561,7 +2561,7 @@ static int MenuDiscList()
 			}
 
         }
-		else if((homeBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn)) //TT
+		else if((homeBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)) //TT
 		{
 
 		    if (time2 == 0)
@@ -2589,7 +2589,7 @@ static int MenuDiscList()
 					gameBrowser.SetFocus(1);
 				}
 		}
-		else if((installBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn)) //TT
+		else if((installBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)) //TT
 		{
 
 		    if (time2 == 0)
@@ -2661,7 +2661,7 @@ static int MenuDiscList()
 
 		}
 
-		else if((settingsBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn)) //TT
+		else if((settingsBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)) //TT
 		{
 
 		    if (time2 == 0)
