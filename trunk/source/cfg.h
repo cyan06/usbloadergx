@@ -114,6 +114,9 @@ struct THEME
 	short info_r;
 	short info_g;
 	short info_b;
+	short clock_x;
+	short clock_y;
+	short clockAlign;
 };
 
 extern struct CFG CFG;

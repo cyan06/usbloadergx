@@ -2336,17 +2336,18 @@ static int MenuDiscList()
 	gameBrowser.SetAlignment(ALIGN_LEFT, ALIGN_CENTRE);
 
     GuiText clockTime(theTime, 30, (GXColor){138, 138, 138, 255});
-    clockTime.SetAlignment(ALIGN_CENTRE, ALIGN_BOTTOM);
-    clockTime.SetPosition(0,-120);
+    clockTime.SetAlignment(THEME.clockAlign, ALIGN_BOTTOM);
+    clockTime.SetPosition(THEME.clock_x, THEME.clock_y);
 
     HaltGui();
 	GuiWindow w(screenwidth, screenheight);
 
-	if(Settings.hddinfo == HDDInfo)//CLOCK
+	if((Settings.hddinfo == HDDInfo && THEME.showHDD == -1) || THEME.showHDD == 1) //force show hdd info
 	{
-	if (THEME.showHDD)
 		w.Append(&usedSpaceTxt);
-	if (THEME.showGameCnt)
+	}
+	if((Settings.hddinfo == HDDInfo && THEME.showGameCnt == -1) || THEME.showGameCnt == 1) //force show game cnt info
+	{
 		w.Append(&gamecntTxt);
 	}
 
@@ -2361,7 +2362,7 @@ static int MenuDiscList()
 
     if(Settings.hddinfo == Clock)
     {
-			w.Append(&clockTime);
+		w.Append(&clockTime);
     }
 
 	if (THEME.showBattery)

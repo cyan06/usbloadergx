@@ -216,8 +216,8 @@ void CFG_Default()
 	THEME.home_y = 367;
 	THEME.setting_x = 60;//-210
 	THEME.setting_y = 367;
-	THEME.showHDD = 1;
-	THEME.showGameCnt = 1;
+	THEME.showHDD = -1; //default, non-force mode
+	THEME.showGameCnt = -1; //default, non-force mode
 	THEME.install_x = 16;//-280
 	THEME.install_y = 355;
 	THEME.showBattery = 1;
@@ -240,6 +240,9 @@ void CFG_Default()
 	THEME.info_r = 63;
 	THEME.info_g = 154;
 	THEME.info_b = 192;
+	THEME.clock_x = 0;
+	THEME.clock_y = -120;
+	THEME.clockAlign = CFG_ALIGN_CENTRE;
 }
 
 
@@ -542,6 +545,14 @@ void theme_set(char *name, char *val)
 			THEME.battery4_y = y;
 		}
 	}
+
+	else if (strcmp(cfg_name, "clock_coords") == 0) {
+		int x,y;
+		if (sscanf(val, "%hd,%hd", &x, &y) == 2) {
+			THEME.clock_x = x - (x % 4);
+			THEME.clock_y = y;
+		}
+	}
 	
 	else if (strcmp(cfg_name, "info_color") == 0) {
 		short x,y,z;
@@ -560,6 +571,7 @@ void theme_set(char *name, char *val)
 	cfg_bool("show_tooltip", &THEME.showToolTip);
 	cfg_map_auto("hddinfo_align", map_alignment, &THEME.hddInfoAlign);
 	cfg_map_auto("gamecount_align", map_alignment, &THEME.gameCntAlign);
+	cfg_map_auto("clock_align", map_alignment, &THEME.clockAlign);
 	
 	/*
 	else if (strcmp(cfg_name, "entry_lines") == 0) {
