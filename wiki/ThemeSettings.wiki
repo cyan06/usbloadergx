@@ -22,6 +22,10 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * *wbackground.png* is the loader's widescreen background (for 16:9)
 
   * *bg_options.png* is the background of selection game list
+  
+  * *settings_background.png" is the background of setting screens
+  
+  * *bg_options_settings" is the background of setting list
 
   * *button_install.png* is the install button
 

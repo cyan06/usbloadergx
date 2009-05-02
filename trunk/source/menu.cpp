@@ -1575,7 +1575,7 @@ ProgressDownloadWindow(int choice2)
     prTxt.SetText(prozent);
     progressbarImg.SetTile(100*i/cntMissFiles);
 
-    sprintf(msg, "%i files left", cntMissFiles - i);
+    sprintf(msg, "%i file(s) left", cntMissFiles - i);
     msgTxt.SetText(msg);
 
     //download boxart image
@@ -2733,6 +2733,11 @@ static int MenuDiscList()
 					break;
 
 					case 'P':
+					case 'D':
+					case 'F':
+					case 'X':
+					case 'S':
+					case 'Y':
 					sprintf(gameregion,"  PAL ");
 					break;
 				}
@@ -3187,8 +3192,11 @@ static int MenuSettings()
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM, vol);
 	//btnClick.SetVolume(vol);
 	//btnSoundOver.SetVolume(vol);
+	char imgPath[100];
+	
 	GuiImageData btnOutline(settings_menu_button_png);
-	GuiImageData settingsbg(settings_background_png);
+	snprintf(imgPath, sizeof(imgPath), "%ssettings_background.png", CFG.theme_path);
+	GuiImageData settingsbg(imgPath, settings_background_png);
 
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -3252,7 +3260,7 @@ static int MenuSettings()
 	btnLogo->SetTrigger(&trigA);
 	btnLogo->SetUpdateCallback(WindowCredits);
 
-	GuiCustomOptionBrowser optionBrowser2(396, 280, &options2, 0, bg_options_settings_png, 0);
+	GuiCustomOptionBrowser optionBrowser2(396, 280, &options2, CFG.theme_path, "bg_options_settings", bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(0, 90);
 	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	optionBrowser2.SetCol2Position(150);
@@ -3467,8 +3475,11 @@ int GameSettings(struct discHdr * header)
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
 	//btnSoundOver.SetVolume(vol);
+	char imgPath[100];
+	
 	GuiImageData btnOutline(settings_menu_button_png);
-	GuiImageData settingsbg(settings_background_png);
+	snprintf(imgPath, sizeof(imgPath), "%ssettings_background.png", CFG.theme_path);
+	GuiImageData settingsbg(imgPath, settings_background_png);
 
     GuiTrigger trigA;
 	trigA.SetSimpleTrigger(-1, WPAD_BUTTON_A | WPAD_CLASSIC_BUTTON_A, PAD_BUTTON_A);
@@ -3527,7 +3538,7 @@ int GameSettings(struct discHdr * header)
 	deleteBtn.SetTrigger(&trigA);
 	deleteBtn.SetEffectGrow();
 
-	GuiCustomOptionBrowser optionBrowser3(396, 280, &options3, 0, bg_options_settings_png, 0);
+	GuiCustomOptionBrowser optionBrowser3(396, 280, &options3, CFG.theme_path, "bg_options_settings", bg_options_settings_png, 0);
 	optionBrowser3.SetPosition(0, 90);
 	optionBrowser3.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	optionBrowser3.SetCol2Position(150);

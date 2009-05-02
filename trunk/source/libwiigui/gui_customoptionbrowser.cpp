@@ -21,7 +21,7 @@ extern const int vol;
 /**
  * Constructor for the GuiCustomOptionBrowser class.
  */
-GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * l, const char *themePath, const u8 *imagebg, int scrollon)
+GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * l, const char *themePath, const char *custombg, const u8 *imagebg, int scrollon)
 {
 	width = w;
 	height = h;
@@ -40,7 +40,7 @@ GuiCustomOptionBrowser::GuiCustomOptionBrowser(int w, int h, customOptionList * 
 	trigHeldA->SetHeldTrigger(-1, WPAD_BUTTON_A, PAD_BUTTON_A);
 	btnSoundClick = new GuiSound(button_click_pcm, button_click_pcm_size, SOUND_PCM, vol);
 
-	snprintf(imgPath, sizeof(imgPath), "%sbg_options.png", themePath);
+	snprintf(imgPath, sizeof(imgPath), "%s%s", themePath, custombg);
 	bgOptions = new GuiImageData(imgPath, imagebg);
 
 	bgOptionsImg = new GuiImage(bgOptions);
