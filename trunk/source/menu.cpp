@@ -3399,39 +3399,43 @@ static int MenuSettings()
 
 		if(lockBtn.GetState() == STATE_CLICKED)
 		{
-		        if ( CFG.godmode == 0 )
-		        {
-			        //password check to unlock Install,Delete and Format
-			        char entered[8] = "";
-			        int result = OnScreenKeyboard(entered, 8);
-			        if ( result == 1 )
-			        {
-			                if (!strcmp(entered, CFG.unlockCode))
-			                {
-			                        if (CFG.godmode == 0)
-				                {
-				                        WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
-				                        CFG.godmode = 1;
-				                        lockBtnTxt.SetText("Lock");
-				                }
-			                }
-			                else
-			                {
-			                                WindowPrompt("Wrong Password","USB Loader is protected.","OK",0);
-	                                }
-	                        }
+			if ( CFG.godmode == 0 )
+			{
+				//password check to unlock Install,Delete and Format
+				char entered[8] = "";
+				int result = OnScreenKeyboard(entered, 8);
+				if ( result == 1 )
+				{
+					if (!strcmp(entered, CFG.unlockCode)) //if password correct
+					{
+						if (CFG.godmode == 0)
+						{
+							WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
+							CFG.godmode = 1;
+							lockBtnTxt.SetText("Lock");
+							if (CFG.parentalcontrol) //if parental control is turned on, then get entry again
+								__Menu_GetEntries();
+						}
+					}
+					else
+					{
+						WindowPrompt("Wrong Password","USB Loader is protected.","OK",0);
+					}
+				}
 			}
 			else
-	                {
-                                int choice = WindowPrompt ("Lock Console","Are you sure?","Yes","No");
-			        if(choice == 1)
-			        {
-                                        WindowPrompt("Console Locked","USB Loader is now protected.","OK",0);
-                                        CFG.godmode = 0;
-                                        lockBtnTxt.SetText("Unlock");
-                                }
-                        }
-                        lockBtn.ResetState();
+			{
+				int choice = WindowPrompt ("Lock Console","Are you sure?","Yes","No");
+				if(choice == 1)
+				{
+					WindowPrompt("Console Locked","USB Loader is now protected.","OK",0);
+					CFG.godmode = 0;
+					lockBtnTxt.SetText("Unlock");
+					if (CFG.parentalcontrol) //if parental control is on, then get entry again
+						__Menu_GetEntries();
+				}
+			}
+			lockBtn.ResetState();
 		}
 	}
 
