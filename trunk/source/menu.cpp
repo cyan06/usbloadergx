@@ -139,7 +139,7 @@ char temp[11];
 while ((file = readdir(dir)))
 {
 	snprintf(temp,sizeof(temp),"%s",file->d_name);
-    if (!strncmp(temp,filename,11))
+    if (!strncmpi(temp,filename,11))
 		{
 		//WindowPrompt(path, filename,"go" ,0);
 		closedir(dir);

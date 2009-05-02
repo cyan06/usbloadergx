@@ -97,16 +97,16 @@ DefaultSettings()
 int
 main(int argc, char *argv[])
 {
-        __Disc_SetLowMem();
-        s32 ret2;
-        /* Load Custom IOS */
+//  __Disc_SetLowMem();
+	s32 ret2;
+	/* Load Custom IOS */
 	ret2 = IOS_ReloadIOS(249);
 	if (ret2 < 0) {
 		printf("ERROR: cIOS could not be loaded!");
 		SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
 	}
 
-	//Sys_Init();
+	Sys_Init();
 	//Video_SetMode();
 	//Con_Init(CONSOLE_XCOORD, CONSOLE_YCOORD, CONSOLE_WIDTH, CONSOLE_HEIGHT);
 	//Wpad_Init();
