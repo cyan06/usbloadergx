@@ -319,7 +319,7 @@ static void WindowCredits(void * ptr)
 			#ifdef HW_RVL
 			if(userInput[i].wpad.ir.valid)
 				Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
-					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
+					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, CFG.widescreen? 0.8 : 1, 1, 255);
 			if(Settings.rumble == RumbleOn){
 				DoRumble(i);
 				}
@@ -1661,7 +1661,7 @@ UpdateGUI (void *arg)
 			{
 				if(userInput[i].wpad.ir.valid)
 					Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
-						96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, 1, 1, 255);
+						96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, CFG.widescreen? 0.8 : 1, 1, 255);
 				if(Settings.rumble == RumbleOn)
 				{
 				DoRumble(i);
@@ -2282,11 +2282,8 @@ static int MenuDiscList()
 	installBtn.SetSoundClick(&btnClick);
 	//installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 
-	if (CFG.godmode == 1)
-	{
-		installBtn.SetTrigger(&trigA);
-		installBtn.SetEffectGrow();
-	}
+	installBtn.SetTrigger(&trigA);
+	installBtn.SetEffectGrow();
 
 	GuiText ttsettingsTxt("Settings", 22, (GXColor){0, 0, 0, 255});		//TOOLTIP DATA FOR SETTINGS BUTTON
 	GuiImageData ttsettings(tooltip_png);
@@ -2453,7 +2450,8 @@ static int MenuDiscList()
 
 	w.Append(&sdcardBtn);
 	w.Append(&poweroffBtn);
-    w.Append(&installBtn);
+	if (CFG.godmode)
+		w.Append(&installBtn);
 	w.Append(&homeBtn);
     w.Append(&settingsBtn);
 	w.Append(&DownloadBtn);
