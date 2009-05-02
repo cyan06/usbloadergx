@@ -247,6 +247,8 @@ void CFG_Default()
 	THEME.clock_x = 0;
 	THEME.clock_y = -120;
 	THEME.clockAlign = CFG_ALIGN_CENTRE;
+	THEME.sdcard_x = 160;
+	THEME.sdcard_y = 380;
 }
 
 
@@ -551,6 +553,14 @@ void theme_set(char *name, char *val)
 	}
 
 	else if (strcmp(cfg_name, "clock_coords") == 0) {
+		short x,y;
+		if (sscanf(val, "%hd,%hd", &x, &y) == 2) {
+			THEME.clock_x = x - (x % 4);
+			THEME.clock_y = y;
+		}
+	}
+	
+	else if (strcmp(cfg_name, "sdcard_coords") == 0) {
 		short x,y;
 		if (sscanf(val, "%hd,%hd", &x, &y) == 2) {
 			THEME.clock_x = x - (x % 4);

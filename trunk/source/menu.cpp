@@ -2232,6 +2232,8 @@ static int MenuDiscList()
 	GuiImageData btnhome(imgPath, menu_button_png);
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
 	GuiImageData btnhomeOver(imgPath, menu_button_over_png);
+	snprintf(imgPath, sizeof(imgPath), "%sSDcard.png", CFG.theme_path);
+	GuiImageData btnsdcard(imgPath, sdcard_png);
 
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
@@ -2358,6 +2360,17 @@ static int MenuDiscList()
 	poweroffBtn.SetSoundClick(&btnClick);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
+	
+	GuiImage sdcardImg(&btnsdcard);
+	sdcardImg.SetWidescreen(CFG.widescreen);
+	GuiButton sdcardBtn(btnsdcard.GetWidth(), btnsdcard.GetHeight());
+	sdcardBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
+	sdcardBtn.SetPosition(THEME.sdcard_x, THEME.sdcard_y);
+	sdcardBtn.SetImage(&sdcardImg);
+	sdcardBtn.SetSoundOver(&btnSoundOver);
+	sdcardBtn.SetSoundClick(&btnClick);
+	sdcardBtn.SetTrigger(&trigA);
+	sdcardBtn.SetEffectGrow();
 
 	//Downloading Covers
 	GuiText ttDownloadTxt("Click to Download Covers", 20, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR DOWNLOAD
@@ -2438,6 +2451,7 @@ static int MenuDiscList()
 		w.Append(&gamecntTxt);
 	}
 
+	w.Append(&sdcardBtn);
 	w.Append(&poweroffBtn);
     w.Append(&installBtn);
 	w.Append(&homeBtn);
@@ -2603,6 +2617,14 @@ static int MenuDiscList()
 			if(installBtn.GetState() == STATE_SELECTED) {
 			}
 		}
+		
+		else if(sdcardBtn.GetState() == STATE_CLICKED)
+		{
+			__io_wiisd.shutdown();
+			__io_wiisd.startup();
+			break;
+		}
+		
 		else if(DownloadBtn.GetState() == STATE_CLICKED)
 		{
 			choice = DownloadWindowPrompt(); // ask for download choice
@@ -2683,6 +2705,8 @@ static int MenuDiscList()
 			w.Remove(&ttsettingsBtn);
 			time2 = 0;
 		}
+		
+		
 
 
 		//Get selected game under cursor

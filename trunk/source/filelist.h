@@ -14,6 +14,9 @@
 extern const u8		font_ttf[];
 extern const u32	font_ttf_size;
 
+extern const u8		sdcard_png[];
+extern const u32	sdcard_png_size;
+
 extern const u8		bg_music_ogg[];
 extern const u32	bg_music_ogg_size;
 
