@@ -1509,13 +1509,17 @@ ProgressDownloadWindow(int choice2)
 	progressbarImg.SetAlignment(ALIGN_LEFT, ALIGN_MIDDLE);
 	progressbarImg.SetPosition(25, 40);
 
-	GuiText titleTxt("Downloading files...", 26, (GXColor){70, 70, 10, 255});
+	GuiText titleTxt("Downloading file:", 26, (GXColor){70, 70, 10, 255});
 	titleTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	titleTxt.SetPosition(0,60);
     char msg[25] = " ";
 	GuiText msgTxt(msg, 26, (GXColor){0, 0, 0, 255});
 	msgTxt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	msgTxt.SetPosition(0,130);
+	char msg2[15] = " ";
+	GuiText msg2Txt(msg2, 26, (GXColor){0, 0, 0, 255});
+	msg2Txt.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
+	msg2Txt.SetPosition(0,100);
 
 	prTxt.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	prTxt.SetPosition(0, 40);
@@ -1536,6 +1540,7 @@ ProgressDownloadWindow(int choice2)
 	promptWindow.Append(&dialogBoxImg);
 	promptWindow.Append(&titleTxt);
 	promptWindow.Append(&msgTxt);
+	promptWindow.Append(&msg2Txt);
     promptWindow.Append(&progressbarEmptyImg);
     promptWindow.Append(&progressbarImg);
     promptWindow.Append(&progressbarOutlineImg);
@@ -1577,6 +1582,8 @@ ProgressDownloadWindow(int choice2)
 
     sprintf(msg, "%i file(s) left", cntMissFiles - i);
     msgTxt.SetText(msg);
+    sprintf(msg2, "%s", missingFiles[i]);
+    msg2Txt.SetText(msg2);
 
     //download boxart image
     char imgPath[100];
@@ -2180,7 +2187,6 @@ static int MenuDiscList()
 	char text[MAX_CHARACTERS + 4]; //text2[20];
 	int choice = 0, selectedold = 100;
 	s32 ret;
-	time_t time1 = 0, time2 = 0; //TT
 
 	//CLOCK
 	struct tm * timeinfo;
@@ -2192,27 +2198,9 @@ static int MenuDiscList()
     if (!gameCnt) {
         nolist = 1;
     }
-	/*else {
-        for (cnt = 0; cnt < gameCnt; cnt++) {
-            struct discHdr *header = &gameList[cnt];
-			//snprintf(GamesHDD[cnt],sizeof(GamesHDD[cnt]),"%s",header->id);
-            if (strlen(get_title(header)) < (MAX_CHARACTERS + 3))
-			{
-                sprintf(games.name[cnt], "%s", get_title(header));
-            }
-			else
-			{
-                sprintf(games.name[cnt], get_title(header),  MAX_CHARACTERS);
-				//games.name[cnt][MAX_CHARACTERS] = '\0';
-                //strncat(games.name[cnt], "...", 3);
-            }
-        }
-    }*/
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM, vol);
-	//btnClick.SetVolume(vol);
-	//btnSoundOver.SetVolume(vol);
 
 	snprintf(imgPath, sizeof(imgPath), "%sbutton_install.png", CFG.theme_path);
 	GuiImageData btnInstall(imgPath, button_install_png);
@@ -2262,12 +2250,6 @@ static int MenuDiscList()
 	GuiText ttinstallTxt("Install a game", 22, (GXColor){0, 0, 0, 255}); //TOOLTIP DATA FOR INSTALL BUTTON
 	GuiImageData ttinstall(tooltip_medium_png);
 	GuiImage ttinstallImg(&ttinstall);
-	GuiButton ttinstallBtn(ttinstall.GetWidth(), ttinstall.GetHeight());
-	ttinstallBtn.SetImage(&ttinstallImg);
-	ttinstallBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	ttinstallBtn.SetPosition(39,333);
-	ttinstallBtn.SetLabel(&ttinstallTxt);
-	ttinstallBtn.SetEffect(EFFECT_FADE, 20);
 
 	GuiImage installBtnImg(&btnInstall);
 	GuiImage installBtnImgOver(&btnInstallOver);
@@ -2280,20 +2262,14 @@ static int MenuDiscList()
 	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
 	installBtn.SetSoundClick(&btnClick);
-	//installBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
-
 	installBtn.SetTrigger(&trigA);
 	installBtn.SetEffectGrow();
+	if (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)
+		installBtn.SetToolTip(&ttinstallImg,&ttinstallTxt,175,-30);
 
 	GuiText ttsettingsTxt("Settings", 22, (GXColor){0, 0, 0, 255});		//TOOLTIP DATA FOR SETTINGS BUTTON
 	GuiImageData ttsettings(tooltip_png);
 	GuiImage ttsettingsImg(&ttsettings);
-	GuiButton ttsettingsBtn(ttsettings.GetWidth(), ttsettings.GetHeight());
-	ttsettingsBtn.SetImage(&ttsettingsImg);
-	ttsettingsBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	ttsettingsBtn.SetPosition(115,350);
-	ttsettingsBtn.SetLabel(&ttsettingsTxt);
-	ttsettingsBtn.SetEffect(EFFECT_FADE, 20);
 
 	GuiImage settingsBtnImg(&btnSettings);
 	settingsBtnImg.SetWidescreen(CFG.widescreen); //added
@@ -2308,16 +2284,12 @@ static int MenuDiscList()
 	settingsBtn.SetSoundClick(&btnClick);
 	settingsBtn.SetTrigger(&trigA);
 	settingsBtn.SetEffectGrow();
+	if (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)
+		settingsBtn.SetToolTip(&ttsettingsImg,&ttsettingsTxt,65,-30);
 
 	GuiText tthomeTxt("Back to HBC or Wii Menu", 22, (GXColor){0, 0, 0, 255});	//TOOLTIP DATA FOR HOME BUTTON
 	GuiImageData tthome(tooltip_large_png);
 	GuiImage tthomeImg(&tthome);
-	GuiButton tthomeBtn(tthome.GetWidth(), tthome.GetHeight());
-	tthomeBtn.SetImage(&tthomeImg);
-	tthomeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	tthomeBtn.SetPosition(250,350);
-	tthomeBtn.SetLabel(&tthomeTxt);
-	tthomeBtn.SetEffect(EFFECT_FADE, 20);
 
 	GuiImage homeBtnImg(&btnhome);
 	homeBtnImg.SetWidescreen(CFG.widescreen); //added
@@ -2333,15 +2305,12 @@ static int MenuDiscList()
 	homeBtn.SetTrigger(&trigA);
 	homeBtn.SetTrigger(&trigHome);
 	homeBtn.SetEffectGrow();
+	if (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)
+		homeBtn.SetToolTip(&tthomeImg,&tthomeTxt,15,-30);
 
 	GuiText ttpoweroffTxt("Power off the Wii", 22, (GXColor){0, 0, 0, 255}); //TOOLTIP DATA FOR POWER BUTTON
 	GuiImageData ttpoweroff(tooltip_medium_png);
 	GuiImage ttpoweroffImg(&ttpoweroff);
-	GuiButton ttpoweroffBtn(ttpoweroff.GetWidth(), ttpoweroff.GetHeight());
-	ttpoweroffBtn.SetImage(&ttpoweroffImg);
-	ttpoweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
-	ttpoweroffBtn.SetPosition(390,333);
-	ttpoweroffBtn.SetLabel(&ttpoweroffTxt);
 
 
     GuiImage poweroffBtnImg(&btnpwroff);
@@ -2357,7 +2326,9 @@ static int MenuDiscList()
 	poweroffBtn.SetSoundClick(&btnClick);
 	poweroffBtn.SetTrigger(&trigA);
 	poweroffBtn.SetEffectGrow();
-	
+	if (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)
+        poweroffBtn.SetToolTip(&ttpoweroffImg,&ttpoweroffTxt,-10,-30);
+
 	GuiImage sdcardImg(&btnsdcard);
 	sdcardImg.SetWidescreen(CFG.widescreen);
 	GuiButton sdcardBtn(btnsdcard.GetWidth(), btnsdcard.GetHeight());
@@ -2374,18 +2345,13 @@ static int MenuDiscList()
 	GuiImageData ttDownload(tooltip_large_png);
 	GuiImage ttDownloadImg(&ttDownload);
 
-	//GuiImage DownloadBtnImg(&btnInstall);
-	//GuiImage DownloadBtnImgOver(&btnInstallOver);
 	GuiButton DownloadBtn(160,224);
 	DownloadBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	DownloadBtn.SetPosition(THEME.cover_x,THEME.cover_y);//(20, 300);
-	//DownloadBtn.SetImage(&DownloadBtnImg);
-	//DownloadBtn.SetImageOver(&DownloadBtnImgOver);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
 	if (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)
 		DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,205,-30);
 	DownloadBtn.SetTrigger(&trigA);
-	//DownloadBtn.SetEffectGrow();
 
 	#ifdef HW_RVL
 	int i = 0, level;
@@ -2539,20 +2505,6 @@ static int MenuDiscList()
 			}
 
 		}
-		else if(poweroffBtn.GetState() == STATE_SELECTED) //TT
-		{
-
-		    if (time2 == 0)
-		    time(&time2);
-
-		    time(&time1);
-
-            if (difftime(time1,time2) == 2 && (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0))
-            w.Append(&ttpoweroffBtn);
-
-			if(poweroffBtn.GetState() == STATE_SELECTED) {
-			}
-		}
 		else if(homeBtn.GetState() == STATE_CLICKED)
 		{
 
@@ -2573,20 +2525,6 @@ static int MenuDiscList()
 			}
 
         }
-		else if((homeBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)) //TT
-		{
-
-		    if (time2 == 0)
-		    time(&time2);
-
-		    time(&time1);
-
-            if (difftime(time1,time2) == 2)
-            w.Append(&tthomeBtn);
-
-			if(homeBtn.GetState() == STATE_SELECTED) {
-			}
-		}
 		else if(installBtn.GetState() == STATE_CLICKED)
 		{
 				choice = WindowPrompt ("Install a game?",0,"Yes","No");
@@ -2601,28 +2539,14 @@ static int MenuDiscList()
 					gameBrowser.SetFocus(1);
 				}
 		}
-		else if((installBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)) //TT
-		{
 
-		    if (time2 == 0)
-		    time(&time2);
-
-		    time(&time1);
-
-            if (difftime(time1,time2) == 2)
-            w.Append(&ttinstallBtn);
-
-			if(installBtn.GetState() == STATE_SELECTED) {
-			}
-		}
-		
 		else if(sdcardBtn.GetState() == STATE_CLICKED)
 		{
 			__io_wiisd.shutdown();
 			__io_wiisd.startup();
 			break;
 		}
-		
+
 		else if(DownloadBtn.GetState() == STATE_CLICKED)
 		{
 			choice = DownloadWindowPrompt(); // ask for download choice
@@ -2680,31 +2604,6 @@ static int MenuDiscList()
 			    break;
 
 		}
-
-		else if((settingsBtn.GetState() == STATE_SELECTED) && (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)) //TT
-		{
-
-		    if (time2 == 0)
-		    time(&time2);
-
-		    time(&time1);
-
-            if (difftime(time1,time2) == 2)
-            w.Append(&ttsettingsBtn);
-
-			if(settingsBtn.GetState() == STATE_SELECTED) {
-			}
-		}
-
-			else {
-			w.Remove(&ttpoweroffBtn);
-			w.Remove(&ttinstallBtn);
-			w.Remove(&tthomeBtn);
-			w.Remove(&ttsettingsBtn);
-			time2 = 0;
-		}
-		
-		
 
 
 		//Get selected game under cursor
@@ -3215,7 +3114,7 @@ static int MenuSettings()
 	//btnClick.SetVolume(vol);
 	//btnSoundOver.SetVolume(vol);
 	char imgPath[100];
-	
+
 	GuiImageData btnOutline(settings_menu_button_png);
 	snprintf(imgPath, sizeof(imgPath), "%ssettings_background.png", CFG.theme_path);
 	GuiImageData settingsbg(imgPath, settings_background_png);
@@ -3502,7 +3401,7 @@ int GameSettings(struct discHdr * header)
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
 	//btnSoundOver.SetVolume(vol);
 	char imgPath[100];
-	
+
 	GuiImageData btnOutline(settings_menu_button_png);
 	snprintf(imgPath, sizeof(imgPath), "%ssettings_background.png", CFG.theme_path);
 	GuiImageData settingsbg(imgPath, settings_background_png);
