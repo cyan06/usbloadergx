@@ -217,7 +217,7 @@ static void WindowCredits(void * ptr)
 
 	GuiImageData star(little_star_png);
 	GuiImage starImg(&star);
-	starImg.SetWidescreen(CFG.widescreen); //added
+	starImg.SetHScale(CFG.widescreen ? 0.75 : 1.0); //added
 	starImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	starImg.SetPosition(500,335);
 
@@ -319,7 +319,7 @@ static void WindowCredits(void * ptr)
 			#ifdef HW_RVL
 			if(userInput[i].wpad.ir.valid)
 				Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
-					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, CFG.widescreen? 0.8 : 1, 1, 255);
+					96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, CFG.widescreen? 0.75 : 1, 1, 255);
 			if(Settings.rumble == RumbleOn){
 				DoRumble(i);
 				}
@@ -773,7 +773,7 @@ int GameWindowPrompt()
 	char IDFull[7];
 	char gameName[CFG.maxcharacters + 4];
 
-	GuiWindow promptWindow(472,320);
+	GuiWindow promptWindow(472, 320);
 	promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
 	promptWindow.SetPosition(0, -10);
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
@@ -825,7 +825,8 @@ int GameWindowPrompt()
 	sizeTxt.SetPosition(-60,70);
 
 	GuiImage diskImg;
-	diskImg.SetWidescreen(CFG.widescreen);
+//	diskImg.SetWidescreen(CFG.widescreen); // use SetHScale
+	diskImg.SetHScale(CFG.widescreen ? 0.75 : 1.0);
 	diskImg.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	diskImg.SetAngle(angle);
 
@@ -1663,7 +1664,7 @@ UpdateGUI (void *arg)
 			{
 				if(userInput[i].wpad.ir.valid)
 					Menu_DrawImg(userInput[i].wpad.ir.x-48, userInput[i].wpad.ir.y-48,
-						96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, CFG.widescreen? 0.8 : 1, 1, 255);
+						96, 96, pointer[i]->GetImage(), userInput[i].wpad.ir.angle, CFG.widescreen? 0.75 : 1, 1, 255);
 				if(Settings.rumble == RumbleOn)
 				{
 				DoRumble(i);
@@ -2139,25 +2140,25 @@ static int MenuDiscList()
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM, vol);
 
 	snprintf(imgPath, sizeof(imgPath), "%sbutton_install.png", CFG.theme_path);
-	GuiImageData btnInstall(imgPath, button_install_png);
+	GuiImageData btnInstall(imgPath, button_install_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%sbutton_install_over.png", CFG.theme_path);
-	GuiImageData btnInstallOver(imgPath, button_install_over_png);
+	GuiImageData btnInstallOver(imgPath, button_install_over_png, CFG.widescreen);
 
 	snprintf(imgPath, sizeof(imgPath), "%ssettings_button.png", CFG.theme_path);
-	GuiImageData btnSettings(imgPath, settings_button_png);
+	GuiImageData btnSettings(imgPath, settings_button_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%ssettings_button_over.png", CFG.theme_path);
-	GuiImageData btnSettingsOver(imgPath, settings_button_over_png);
+	GuiImageData btnSettingsOver(imgPath, settings_button_over_png, CFG.widescreen);
 
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
-	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
+	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
-	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
+	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button.png", CFG.theme_path);
-	GuiImageData btnhome(imgPath, menu_button_png);
+	GuiImageData btnhome(imgPath, menu_button_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
-	GuiImageData btnhomeOver(imgPath, menu_button_over_png);
+	GuiImageData btnhomeOver(imgPath, menu_button_over_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%sSDcard.png", CFG.theme_path);
-	GuiImageData btnsdcard(imgPath, sdcard_png);
+	GuiImageData btnsdcard(imgPath, sdcard_png, CFG.widescreen);
 
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
@@ -2189,13 +2190,13 @@ static int MenuDiscList()
 
 	GuiImage installBtnImg(&btnInstall);
 	GuiImage installBtnImgOver(&btnInstallOver);
-	installBtnImg.SetWidescreen(CFG.widescreen); //added
-	installBtnImgOver.SetWidescreen(CFG.widescreen); //added
-	GuiButton installBtn(btnInstall.GetWidth(), btnInstall.GetHeight());
+//	installBtnImg.SetWidescreen(CFG.widescreen); //added
+//	installBtnImgOver.SetWidescreen(CFG.widescreen); //added
+	GuiButton installBtn(&installBtnImg, &installBtnImgOver);
 	installBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	installBtn.SetPosition(THEME.install_x, THEME.install_y);
-	installBtn.SetImage(&installBtnImg);
-	installBtn.SetImageOver(&installBtnImgOver);
+//	installBtn.SetImage(&installBtnImg);
+//	installBtn.SetImageOver(&installBtnImgOver);
 	installBtn.SetSoundOver(&btnSoundOver);
 	installBtn.SetSoundClick(&btnClick);
 	installBtn.SetTrigger(&trigA);
@@ -2208,14 +2209,15 @@ static int MenuDiscList()
 	GuiImage ttsettingsImg(&ttsettings);
 
 	GuiImage settingsBtnImg(&btnSettings);
-	settingsBtnImg.SetWidescreen(CFG.widescreen); //added
+//	settingsBtnImg.SetWidescreen(CFG.widescreen); //added
 	GuiImage settingsBtnImgOver(&btnSettingsOver);
-	settingsBtnImgOver.SetWidescreen(CFG.widescreen); //added
-	GuiButton settingsBtn(btnSettings.GetWidth(), btnSettings.GetHeight());
+//	settingsBtnImgOver.SetWidescreen(CFG.widescreen); //added
+//	GuiButton settingsBtn(btnSettings.GetWidth(), btnSettings.GetHeight());
+	GuiButton settingsBtn(&settingsBtnImg, &settingsBtnImgOver);
 	settingsBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	settingsBtn.SetPosition(THEME.setting_x, THEME.setting_y);
-	settingsBtn.SetImage(&settingsBtnImg);
-	settingsBtn.SetImageOver(&settingsBtnImgOver);
+//	settingsBtn.SetImage(&settingsBtnImg);
+//	settingsBtn.SetImageOver(&settingsBtnImgOver);
 	settingsBtn.SetSoundOver(&btnSoundOver);
 	settingsBtn.SetSoundClick(&btnClick);
 	settingsBtn.SetTrigger(&trigA);
@@ -2228,9 +2230,9 @@ static int MenuDiscList()
 	GuiImage tthomeImg(&tthome);
 
 	GuiImage homeBtnImg(&btnhome);
-	homeBtnImg.SetWidescreen(CFG.widescreen); //added
+//	homeBtnImg.SetWidescreen(CFG.widescreen); //added
 	GuiImage homeBtnImgOver(&btnhomeOver);
-	homeBtnImgOver.SetWidescreen(CFG.widescreen); //added
+//	homeBtnImgOver.SetWidescreen(CFG.widescreen); //added
 	GuiButton homeBtn(btnhome.GetWidth(), btnhome.GetHeight());
 	homeBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	homeBtn.SetPosition(THEME.home_x, THEME.home_y);
@@ -2251,13 +2253,13 @@ static int MenuDiscList()
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
-	poweroffBtnImg.SetWidescreen(CFG.widescreen);
-	poweroffBtnImgOver.SetWidescreen(CFG.widescreen);
-	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
+//	poweroffBtnImg.SetWidescreen(CFG.widescreen);
+//	poweroffBtnImgOver.SetWidescreen(CFG.widescreen);
+	GuiButton poweroffBtn(&poweroffBtnImg, &poweroffBtnImgOver);
 	poweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	poweroffBtn.SetPosition(THEME.power_x, THEME.power_y);
-	poweroffBtn.SetImage(&poweroffBtnImg);
-	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
+//	poweroffBtn.SetImage(&poweroffBtnImg);
+//	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetSoundClick(&btnClick);
 	poweroffBtn.SetTrigger(&trigA);
@@ -2266,11 +2268,11 @@ static int MenuDiscList()
         poweroffBtn.SetToolTip(&ttpoweroffImg,&ttpoweroffTxt,-10,-30);
 
 	GuiImage sdcardImg(&btnsdcard);
-	sdcardImg.SetWidescreen(CFG.widescreen);
-	GuiButton sdcardBtn(btnsdcard.GetWidth(), btnsdcard.GetHeight());
+//	sdcardImg.SetWidescreen(CFG.widescreen);
+	GuiButton sdcardBtn(&sdcardImg);
 	sdcardBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	sdcardBtn.SetPosition(THEME.sdcard_x, THEME.sdcard_y);
-	sdcardBtn.SetImage(&sdcardImg);
+//	sdcardBtn.SetImage(&sdcardImg);
 	sdcardBtn.SetSoundOver(&btnSoundOver);
 	sdcardBtn.SetSoundClick(&btnClick);
 	sdcardBtn.SetTrigger(&trigA);
@@ -2281,7 +2283,7 @@ static int MenuDiscList()
 	GuiImageData ttDownload(tooltip_large_png);
 	GuiImage ttDownloadImg(&ttDownload);
 
-	GuiButton DownloadBtn(160,224);
+	GuiButton DownloadBtn(160,CFG.widescreen ? 168 : 224);
 	DownloadBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	DownloadBtn.SetPosition(THEME.cover_x,THEME.cover_y);//(20, 300);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
@@ -2606,17 +2608,17 @@ static int MenuDiscList()
 				}
 
 				snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.covers_path, ID);
-				cover = new GuiImageData(imgPath,0); //load short id
+				cover = new GuiImageData(imgPath,0, CFG.widescreen); //load short id
 				if (!cover->GetImage()) //if could not load the short id image
 				{
 					delete cover;
 					snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.covers_path, IDfull);
-					cover = new GuiImageData(imgPath, 0); //load full id image
+					cover = new GuiImageData(imgPath, 0, CFG.widescreen); //load full id image
 					if (!cover->GetImage())
 					{
 						delete cover;
 						snprintf(imgPath, sizeof(imgPath), "%snoimage.png", CFG.covers_path);
-						cover = new GuiImageData(imgPath, nocover_png); //load no image
+						cover = new GuiImageData(imgPath, nocover_png, CFG.widescreen); //load no image
 					}
 				}
 
@@ -2626,7 +2628,7 @@ static int MenuDiscList()
 					coverImg = NULL;
 				}
 				coverImg = new GuiImage(cover);
-				coverImg->SetWidescreen(CFG.widescreen);
+				//coverImg->SetWidescreen(CFG.widescreen);
 
 				DownloadBtn.SetImage(coverImg);
 				w.Append(&DownloadBtn);
@@ -2835,13 +2837,13 @@ static int MenuFormat()
 	//btnClick.SetVolume(vol);
 	//btnSoundOver.SetVolume(vol);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff.png", CFG.theme_path);
-	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png);
+	GuiImageData btnpwroff(imgPath, wiimote_poweroff_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%swiimote_poweroff_over.png", CFG.theme_path);
-	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png);
+	GuiImageData btnpwroffOver(imgPath, wiimote_poweroff_over_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button.png", CFG.theme_path);
-	GuiImageData btnhome(imgPath, menu_button_png);
+	GuiImageData btnhome(imgPath, menu_button_png, CFG.widescreen);
 	snprintf(imgPath, sizeof(imgPath), "%smenu_button_over.png", CFG.theme_path);
-	GuiImageData btnhomeOver(imgPath, menu_button_over_png);
+	GuiImageData btnhomeOver(imgPath, menu_button_over_png, CFG.widescreen);
     GuiImageData battery(battery_png);
 	GuiImageData batteryRed(battery_red_png);
 	GuiImageData batteryBar(battery_bar_png);
@@ -2861,13 +2863,13 @@ static int MenuFormat()
 
     GuiImage poweroffBtnImg(&btnpwroff);
 	GuiImage poweroffBtnImgOver(&btnpwroffOver);
-	poweroffBtnImg.SetWidescreen(CFG.widescreen);
-	poweroffBtnImgOver.SetWidescreen(CFG.widescreen);
-	GuiButton poweroffBtn(btnpwroff.GetWidth(), btnpwroff.GetHeight());
+//	poweroffBtnImg.SetWidescreen(CFG.widescreen);
+//	poweroffBtnImgOver.SetWidescreen(CFG.widescreen);
+	GuiButton poweroffBtn(&poweroffBtnImg, &poweroffBtnImgOver);
 	poweroffBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	poweroffBtn.SetPosition(THEME.power_x, THEME.power_y);
-	poweroffBtn.SetImage(&poweroffBtnImg);
-	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
+//	poweroffBtn.SetImage(&poweroffBtnImg);
+//	poweroffBtn.SetImageOver(&poweroffBtnImgOver);
 	poweroffBtn.SetSoundOver(&btnSoundOver);
 	poweroffBtn.SetSoundClick(&btnClick);
 	poweroffBtn.SetTrigger(&trigA);
@@ -2875,13 +2877,13 @@ static int MenuFormat()
 
 	GuiImage exitBtnImg(&btnhome);
 	GuiImage exitBtnImgOver(&btnhomeOver);
-	exitBtnImg.SetWidescreen(CFG.widescreen);
-	exitBtnImgOver.SetWidescreen(CFG.widescreen);
-	GuiButton exitBtn(btnhome.GetWidth(), btnhome.GetHeight());
+//	exitBtnImg.SetWidescreen(CFG.widescreen);
+//	exitBtnImgOver.SetWidescreen(CFG.widescreen);
+	GuiButton exitBtn(&exitBtnImg, &exitBtnImgOver);
 	exitBtn.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	exitBtn.SetPosition(240, 367);
-	exitBtn.SetImage(&exitBtnImg);
-	exitBtn.SetImageOver(&exitBtnImgOver);
+//	exitBtn.SetImage(&exitBtnImg);
+//	exitBtn.SetImageOver(&exitBtnImgOver);
 	exitBtn.SetSoundOver(&btnSoundOver);
 	exitBtn.SetSoundClick(&btnClick);
 	exitBtn.SetTrigger(&trigA);

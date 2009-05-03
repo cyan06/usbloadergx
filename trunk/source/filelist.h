@@ -14,6 +14,9 @@
 extern const u8		font_ttf[];
 extern const u32	font_ttf_size;
 
+extern const u8		wfont_ttf[];
+extern const u32	wfont_ttf_size;
+
 extern const u8		sdcard_png[];
 extern const u32	sdcard_png_size;
 
@@ -166,6 +169,12 @@ extern const u32	scrollbar_box_png_size;
 
 extern const u8		scrollbar_box_over_png[];
 extern const u32	scrollbar_box_over_png_size;
+
+extern const u8		startgame_arrow_left_png[];
+extern const u32	startgame_arrow_left_png_size;
+
+extern const u8		startgame_arrow_right_png[];
+extern const u32	startgame_arrow_right_png_size;
 
 extern const u8		progressbar_png[];
 extern const u32	progressbar_png_size;

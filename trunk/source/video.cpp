@@ -46,7 +46,8 @@ UpdatePadsCB ()
 		#ifdef HW_RVL
 		memcpy(&userInput[i].wpad, WPAD_Data(i), sizeof(WPADData));
 		#endif
-
+		userInput[i].wpad.ir.x -= vmode->viXOrigin;
+//		userInput[i].wpad.ir.x -= 10;
 		userInput[i].chan = i;
 		userInput[i].pad.btns_d = PAD_ButtonsDown(i);
 		userInput[i].pad.btns_u = PAD_ButtonsUp(i);

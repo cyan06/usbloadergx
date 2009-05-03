@@ -175,9 +175,12 @@ void cfg_int(char *name, short *var, int count)
 
 //static char bg_path[100];
 
-void CFG_Default()
+void CFG_Default(int widescreen)
 {
-	CFG.widescreen = CONF_GetAspectRatio();
+	if(widescreen == -1)
+		CFG.widescreen = CONF_GetAspectRatio() == CONF_ASPECT_16_9 ? 2 : 0;//1=manual setting / 2=automatic
+	else
+		CFG.widescreen = widescreen;
 
 	if (CFG.widescreen) {
 		snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
@@ -208,7 +211,7 @@ void CFG_Default()
 	THEME.selection_y = 40;
 	THEME.selection_w = 396;
 	THEME.selection_h = 280;
-	THEME.cover_x = 26;
+	THEME.cover_x = CFG.widescreen ? 26+22 : 26;
 	THEME.cover_y = 55;
 	THEME.showID = 1;
 	THEME.id_x = 68;
@@ -219,12 +222,12 @@ void CFG_Default()
 	THEME.power_y = 355;
 	THEME.home_x = 485;//215;
 	THEME.home_y = 367;
-	THEME.setting_x = 60;//-210
+	THEME.setting_x = CFG.widescreen ? 60+35 : 60;//-210
 	THEME.setting_y = 367;
 	THEME.showHDD = -1; //default, non-force mode
 	THEME.showGameCnt = -1; //default, non-force mode
 	THEME.showToolTip = 1; //1 means use settings, 0 means force turn off
-	THEME.install_x = 16;//-280
+	THEME.install_x = CFG.widescreen ? 16+12 : 16;//-280
 	THEME.install_y = 355;
 	THEME.showBattery = 1;
 	THEME.showRegion = 1;
@@ -248,7 +251,7 @@ void CFG_Default()
 	THEME.clock_x = 0;
 	THEME.clock_y = -120;
 	THEME.clockAlign = CFG_ALIGN_CENTRE;
-	THEME.sdcard_x = 160;
+	THEME.sdcard_x =  170;
 	THEME.sdcard_y = 390;
 	
 }
@@ -353,18 +356,9 @@ void widescreen_set(char *name, char *val)
 	cfg_name = name;
 	cfg_val = val;
 
-	if (cfg_bool("widescreen", &CFG.widescreen)) //reset default
-	{
-		if (CFG.widescreen) {
-//			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/wimages/");
-			snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/wtheme/");
-		}
-		else
-		{
-//			snprintf(CFG.covers_path, sizeof(CFG.covers_path), "SD:/images/");
-			snprintf(CFG.theme_path, sizeof(CFG.theme_path), "SD:/theme/");
-		}
-	}
+	short widescreen;
+	if (cfg_bool("widescreen", &widescreen) && CFG.widescreen != widescreen)
+		CFG_Default(widescreen); //reset default when forced an other Screenmode
 }
 
 
@@ -1016,7 +1010,7 @@ void CFG_Load(int argc, char **argv)
 	//set app path
 //	chdir_app(argv[0]);
 
-	CFG_Default();
+	CFG_Default(-1); // -1 = no forced Screen-Mode (set widescreen from Wii-Settings)
 
 	snprintf(pathname, sizeof(pathname), "SD:/config/config.txt");
 

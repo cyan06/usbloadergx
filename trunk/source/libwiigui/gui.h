@@ -487,8 +487,8 @@ class GuiImageData
 		//!Constructor
 		//!Converts the image data to RGBA8 - expects PNG format
 		//!\param i Image data
-		GuiImageData(const u8 * i);
-		GuiImageData(const char * imgPath, const u8 * buffer);
+		GuiImageData(const u8 * i, bool prepare4widescreen=false);
+		GuiImageData(const char * imgPath, const u8 * buffer, bool prepare4widescreen=false);
 		//!Destructor
 		~GuiImageData();
 		//!Gets a pointer to the image data
@@ -500,6 +500,7 @@ class GuiImageData
 		//!Gets the image height
 		//!\return image height
 		int GetHeight();
+		void Prepare4Widescreen();
 	protected:
 		u8 * data; //!< Image data
 		int height; //!< Height of image
@@ -535,8 +536,9 @@ class GuiImage : public GuiElement
 		//!Sets the number of times to draw the image horizontally
 		//!\param t Number of times to draw the image
 		void SetTile(int t);
-		// not NULL set horizontal scale to 0.8 //added
-		void SetWidescreen(short w);
+		// not NULL set horizontal scale to 0.75 //added
+///		void SetWidescreen(short hs){};
+		void SetHScale(float hs);
 		//!Constantly called to draw the image
 		void Draw();
 		//!Gets the image data
@@ -573,7 +575,7 @@ class GuiImage : public GuiElement
 		f32 imageangle; //!< Angle to draw the image
 		int tile; //!< Number of times to draw (tile) the image horizontally
 		int stripe; //!< Alpha value (0-255) to apply a stripe effect to the texture
-		short widescreen; //added
+		float hscale; //added
 };
 
 //!Display, manage, and manipulate text in the GUI
@@ -638,6 +640,9 @@ class GuiButton : public GuiElement
 		//!\param w Width
 		//!\param h Height
 		GuiButton(int w, int h);
+		//!\param i Image	(with & hight used from Image)
+		//!\param o ImageOver
+		GuiButton(GuiImage* i, GuiImage* o=0);
 		//!Destructor
 		~GuiButton();
 		//!Sets the button's image

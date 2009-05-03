@@ -46,6 +46,38 @@ GuiButton::GuiButton(int w, int h)
 	holdable = false;
 	clickable = true;
 }
+GuiButton::GuiButton(GuiImage* i, GuiImage* o/*=0*/)
+{
+	width = i->GetWidth();
+	height = i->GetHeight();
+	image = i;
+	imageOver = o;
+	imageHold = NULL;
+	imageClick = NULL;
+	icon = NULL;
+	iconOver = NULL;
+	iconHold = NULL;
+	iconClick = NULL;
+	toolTip = NULL;
+	toolTipTxt = NULL;
+
+	for(int i=0; i < 3; i++)
+	{
+		label[i] = NULL;
+		labelOver[i] = NULL;
+		labelHold[i] = NULL;
+		labelClick[i] = NULL;
+	}
+
+	soundOver = NULL;
+	soundHold = NULL;
+	soundClick = NULL;
+	selectable = true;
+	holdable = false;
+	clickable = true;
+	image->SetParent(this);
+	if(imageOver) imageOver->SetParent(this);
+}
 
 /**
  * Destructor for the GuiButton class.
