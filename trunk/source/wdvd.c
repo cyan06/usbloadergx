@@ -17,6 +17,7 @@
 #define IOCTL_DI_OFFSET		0xD9
 #define IOCTL_DI_STOPMOTOR	0xE3
 #define IOCTL_DI_SETUSBMODE	0xF4
+#define IOCTL_DI_SETWBFSMODE    0xfe
 #define IOCTL_DI_DISABLERESET	0xF6
 
 /* Variables */
@@ -311,14 +312,18 @@ s32 WDVD_DisableReset(u8 val)
 	return (ret == 1) ? 0 : -ret;
 }
 
-s32 WDVD_SetUSBMode(u8 *id)
+s32 WDVD_SetUSBMode(u8 *id, int ios222)
 {
 	s32 ret;
 
 	memset(inbuf, 0, sizeof(inbuf));
 
 	/* Set USB mode */
+	if(ios222 == 1) {
+    inbuf[0] = IOCTL_DI_SETWBFSMODE << 24;
+	} else {
 	inbuf[0] = IOCTL_DI_SETUSBMODE << 24;
+	}
 	inbuf[1] = (id) ? 1 : 0;
 
 	/* Copy ID */

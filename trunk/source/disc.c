@@ -114,7 +114,7 @@ void __Disc_SetVMode(u8 videoselected)
  //       vmode     = VIDEO_GetPreferredMode(NULL);
         break;
     }
-			
+
 	/* Set video mode register */
 	*(vu32 *)0x800000CC = vmode_reg;
 
@@ -218,10 +218,10 @@ s32 Disc_Wait(void)
 	return 0;
 }
 
-s32 Disc_SetUSB(u8 *id)
+s32 Disc_SetUSB(u8 *id, int ios222)
 {
 	/* Set USB mode */
-	return WDVD_SetUSBMode(id);
+	return WDVD_SetUSBMode(id, ios222);
 }
 
 s32 Disc_ReadHeader(void *outbuf)
