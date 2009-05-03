@@ -128,6 +128,7 @@ extern u8 videoChoice;
 extern u8 languageChoice;
 extern u8 viChoice;
 extern u8 iosChoice;
+extern u8 parentalcontrolChoice;
 
 struct Game_CFG
 {
@@ -137,6 +138,7 @@ struct Game_CFG
 	u8 ocarina;
 	u8 vipatch;
 	u8 ios;
+	u8 parentalcontrol;
 };
 
 
@@ -216,6 +218,13 @@ enum {
 	v0,
 };
 
+enum {
+	ParentalControlOff,
+	ParentalControlLevel1,
+	ParentalControlLevel2,
+	ParentalControlLevel3
+};
+
 struct SSettings {
     int		video;
     int		language;
@@ -226,7 +235,9 @@ struct SSettings {
 	int		hddinfo;
 	int		rumble;
 	int		volume;
-	int             tooltips;
+	int     tooltips;
+	char 	unlockCode[20];
+	int		parentalcontrol;
 };
 
 void CFG_LoadGlobal(void);

@@ -89,6 +89,8 @@ DefaultSettings()
 	}
 	Settings.volume = v80;
 	Settings.tooltips = TooltipsOn;
+	snprintf(Settings.unlockCode, sizeof(Settings.unlockCode), "ab121b");
+	Settings.parentalcontrol = 0;
 	
 	CFG_LoadGlobal();
 }

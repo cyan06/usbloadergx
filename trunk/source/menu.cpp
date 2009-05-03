@@ -2285,9 +2285,10 @@ static int MenuDiscList()
 	DownloadBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	DownloadBtn.SetPosition(THEME.cover_x,THEME.cover_y);//(20, 300);
 	DownloadBtn.SetSoundOver(&btnSoundOver);
-	if (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0)
-		DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,205,-30);
-	DownloadBtn.SetTrigger(&trigA);
+	if (CFG.godmode == 1){
+	if (Settings.tooltips == TooltipsOn && THEME.showToolTip != 0){
+		DownloadBtn.SetToolTip(&ttDownloadImg,&ttDownloadTxt,205,-30);}
+		DownloadBtn.SetTrigger(&trigA);}
 
 	#ifdef HW_RVL
 	int i = 0, level;
@@ -3058,23 +3059,15 @@ static int MenuFormat()
 /****************************************************************************
  * MenuSettings
  ***************************************************************************/
+/****************************************************************************
+ * MenuSettings
+ ***************************************************************************/
 
 static int MenuSettings()
 {
     //__Disc_SetLowMem();
 	int menu = MENU_NONE;
 	int ret;
-
-	customOptionList options2(9);
-	sprintf(options2.name[0], "Video Mode");
-	sprintf(options2.name[1], "VIDTV Patch");
-	sprintf(options2.name[2], "Language");
-	sprintf(options2.name[3], "Ocarina");
-	sprintf(options2.name[4], "Display");
-	sprintf(options2.name[5], "Clock"); //CLOCK
-	sprintf(options2.name[6], "Rumble"); //RUMBLE
-	sprintf(options2.name[7], "Volume");
-    sprintf(options2.name[8], "Tooltips");
 
 	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
 	GuiSound btnClick(button_click2_pcm, button_click2_pcm_size, SOUND_PCM, vol);
@@ -3116,9 +3109,9 @@ static int MenuSettings()
 	backBtn.SetTrigger(&trigB);
 	backBtn.SetEffectGrow();
 
-        const char * text = "Unlock";
-        if (CFG.godmode == 1)
-                text = "Lock";
+	const char * text = "Unlock";
+	if (CFG.godmode == 1)
+			text = "Lock";
 	GuiText lockBtnTxt(text, 22, (GXColor){0, 0, 0, 255});
 	lockBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
 	GuiImage lockBtnImg(&btnOutline);
@@ -3147,185 +3140,307 @@ static int MenuSettings()
 	btnLogo->SetTrigger(&trigA);
 	btnLogo->SetUpdateCallback(WindowCredits);
 
+	customOptionList options2(9);	
 	GuiCustomOptionBrowser optionBrowser2(396, 280, &options2, CFG.theme_path, "bg_options_settings", bg_options_settings_png, 0);
 	optionBrowser2.SetPosition(0, 90);
 	optionBrowser2.SetAlignment(ALIGN_CENTRE, ALIGN_TOP);
 	optionBrowser2.SetCol2Position(150);
-
-    HaltGui();
 	GuiWindow w(screenwidth, screenheight);
-	w.Append(&settingsbackgroundbtn);
-    w.Append(&titleTxt);
-    w.Append(&backBtn);
-	w.Append(&lockBtn);
-	w.Append(btnLogo);
-
-    mainWindow->Append(&w);
-    mainWindow->Append(&optionBrowser2);
-
-	ResumeGui();
-
-
-	while(menu == MENU_NONE)
+	
+	int pageToDisplay = 1;
+	while ( pageToDisplay > 0) //set pageToDisplay to 0 to quit
 	{
-		VIDEO_WaitVSync ();
-
-		if(Settings.video > 5)
-			Settings.video = 0;
-		if(Settings.language  > 10)
-			Settings.language = 0;
-        if(Settings.ocarina  > 1)
-			Settings.ocarina = 0;
-        if(Settings.vpatch  > 1)
-			Settings.vpatch = 0;
-		if(Settings.sinfo  > 3)
-			Settings.sinfo = 0;
-		if(Settings.hddinfo > 1)
-			Settings.hddinfo = 0; //CLOCK
-		if(Settings.rumble > 1)
-			Settings.rumble = 0; //RUMBLE
-		if(Settings.volume > 10)
-			Settings.volume = 0;
-                if(Settings.tooltips > 1)
-			Settings.tooltips = 0;
-
-		if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
-		else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
-		else if (Settings.video == patch) sprintf (options2.value[0],"Auto Patch");
-		else if (Settings.video == pal50) sprintf (options2.value[0],"Force PAL50");
-		else if (Settings.video == pal60) sprintf (options2.value[0],"Force PAL60");
-		else if (Settings.video == ntsc) sprintf (options2.value[0],"Force NTSC");
-
-        if (Settings.vpatch == on) sprintf (options2.value[1],"ON");
-		else if (Settings.vpatch == off) sprintf (options2.value[1],"OFF");
-
-		if (Settings.language == ConsoleLangDefault) sprintf (options2.value[2],"Console Default");
-		else if (Settings.language == jap) sprintf (options2.value[2],"Japanese");
-		else if (Settings.language == ger) sprintf (options2.value[2],"German");
-		else if (Settings.language == eng) sprintf (options2.value[2],"English");
-		else if (Settings.language == fren) sprintf (options2.value[2],"French");
-		else if (Settings.language == esp) sprintf (options2.value[2],"Spanish");
-        else if (Settings.language == it) sprintf (options2.value[2],"Italian");
-		else if (Settings.language == dut) sprintf (options2.value[2],"Dutch");
-		else if (Settings.language == schin) sprintf (options2.value[2],"S. Chinese");
-		else if (Settings.language == tchin) sprintf (options2.value[2],"T. Chinese");
-		else if (Settings.language == kor) sprintf (options2.value[2],"Korean");
-
-        if (Settings.ocarina == on) sprintf (options2.value[3],"ON");
-		else if (Settings.ocarina == off) sprintf (options2.value[3],"OFF");
-
-		if (Settings.sinfo == GameID) sprintf (options2.value[4],"Game ID");
-		else if (Settings.sinfo == GameRegion) sprintf (options2.value[4],"Game Region");
-		else if (Settings.sinfo == Both) sprintf (options2.value[4],"Both");
-		else if (Settings.sinfo == Neither) sprintf (options2.value[4],"Neither");
-
-		if (Settings.hddinfo == HDDInfo) sprintf (options2.value[5],"Off");//CLOCK
-		else if (Settings.hddinfo == Clock) sprintf (options2.value[5],"On");
-
-		if (Settings.rumble == RumbleOn) sprintf (options2.value[6],"On");//CLOCK
-		else if (Settings.rumble == RumbleOff) sprintf (options2.value[6],"Off");
-
-		if (Settings.volume == v10) sprintf (options2.value[7],"10");//volume
-		else if (Settings.volume == v20) sprintf (options2.value[7],"20");
-		else if (Settings.volume == v30) sprintf (options2.value[7],"30");
-		else if (Settings.volume == v40) sprintf (options2.value[7],"40");
-		else if (Settings.volume == v50) sprintf (options2.value[7],"50");
-		else if (Settings.volume == v60) sprintf (options2.value[7],"60");
-		else if (Settings.volume == v70) sprintf (options2.value[7],"70");
-		else if (Settings.volume == v80) sprintf (options2.value[7],"80");
-		else if (Settings.volume == v90) sprintf (options2.value[7],"90");
-		else if (Settings.volume == v100) sprintf (options2.value[7],"100");
-		else if (Settings.volume == v0) sprintf (options2.value[7],"Off");
-
-        if (Settings.tooltips == TooltipsOn) sprintf (options2.value[8],"On");
-		else if (Settings.tooltips == TooltipsOff) sprintf (options2.value[8],"Off");
-
-		ret = optionBrowser2.GetClickedOption();
-
-		switch (ret)
+		menu = MENU_NONE;
+		if ( pageToDisplay == 1)
 		{
-			case 0:
-				Settings.video++;
-				break;
+			sprintf(options2.name[0], "Video Mode");
+			sprintf(options2.name[1], "VIDTV Patch");
+			sprintf(options2.name[2], "Language");
+			sprintf(options2.name[3], "Ocarina");
+			sprintf(options2.name[4], "Display");
+			sprintf(options2.name[5], "Clock"); //CLOCK
+			sprintf(options2.name[6], "Rumble"); //RUMBLE
+			sprintf(options2.name[7], "Volume");
+			sprintf(options2.name[8], " ");
 
-			case 1:
-				Settings.vpatch++;
-				break;
-            case 2:
-				Settings.language++;
-				break;
-            case 3:
-				Settings.ocarina++;
-				break;
-			case 4:
-				Settings.sinfo++;
-				break;
-			case 5:  //CLOCK
-				Settings.hddinfo++;
-				break;
-			case 6:
-				Settings.rumble++; //Rumble
-				break;
-			case 7:
-				Settings.volume++;
-				break;
-			case 8:
-				Settings.tooltips++;
-				break;		}
+			HaltGui();
+			w.Append(&settingsbackgroundbtn);
+			w.Append(&titleTxt);
+			w.Append(&backBtn);
+			w.Append(&lockBtn);
+			w.Append(btnLogo);
 
-		if(shutdown == 1)
-			Sys_Shutdown();
+			mainWindow->Append(&w);
+			mainWindow->Append(&optionBrowser2);
 
-		if(backBtn.GetState() == STATE_CLICKED)
-		{
-			//Add the procedure call to save the global configuration
-			cfg_save_global();
-			menu = MENU_DISCLIST;
-			break;
+			ResumeGui();
 		}
-
-		if(lockBtn.GetState() == STATE_CLICKED)
+		else if ( pageToDisplay == 2 )
 		{
-			if ( CFG.godmode == 0 )
+			sprintf(options2.name[0], "Tooltips");
+			sprintf(options2.name[1], "Password");
+			sprintf(options2.name[2], "Parental Ctrl");
+			sprintf(options2.name[3], " ");
+			sprintf(options2.name[4], " ");
+			sprintf(options2.name[5], " "); 
+			sprintf(options2.name[6], " ");
+			sprintf(options2.name[7], " ");
+			sprintf(options2.name[8], " ");
+			
+		}
+		while(menu == MENU_NONE)
+		{
+			VIDEO_WaitVSync ();
+			
+			if ( pageToDisplay == 1 )
 			{
-				//password check to unlock Install,Delete and Format
-				char entered[8] = "";
-				int result = OnScreenKeyboard(entered, 8);
-				if ( result == 1 )
+				if(Settings.video > 5)
+					Settings.video = 0;
+				if(Settings.language  > 10)
+					Settings.language = 0;
+				if(Settings.ocarina  > 1)
+					Settings.ocarina = 0;
+				if(Settings.vpatch  > 1)
+					Settings.vpatch = 0;
+				if(Settings.sinfo  > 3)
+					Settings.sinfo = 0;
+				if(Settings.hddinfo > 1)
+					Settings.hddinfo = 0; //CLOCK
+				if(Settings.rumble > 1)
+					Settings.rumble = 0; //RUMBLE
+				if(Settings.volume > 10)
+					Settings.volume = 0;
+
+				if (Settings.video == discdefault) sprintf (options2.value[0],"Disc Default");
+				else if (Settings.video == systemdefault) sprintf (options2.value[0],"System Default");
+				else if (Settings.video == patch) sprintf (options2.value[0],"Auto Patch");
+				else if (Settings.video == pal50) sprintf (options2.value[0],"Force PAL50");
+				else if (Settings.video == pal60) sprintf (options2.value[0],"Force PAL60");
+				else if (Settings.video == ntsc) sprintf (options2.value[0],"Force NTSC");
+
+				if (Settings.vpatch == on) sprintf (options2.value[1],"On");
+				else if (Settings.vpatch == off) sprintf (options2.value[1],"Off");
+
+				if (Settings.language == ConsoleLangDefault) sprintf (options2.value[2],"Console Default");
+				else if (Settings.language == jap) sprintf (options2.value[2],"Japanese");
+				else if (Settings.language == ger) sprintf (options2.value[2],"German");
+				else if (Settings.language == eng) sprintf (options2.value[2],"English");
+				else if (Settings.language == fren) sprintf (options2.value[2],"French");
+				else if (Settings.language == esp) sprintf (options2.value[2],"Spanish");
+				else if (Settings.language == it) sprintf (options2.value[2],"Italian");
+				else if (Settings.language == dut) sprintf (options2.value[2],"Dutch");
+				else if (Settings.language == schin) sprintf (options2.value[2],"S. Chinese");
+				else if (Settings.language == tchin) sprintf (options2.value[2],"T. Chinese");
+				else if (Settings.language == kor) sprintf (options2.value[2],"Korean");
+
+				if (Settings.ocarina == on) sprintf (options2.value[3],"On");
+				else if (Settings.ocarina == off) sprintf (options2.value[3],"Off");
+
+				if (Settings.sinfo == GameID) sprintf (options2.value[4],"Game ID");
+				else if (Settings.sinfo == GameRegion) sprintf (options2.value[4],"Game Region");
+				else if (Settings.sinfo == Both) sprintf (options2.value[4],"Both");
+				else if (Settings.sinfo == Neither) sprintf (options2.value[4],"Neither");
+
+				if (Settings.hddinfo == HDDInfo) sprintf (options2.value[5],"Off");
+				else if (Settings.hddinfo == Clock) sprintf (options2.value[5],"On");
+
+				if (Settings.rumble == RumbleOn) sprintf (options2.value[6],"On");
+				else if (Settings.rumble == RumbleOff) sprintf (options2.value[6],"Off");
+
+				if (Settings.volume == v10) sprintf (options2.value[7],"10");
+				else if (Settings.volume == v20) sprintf (options2.value[7],"20");
+				else if (Settings.volume == v30) sprintf (options2.value[7],"30");
+				else if (Settings.volume == v40) sprintf (options2.value[7],"40");
+				else if (Settings.volume == v50) sprintf (options2.value[7],"50");
+				else if (Settings.volume == v60) sprintf (options2.value[7],"60");
+				else if (Settings.volume == v70) sprintf (options2.value[7],"70");
+				else if (Settings.volume == v80) sprintf (options2.value[7],"80");
+				else if (Settings.volume == v90) sprintf (options2.value[7],"90");
+				else if (Settings.volume == v100) sprintf (options2.value[7],"100");
+				else if (Settings.volume == v0) sprintf (options2.value[7],"Off");
+
+				sprintf(options2.value[8], "Go to page 2");
+				
+				ret = optionBrowser2.GetClickedOption();
+
+				switch (ret)
 				{
-					if (!strcmp(entered, CFG.unlockCode)) //if password correct
-					{
-						if (CFG.godmode == 0)
+					case 0:
+						Settings.video++;
+						break;
+					case 1:
+						Settings.vpatch++;
+						break;
+					case 2:
+						Settings.language++;
+						break;
+					case 3:
+						Settings.ocarina++;
+						break;
+					case 4:  // Game Code and Region
+						Settings.sinfo++;
+						break;
+					case 5:  //CLOCK
+						Settings.hddinfo++;
+						break;
+					case 6:  //Rumble
+						Settings.rumble++; 
+						break;
+					case 7:
+						Settings.volume++;
+						break;
+					case 8:
+						pageToDisplay = 2;
+						menu = MENU_EXIT;
+						break;		
+				}
+			}
+			
+			if ( pageToDisplay == 2 )
+			{
+				if ( Settings.tooltips > 1 )
+					Settings.tooltips = 0;
+				if ( Settings.parentalcontrol > 3 )
+					Settings.parentalcontrol = 0;
+
+				if (Settings.tooltips == TooltipsOn) sprintf (options2.value[0],"On");
+				else if (Settings.tooltips == TooltipsOff) sprintf (options2.value[0],"Off");
+				
+				if ( CFG.godmode != 1) sprintf(options2.value[1], "********"); 
+				else if (!strcmp("", Settings.unlockCode)) sprintf(options2.value[1], "<not set>");
+				else sprintf(options2.value[1], Settings.unlockCode);
+				 
+				
+				if (Settings.parentalcontrol == ParentalControlOff) sprintf (options2.value[2],"Not yet");
+				else if (Settings.parentalcontrol == ParentalControlLevel1) sprintf (options2.value[2],"not working");
+				else if (Settings.parentalcontrol == ParentalControlLevel2) sprintf (options2.value[2],"broken");
+				else if (Settings.parentalcontrol == ParentalControlLevel3) sprintf (options2.value[2],"coming soon");
+				
+				sprintf(options2.value[3], " ");
+				sprintf(options2.value[4], " ");
+				sprintf(options2.value[5], " "); 
+				sprintf(options2.value[6], " ");
+				sprintf(options2.value[7], " ");
+				sprintf(options2.value[8], "Go to page 1");
+				
+				ret = optionBrowser2.GetClickedOption();
+
+				switch (ret)
+				{
+					case 0:
+						Settings.tooltips++;
+						break;
+					case 1: // Modify Password
+						if ( CFG.godmode == 1)
 						{
-							WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
-							CFG.godmode = 1;
-							lockBtnTxt.SetText("Lock");
-							if (CFG.parentalcontrol) //if parental control is turned on, then get entry again
+							char entered[20] = ""; 
+							strncpy(entered, Settings.unlockCode, sizeof(entered));
+							int result = OnScreenKeyboard(entered, 20);
+							if ( result == 1 )
+							{
+								strncpy(Settings.unlockCode, entered, sizeof(Settings.unlockCode));
+								WindowPrompt("Password Changed","Password has been changed","OK",0);
+								cfg_save_global();
+							}
+						}
+						else
+						{
+							WindowPrompt("Password change","Console should be unlocked to modify it.","OK",0);
+						}
+						break;
+					case 2:
+						if ( CFG.godmode == 1)
+						{
+							Settings.parentalcontrol++;
+						}
+						else
+						{
+							WindowPrompt("Parental Control","Console should be unlocked to modify it.","OK",0);
+						}
+						break;
+					case 3:
+						break;
+					case 4: 
+						break;
+					case 5:
+						break;
+					case 6:
+						break;
+					case 7:
+						
+						break;
+					case 8:
+						pageToDisplay = 1;
+						menu = MENU_EXIT;
+						break;		
+				}
+			}
+			
+			if(shutdown == 1)
+				Sys_Shutdown();
+
+			if(backBtn.GetState() == STATE_CLICKED)
+			{
+				//Add the procedure call to save the global configuration
+				cfg_save_global();
+				menu = MENU_DISCLIST;
+				pageToDisplay = 0;
+				break;
+			}
+
+			if(lockBtn.GetState() == STATE_CLICKED)
+			{
+				if (!strcmp("", Settings.unlockCode)) 
+				{
+					CFG.godmode = !CFG.godmode;
+				}
+				else if ( CFG.godmode == 0 )
+				{
+					//password check to unlock Install,Delete and Format
+					char entered[20] = "";
+					int result = OnScreenKeyboard(entered, 20);
+					if ( result == 1 )
+					{
+						if (!strcmp(entered, Settings.unlockCode)) //if password correct
+						{
+							if (CFG.godmode == 0)
+							{
+								WindowPrompt("Correct Password","Install, Rename, and Delete are unlocked.","OK",0);
+								CFG.godmode = 1;
 								__Menu_GetEntries();
+								menu = MENU_DISCLIST;
+							}
+						}
+						else
+						{
+							WindowPrompt("Wrong Password","USB Loader is protected.","OK",0);
 						}
 					}
-					else
+				}
+				else
+				{
+					int choice = WindowPrompt ("Lock Console","Are you sure?","Yes","No");
+					if(choice == 1)
 					{
-						WindowPrompt("Wrong Password","USB Loader is protected.","OK",0);
+						WindowPrompt("Console Locked","USB Loader is now protected.","OK",0);
+						CFG.godmode = 0;
+						__Menu_GetEntries();
+						menu = MENU_DISCLIST;
 					}
 				}
-			}
-			else
-			{
-				int choice = WindowPrompt ("Lock Console","Are you sure?","Yes","No");
-				if(choice == 1)
+				if ( CFG.godmode == 1)
 				{
-					WindowPrompt("Console Locked","USB Loader is now protected.","OK",0);
-					CFG.godmode = 0;
-					lockBtnTxt.SetText("Unlock");
-					if (CFG.parentalcontrol) //if parental control is on, then get entry again
-						__Menu_GetEntries();
+					lockBtnTxt.SetText("Lock");
 				}
+				else
+				{
+					lockBtnTxt.SetText("Unlock");
+				}
+				lockBtn.ResetState();
 			}
-			lockBtn.ResetState();
 		}
-	}
 
+	}
 	HaltGui();
 	delete btnLogo;
 	btnLogo = NULL;
@@ -3334,6 +3449,7 @@ static int MenuSettings()
 	ResumeGui();
 	return menu;
 }
+
 
 
 /********************************************************************************
