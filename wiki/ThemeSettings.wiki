@@ -23,9 +23,13 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
 
   * *bg_options.png* is the background of selection game list
   
-  * *settings_background.png* is the background of setting screens
+  * *settings_background.png* is the background of general setting screen
+
+  * *bg_options_settings.png* is the background of setting list
   
-  * *bg_options_settings* is the background of setting list
+  * *gamesettings_background.png* is the background of game setting screen (*new*)
+  
+  * *bg_options_gamesettings.png* is the background of game setting list (*new*)
 
   * *button_install.png* is the install button
 
@@ -112,6 +116,8 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * *clock_coords = x, y* (x, y is the coordinate of clock (center alignment)
   
   * *clock_align = left center right* (set the x-axis alignment of clock. Default is center aligned)
+  
+  * *gametext_color = r, g, b* (Color for the game list text)
 
   * *sdcard_coords = x, y* (x, y is the coordinate of sd card button
 
