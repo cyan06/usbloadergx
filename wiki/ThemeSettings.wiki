@@ -120,5 +120,7 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * *gametext_color = r, g, b* (Color for the game list text)
 
   * *sdcard_coords = x, y* (x, y is the coordinate of sd card button
+  
+  * *pagesize = x* (x is the number of entries displayed on the game list)
 
   * more to add later
