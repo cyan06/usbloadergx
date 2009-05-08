@@ -57,7 +57,7 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   
   * *dialogue_box_startgame.png* is the disc prompt image (size is 472 x 320)
   
-  * *wdialogue_box_startgame.png* is the widescreen version disc prompt image (make a 590 x 320 image and shrink it to 472 x 320)  
+  * *wdialogue_box_startgame.png* is the widescreen version disc prompt image (make a 630 x 320 image and shrink it to 472 x 320)  
 
   * *sdcard.png* is the sd card image
 
