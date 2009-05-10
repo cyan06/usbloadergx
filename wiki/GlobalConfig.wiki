@@ -1,101 +1,123 @@
 #labels Phase-Implementation
 = Introduction =
 
-This is the description for global config and all the settings in the Loader. 
-All the settings that are being made in global settings are saved to <b>global_settings.cfg</b>. 
+This is the description for global config and all the settings in the Loader. <br>
+All the settings that are being made in global settings are saved to <b>global_settings.cfg</b>. <br>
 You can also edit the global_settings.cfg manuel which is not needed though. 
 
 The global settings are the standard for all games. The individuel gamesettings are overriding the global settings.
 
 = Details =
 
-The Options:
+<b>The Options:</b>
    
   <b>PAGE 1:</b>
 
-  * Video Mode: Choose in which video mode the games should be booted.
+  * <b>Video Mode:</b> Choose in which video mode the games should be booted.
     global_settings.cfg entrace:
-    video = [0...5]
+    <br>
+    video = 0...5
 
-  * VIDTV Patch: Patch game to the System default region and boot it under that.
+  * <b>VIDTV Patch:</b> Patch game to the System default region and boot it under that.
     global_settings.cfg entrace:
-    video = [0...1]
+    <br>
+    video = 0...1
 
-  * Language: Language in which the game should be booted.
+  * <b>Language:</b> Language in which the game should be booted.
     global_settings.cfg entrace:
-    language = [0...10]
+    <br>
+    language = 0...10
 
-  * Ocarina: Enable or disable Ocarina Cheats.
+  * <b>Ocarina:</b> Enable or disable Ocarina Cheats.
     global_settings.cfg entrace:
-    ocarina = [0...1]
+    <br>
+    ocarina = 0...1
 
-  * Display: Show GameID/GameRegion or none of them around the cover.
+  * <b>Display:</b> Show GameID or Gameregion or none of them around the cover.
     global_settings.cfg entrace:
-    sinfo = [0...3]
+    <br>
+    sinfo = 0...3
 
-  * Clock: Change between a Clock and the HDD Size information.
+  * <b>Clock:</b> Change between a Clock and the HDD Size information.
     global_settings.cfg entrace:
-    hddinfo = [0...1]
+    <br>
+    hddinfo = 0...1
 
-  * Rumble: Enable WiiMote Rumble when going over buttons.
+  * <b>Rumble:</b> Enable Wiimote Rumble when going over buttons.
     global_settings.cfg entrace:
-    rumble = [0...1]
+    <br>
+    rumble = 0...1
 
-  * Volume: Change Volume of backgroundmusic and SFX.
+  * <b>Volume:</b> Change Volume of backgroundmusic and SFX.
     global_settings.cfg entrace:
-    volume = [0...10]
+    <br>
+    volume = 0...10
 
-  * Tooltip: Enable or disable tooltips.
+  * <b>Tooltip:</b> Enable or disable tooltips.
     global_settings.cfg entrace:
-    tooltip = [0...1]
-
+    <br>
+    tooltip = 0...1
+    <br>    <br>
 
   <b>PAGE 2:</b>
 
-  * Password: Set a password for locking the Loader. If no password is set the unlock 
-              mode is saved. Password can only be set in unlocked mode.
+  * <b>Password:</b> Set a password for locking the Loader. If no password is set the 
+                     unlock mode is saved. Password can only be set in unlocked mode.
     global_settings.cfg entrace:
+    <br>
     password = text
 
-  * Boot/Standard: Set the cIOS in which the Loader is booted. Also the standard for game 
-                   booting. Can only be changed in unlocked mode.
+  * <b>Boot/Standard:</b> Set the cIOS in which the Loader is booted. Also the standard 
+                          for game booting. Can only be changed in unlocked mode.
     global_settings.cfg entrace:
-    cios = [0...1]
+    <br>
+    cios = 0...1
 
-  * Flip X: Set in which directions the GameWindowPrompt should be sliding in or out.
+  * <b>Flip X:</b> Set in which directions the gamewindowprompt should be sliding in or 
+                   out.
     global_settings.cfg entrace:
-    xflip = [0...3]
+    <br>
+    xflip = 0...3
 
-  * Quick Boot: Enable or disable GameWindowPrompt with spinning discs and boot game 
-                directly on only one click.
+  * <b>Quick Boot:</b> Enable or disable gamewindowprompt with spinning discs and boot 
+                       game directly on only one click.
     global_settings.cfg entrace:
-    qboot = [0...1]
+    <br>
+    qboot = 0...1
 
-  * Prompts & Buttons: Enable or disable widescreen fix for buttons and prompts. This is 
-                       streching the promptwindows and buttons if disabled.
+  * <b>Prompts & Buttons:</b> Enable or disable widescreen fix for buttons and prompts. 
+                           This is streching the promptwindows and buttons if disabled.
     global_settings.cfg entrace:
-    wsprompt = [0...1]
+    <br>
+    wsprompt = 0...1
 
-  * Parentalcontrol: Change the parentalcontrol. This option can only be changed when in 
-                     unlock mode.
+  * <b>Parentalcontrol:</b> Change the parentalcontrol. This option can only be changed 
+                            when in unlock mode.
     global_settings.cfg entrace:
-    parentalcontrol = [0...3]
+    <br>
+    parentalcontrol = 0...3
 
-  * Cover Path: Set the standard cover path where they should be downloaded too and where 
-                they are being loaded from.
+  * <b>Cover Path:</b> Set the standard cover path where they should be downloaded too 
+                       and where they are being loaded from.
     global_settings.cfg entrace:
+    <br>
     cover_path = path
 
-  * Discimage Path: Set the standard discimage path for the spinning discs. This is where 
-                    they will be downloaded too and where they are being loaded from.
+  * <b>Discimage Path:</b> Set the standard discimage path for the spinning discs. This 
+               is where they will be downloaded too and where they are being loaded from.
     global_settings.cfg entrace:
+    <br>
     disc_path = path
 
 
-  * Theme Path: Set the standard theme path for your own themes. This is where 
+  * <b>Theme Path:</b> Set the standard theme path for your own themes. This is where 
                 they are being loaded from.
     global_settings.cfg entrace:
-    On Widescreen 16:9:
+    <br>
+    <b>On Widescreen 16:9:</b>
+    <br>
     wtheme_path = path
-    On Normalcreen 4:3:
+    <br>
+    <b>On Normalcreen 4:3:</b>
+    <br>
     theme_path = path
