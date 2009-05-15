@@ -63,6 +63,12 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
 
   * *theme.txt* is the place you put the settings of the theme
 
+  * *battery.png* is the outline of the battery
+
+  * *battery_red.png* is the outline of the battery when it is almost dead
+
+  * *battery_bar.png* is the 4 units that indicate battery life 
+
   * more to add later
 
   * *CAUTION*: All png files should have dimensions of *multiple of 4*
@@ -98,6 +104,8 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * *show_region = 0 1* (0 means don't show, 1 otherwise)
 
   * *show_gamecount = 0 1* (0 means don't show, 1 means force show)
+
+  * *batteryUnused = 0-255* is the transparency for unconnected batteries.(0 means transparent, 255 means opaque)
 
   * *show_battery = 0 1* (0 means don't show, 1 otherwise)
   
