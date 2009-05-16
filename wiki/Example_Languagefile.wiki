@@ -3,7 +3,7 @@
 
 
 Specialthanksto = Special thanks to
-t3Coverst = 3D Covers
+t3Covers = 3D Covers
 AppLanguage = App Language
 Areyousure = Are you sure?
 AutoPatch = AutoPatch
