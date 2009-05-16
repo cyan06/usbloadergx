@@ -1,5 +1,5 @@
 #labels Phase-Deploy
-As of 5/16/09 these are the variables you can edit for a language file.  The text on the right is what will show up on the screen.
+<pre>As of 5/16/09 these are the variables you can edit for a language file.  The text on the right is what will show up on the screen.
 
 
 Specialthanksto = Special thanks to
@@ -172,4 +172,4 @@ Italian = Italian
 Dutch = Dutch
 SChinese = SChinese
 TChinese = TChinese
-Korean = Korean
+Korean = Korean</pre>
