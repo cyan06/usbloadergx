@@ -17,6 +17,10 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
 
   * Currently, you can put the following files in your theme folder:
 
+  * *button_dialogue_box.png* is button used throughout the GUI
+
+  * *dialogue_box.png* is the dialog box that shows up in prompts and such
+
   * *background.png* is the loader's main background (for 4:3)
 
   * *wbackground.png* is the loader's widescreen background (for 16:9)
@@ -120,6 +124,8 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
   * *gamecount_align = left center right* (set the x-axis alignment of game count text. The text is default to center aligned)
   
   * *info_color = r, g, b* (r, g, b is the rgb color code. This is the color of the information text, such as the hdd info)
+  
+  * *prompttext_color = r, g, b* (r, g, b is the rgb color code. This is the color of the button and prompt text)
   
   * *clock_coords = x, y* (x, y is the coordinate of clock (center alignment)
   
