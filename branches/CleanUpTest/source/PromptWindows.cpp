@@ -319,10 +319,10 @@ void WindowCredits()
 	}
 	ResumeGui();
 
-	if(!strcmp("", CFG.oggload_path) || !strcmp("notset", CFG.ogg_path)) {
+	if(!strcmp("", Settings.oggload_path) || !strcmp("notset", Settings.ogg_path)) {
         bgMusic->Play();
     } else {
-        bgMusic->PlayOggFile(CFG.ogg_path);
+        bgMusic->PlayOggFile(Settings.ogg_path);
     }
     bgMusic->SetPlayTime(thetimeofbg);
     SetVolumeOgg(255*(vol/100.0));
@@ -961,7 +961,7 @@ int GameWindowPrompt()
 	nameBtn.SetSoundClick(&btnClick);
 	nameBtn.SetToolTip(&nameBtnTT,24,-30, ALIGN_LEFT);
 
-	if (CFG.godmode == 1){
+	if (Settings.godmode == 1){
 		nameBtn.SetTrigger(&trigA);
 		nameBtn.SetEffectGrow();
 	}
@@ -1003,7 +1003,7 @@ int GameWindowPrompt()
 	btn2Img.SetWidescreen(CFG.widescreen);
 	}
 	GuiButton btn2(&btn2Img,&btn2Img, 1, 5, 0, 0, &trigA, &btnSoundOver, &btnClick,1);
-	if (CFG.godmode == 1)
+	if (Settings.godmode == 1)
 	{
 		btn2.SetAlignment(ALIGN_RIGHT, ALIGN_BOTTOM);
 		btn2.SetPosition(-50, -40);
@@ -1065,7 +1065,7 @@ int GameWindowPrompt()
 	promptWindow.Append(&btnFavorite);
 
 	//check if unlocked
-	if (CFG.godmode == 1)
+	if (Settings.godmode == 1)
 	{
     promptWindow.Append(&btn3);
 	}
@@ -1106,13 +1106,13 @@ int GameWindowPrompt()
 		if (diskCover)
 			delete diskCover;
 
-		snprintf(imgPath,sizeof(imgPath),"%s%s.png", CFG.disc_path, IDFull); //changed to current full id
+		snprintf(imgPath,sizeof(imgPath),"%s%s.png", Settings.disc_path, IDFull); //changed to current full id
 		diskCover = new GuiImageData(imgPath,0);
 
 		if (!diskCover->GetImage())
 		{
 			delete diskCover;
-			snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.disc_path, ID); //changed to current id
+			snprintf(imgPath, sizeof(imgPath), "%s%s.png", Settings.disc_path, ID); //changed to current id
 			diskCover = new GuiImageData(imgPath, 0);
 
 
@@ -1120,12 +1120,12 @@ int GameWindowPrompt()
 		{	snprintf (ID,sizeof(ID),"%c%c%c%c", header->id[0], header->id[1], header->id[2], header->id[3]);
 
 			delete diskCover;
-			snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.disc_path, ID); //changed to current id
+			snprintf(imgPath, sizeof(imgPath), "%s%s.png", Settings.disc_path, ID); //changed to current id
 			diskCover = new GuiImageData(imgPath, 0);
 			if (!diskCover->GetImage())
 			{
 				delete diskCover;
-				snprintf(imgPath, sizeof(imgPath), "%snodisc.png", CFG.disc_path); //changed to nodisc.png
+				snprintf(imgPath, sizeof(imgPath), "%snodisc.png", Settings.disc_path); //changed to nodisc.png
 				diskCover = new GuiImageData(imgPath,nodisc_png);
 			}
 		}
@@ -1684,10 +1684,10 @@ int NetworkInitPromp(int choice2)
 				if (choice2 != 3) {
 
 					snprintf (filename,sizeof(filename),"%c%c%c.png", header->id[0], header->id[1], header->id[2]);
-					found2 = findfile(filename, CFG.covers_path);
+					found2 = findfile(filename, Settings.covers_path);
 					snprintf(filename,sizeof(filename),"%c%c%c%c%c%c.png",header->id[0], header->id[1], header->id[2],
 																		header->id[3], header->id[4], header->id[5]); //full id
-					found1 = findfile(filename, CFG.covers_path);
+					found1 = findfile(filename, Settings.covers_path);
 					if (!found1 && !found2) //if could not find any image
 					{
 						snprintf(missingFiles[cntMissFiles],11,"%s",filename);
@@ -1696,10 +1696,10 @@ int NetworkInitPromp(int choice2)
 				}
 				else if (choice2 == 3) {
 					snprintf (filename,sizeof(filename),"%c%c%c.png", header->id[0], header->id[1], header->id[2]);
-					found2 = findfile(filename, CFG.disc_path);
+					found2 = findfile(filename, Settings.disc_path);
 					snprintf(filename,sizeof(filename),"%c%c%c%c%c%c.png",header->id[0], header->id[1], header->id[2],
 																		header->id[3], header->id[4], header->id[5]); //full id
-					found1 = findfile(filename,CFG.disc_path);
+					found1 = findfile(filename,Settings.disc_path);
 					if (!found1 && !found2)
 					{
 						snprintf(missingFiles[cntMissFiles],11,"%s",filename);
@@ -2005,9 +2005,9 @@ ProgressDownloadWindow(int choice2)
 
     //check if directory exist and if not create one
     struct stat st;
-    if(stat(CFG.covers_path, &st) != 0) {
+    if(stat(Settings.covers_path, &st) != 0) {
         char dircovers[100];
-        snprintf(dircovers,strlen(CFG.covers_path),"%s",CFG.covers_path);
+        snprintf(dircovers,strlen(Settings.covers_path),"%s",Settings.covers_path);
         if (mkdir(dircovers, 0777) == -1) {
             if(subfoldercheck(dircovers) != 1) {
             WindowPrompt(LANGUAGE.Error,LANGUAGE.Cantcreatedirectory,LANGUAGE.ok,0,0,0);
@@ -2015,9 +2015,9 @@ ProgressDownloadWindow(int choice2)
             }
         }
     }
-    if(stat(CFG.disc_path,&st) != 0) {
+    if(stat(Settings.disc_path,&st) != 0) {
         char dirdiscs[100];
-        snprintf(dirdiscs,strlen(CFG.disc_path),"%s",CFG.disc_path);
+        snprintf(dirdiscs,strlen(Settings.disc_path),"%s",Settings.disc_path);
         if (mkdir(dirdiscs, 0777) == -1) {
             if(subfoldercheck(dirdiscs) != 1) {
             WindowPrompt(LANGUAGE.Error,LANGUAGE.Cantcreatedirectory,LANGUAGE.ok,0,0,0);
@@ -2051,17 +2051,17 @@ ProgressDownloadWindow(int choice2)
 		if (choice2 == 2)
 		{
 			sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s",missingFiles[i]); // For 3D Covers
-			sprintf(imgPath,"%s%s", CFG.covers_path, missingFiles[i]);
+			sprintf(imgPath,"%s%s", Settings.covers_path, missingFiles[i]);
 		}
 		if(choice2 == 3)
 		{
 			sprintf(URLFile,"http://www.theotherzone.com/wii/diskart/160/160/%s",missingFiles[i]);
-			sprintf(imgPath,"%s%s", CFG.disc_path, missingFiles[i]);
+			sprintf(imgPath,"%s%s", Settings.disc_path, missingFiles[i]);
 		}
 		if(choice2 == 1)
 		{
 			sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s",missingFiles[i]);
-			sprintf(imgPath,"%s%s", CFG.covers_path, missingFiles[i]);
+			sprintf(imgPath,"%s%s", Settings.covers_path, missingFiles[i]);
 		}
 
 		struct block file = downloadfile(URLFile);//reject known bad images
@@ -2098,15 +2098,15 @@ ProgressDownloadWindow(int choice2)
     char URLFile[100];
     if (choice2 == 2) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s",missingFiles[0]); // For 3D Covers
-		sprintf(imgPath,"%s%s", CFG.covers_path, missingFiles[0]);
+		sprintf(imgPath,"%s%s", Settings.covers_path, missingFiles[0]);
     }
     if(choice2 == 3) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/diskart/160/160/%s",missingFiles[0]);
-		sprintf(imgPath,"%s%s", CFG.disc_path, missingFiles[0]);
+		sprintf(imgPath,"%s%s", Settings.disc_path, missingFiles[0]);
     }
     if(choice2 == 1) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/resize/160/224/%s",missingFiles[0]);
-		sprintf(imgPath,"%s%s", CFG.covers_path, missingFiles[0]);
+		sprintf(imgPath,"%s%s", Settings.covers_path, missingFiles[0]);
     }
 
     struct block file = downloadfile(URLFile);
@@ -2243,9 +2243,9 @@ ProgressUpdateWindow()
 	ResumeGui();
 
     struct stat st;
-    if(stat(CFG.update_path, &st) != 0) {
+    if(stat(Settings.update_path, &st) != 0) {
         char dir[100];
-        snprintf(dir,strlen(CFG.update_path),"%s",CFG.update_path);
+        snprintf(dir,strlen(Settings.update_path),"%s",Settings.update_path);
         if (mkdir(dir, 0777) == -1) {
             if(subfoldercheck(dir) != 1) {
             WindowPrompt(LANGUAGE.Error,LANGUAGE.Cantcreatedirectory,LANGUAGE.ok,0,0,0);
@@ -2257,8 +2257,8 @@ ProgressUpdateWindow()
 
     char dolpath[150];
     char dolpathsuccess[150];
-    snprintf(dolpath, sizeof(dolpath), "%sbootnew.dol", CFG.update_path);
-    snprintf(dolpathsuccess, sizeof(dolpathsuccess), "%sboot.dol", CFG.update_path);
+    snprintf(dolpath, sizeof(dolpath), "%sbootnew.dol", Settings.update_path);
+    snprintf(dolpathsuccess, sizeof(dolpathsuccess), "%sboot.dol", Settings.update_path);
 
 	while (!IP && !(ret < 0)) {
 
@@ -2385,7 +2385,7 @@ ProgressUpdateWindow()
                 char xmliconpath[150];
                 file = downloadfile("http://www.techjawa.com/usbloadergx/meta.file");
                 if(file.data != NULL){
-                    sprintf(xmliconpath, "%smeta.xml", CFG.update_path);
+                    sprintf(xmliconpath, "%smeta.xml", Settings.update_path);
                     pfile = fopen(xmliconpath, "wb");
                     fwrite(file.data,1,file.size,pfile);
                     fclose(pfile);
@@ -2393,7 +2393,7 @@ ProgressUpdateWindow()
                 }
                 file = downloadfile("http://www.techjawa.com/usbloadergx/icon.png");
                 if(file.data != NULL){
-                    sprintf(xmliconpath, "%sicon.png", CFG.update_path);
+                    sprintf(xmliconpath, "%sicon.png", Settings.update_path);
                     pfile = fopen(xmliconpath, "wb");
                     fwrite(file.data,1,file.size,pfile);
                     fclose(pfile);

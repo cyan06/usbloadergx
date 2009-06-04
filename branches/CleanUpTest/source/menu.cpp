@@ -646,7 +646,7 @@ static int MenuDiscList()
 	DownloadBtn.SetAlignment(ALIGN_LEFT, ALIGN_TOP);
 	DownloadBtn.SetPosition(THEME.cover_x,THEME.cover_y);
 
-	if (CFG.godmode == 1)
+	if (Settings.godmode == 1)
 	{//only make the button have trigger & tooltip if in godmode
 		DownloadBtn.SetSoundOver(&btnSoundOver);
 		DownloadBtn.SetTrigger(&trigA);
@@ -697,7 +697,7 @@ static int MenuDiscList()
 
 	w.Append(&sdcardBtn);
 	w.Append(&poweroffBtn);
-	if (CFG.godmode)
+	if (Settings.godmode)
 		w.Append(&installBtn);
 	w.Append(&homeBtn);
 	w.Append(&settingsBtn);
@@ -787,10 +787,10 @@ static int MenuDiscList()
 		    s32 thetimeofbg = bgMusic->GetPlayTime();
             bgMusic->Stop();
 			choice = WindowExitPrompt(LANGUAGE.ExitUSBISOLoader,0, LANGUAGE.BacktoLoader,LANGUAGE.WiiMenu,LANGUAGE.Back,0);
-			if(!strcmp("", CFG.oggload_path) || !strcmp("notset", CFG.ogg_path)) {
+			if(!strcmp("", Settings.oggload_path) || !strcmp("notset", Settings.ogg_path)) {
                 bgMusic->Play();
             } else {
-                bgMusic->PlayOggFile(CFG.ogg_path);
+                bgMusic->PlayOggFile(Settings.ogg_path);
             }
             bgMusic->SetPlayTime(thetimeofbg);
             SetVolumeOgg(255*(vol/100.0));
@@ -1259,17 +1259,17 @@ static int MenuDiscList()
 						cover = NULL;
 					}
 
-					snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.covers_path, IDfull);
+					snprintf(imgPath, sizeof(imgPath), "%s%s.png", Settings.covers_path, IDfull);
 					cover = new GuiImageData(imgPath,0); //load short id
 					if (!cover->GetImage()) //if could not load the short id image
 					{
 						delete cover;
-						snprintf(imgPath, sizeof(imgPath), "%s%s.png", CFG.covers_path, ID);
+						snprintf(imgPath, sizeof(imgPath), "%s%s.png", Settings.covers_path, ID);
 						cover = new GuiImageData(imgPath, 0); //load full id image
 						if (!cover->GetImage())
 						{
 							delete cover;
-							snprintf(imgPath, sizeof(imgPath), "%snoimage.png", CFG.covers_path);
+							snprintf(imgPath, sizeof(imgPath), "%snoimage.png", Settings.covers_path);
 							cover = new GuiImageData(imgPath, nocover_png); //load no image
 						}
 					}
@@ -1852,15 +1852,15 @@ int MenuOGG()
 
     char fullpath[150];
     char shortpath[35];
-	int countoggs = GetFiles(CFG.oggload_path);
+	int countoggs = GetFiles(Settings.oggload_path);
 
-    if(!strcmp("", CFG.oggload_path)) {
+    if(!strcmp("", Settings.oggload_path)) {
         sprintf(shortpath, "%s", LANGUAGE.Standard);
-	} else if (strlen(CFG.oggload_path) < (27 + 3)) {
-		sprintf(shortpath, "%s", CFG.oggload_path);
+	} else if (strlen(Settings.oggload_path) < (27 + 3)) {
+		sprintf(shortpath, "%s", Settings.oggload_path);
 	}
 	else {
-		strncpy(shortpath, CFG.oggload_path,  27);
+		strncpy(shortpath, Settings.oggload_path,  27);
 		shortpath[27] = '\0';
 		strncat(shortpath, "...", 3);
 	}
@@ -1996,10 +1996,10 @@ int MenuOGG()
 
     if (backBtn.GetState() == STATE_CLICKED) {
             if(nothingchanged == 1 && countoggs > 0) {
-            if(!strcmp("", CFG.oggload_path) || !strcmp("notset", CFG.ogg_path)) {
+            if(!strcmp("", Settings.oggload_path) || !strcmp("notset", Settings.ogg_path)) {
                 bgMusic->Play();
             } else {
-                bgMusic->PlayOggFile(CFG.ogg_path);
+                bgMusic->PlayOggFile(Settings.ogg_path);
             }
             }
 			menu = MENU_SETTINGS;
@@ -2015,7 +2015,7 @@ int MenuOGG()
             w.Remove(&prevBtn);
             w.Remove(&stopBtn);
             char entered[43] = "";
-            strncpy(entered, CFG.oggload_path, sizeof(entered));
+            strncpy(entered, Settings.oggload_path, sizeof(entered));
             int result = OnScreenKeyboard(entered,43,0);
             mainWindow->Append(&optionBrowser4);
             w.Append(&pathBtn);
@@ -2028,11 +2028,11 @@ int MenuOGG()
                 int len = (strlen(entered)-1);
                 if(entered[len] !='/')
                 strncat (entered, "/", 1);
-                strncpy(CFG.oggload_path, entered, sizeof(CFG.oggload_path));
+                strncpy(Settings.oggload_path, entered, sizeof(Settings.oggload_path));
                 WindowPrompt(LANGUAGE.Backgroundmusicpath,0,LANGUAGE.ok,0,0,0);
                 if(isSdInserted()) {
-                    if(!strcmp("", CFG.oggload_path)) {
-                    sprintf(CFG.ogg_path, "notset");
+                    if(!strcmp("", Settings.oggload_path)) {
+                    sprintf(Settings.ogg_path, "notset");
                     bgMusic->Play();
                     }
                     cfg_save_global();
@@ -2053,15 +2053,15 @@ int MenuOGG()
     if(ret>=0) {
         choice = WindowPrompt(LANGUAGE.Setasbackgroundmusic,alldirfiles[ret],LANGUAGE.Yes,LANGUAGE.No,0,0);
         if(choice == 1) {
-        snprintf(fullpath,150,"%s%s",CFG.oggload_path,alldirfiles[ret]);
+        snprintf(fullpath,150,"%s%s",Settings.oggload_path,alldirfiles[ret]);
         choice = bgMusic->PlayOggFile(fullpath);
         if(choice < 0) {
         WindowPrompt(LANGUAGE.Notasupportedformat, LANGUAGE.Loadingstandardmusic, LANGUAGE.ok, 0,0,0);
-        sprintf(CFG.ogg_path, "notset");
+        sprintf(Settings.ogg_path, "notset");
         bgMusic->Play();
         SetVolumeOgg(255*(vol/100.0));
         } else {
-        snprintf(CFG.ogg_path, sizeof(CFG.ogg_path), "%s", fullpath);
+        snprintf(Settings.ogg_path, sizeof(Settings.ogg_path), "%s", fullpath);
         cfg_save_global();
         SetVolumeOgg(255*(vol/100.0));
         nothingchanged = 0;
@@ -2074,14 +2074,14 @@ int MenuOGG()
          if(countoggs > 0) {
             ret = optionBrowser4.GetSelectedOption();
 			songPlaying=ret;
-            snprintf(fullpath, 150,"%s%s", CFG.oggload_path,alldirfiles[ret]);
+            snprintf(fullpath, 150,"%s%s", Settings.oggload_path,alldirfiles[ret]);
             choice = bgMusic->PlayOggFile(fullpath);
             if(choice < 0) {
             WindowPrompt(LANGUAGE.Notasupportedformat, LANGUAGE.Loadingstandardmusic, LANGUAGE.ok, 0,0,0);
-            if(!strcmp("", CFG.oggload_path) || !strcmp("notset", CFG.ogg_path)) {
+            if(!strcmp("", Settings.oggload_path) || !strcmp("notset", Settings.ogg_path)) {
                 bgMusic->Play();
             } else {
-                bgMusic->PlayOggFile(CFG.ogg_path);
+                bgMusic->PlayOggFile(Settings.ogg_path);
             }
             }
             SetVolumeOgg(255*(vol/100.0));
@@ -2096,14 +2096,14 @@ int MenuOGG()
 	    if(countoggs > 0) {
 			songPlaying++;
 			if (songPlaying>(countoggs - 1)){songPlaying=0;}
-            snprintf(fullpath,150,"%s%s", CFG.oggload_path,alldirfiles[songPlaying]);
+            snprintf(fullpath,150,"%s%s", Settings.oggload_path,alldirfiles[songPlaying]);
             choice = bgMusic->PlayOggFile(fullpath);
             if(choice < 0) {
             WindowPrompt(LANGUAGE.Notasupportedformat, LANGUAGE.Loadingstandardmusic, LANGUAGE.ok, 0,0,0);
-            if(!strcmp("", CFG.oggload_path) || !strcmp("notset", CFG.ogg_path)) {
+            if(!strcmp("", Settings.oggload_path) || !strcmp("notset", Settings.ogg_path)) {
                 bgMusic->Play();
             } else {
-                bgMusic->PlayOggFile(CFG.ogg_path);
+                bgMusic->PlayOggFile(Settings.ogg_path);
             }
             }
             nothingchanged = 1;
@@ -2116,14 +2116,14 @@ int MenuOGG()
 	    if(countoggs > 0) {
             songPlaying--;
             if (songPlaying<0){songPlaying=(countoggs - 1);}
-            snprintf(fullpath,150,"%s%s", CFG.oggload_path,alldirfiles[songPlaying]);
+            snprintf(fullpath,150,"%s%s", Settings.oggload_path,alldirfiles[songPlaying]);
             choice = bgMusic->PlayOggFile(fullpath);
             if(choice < 0) {
             WindowPrompt(LANGUAGE.Notasupportedformat, LANGUAGE.Loadingstandardmusic, LANGUAGE.ok, 0,0,0);
-            if(!strcmp("", CFG.oggload_path) || !strcmp("notset", CFG.ogg_path)) {
+            if(!strcmp("", Settings.oggload_path) || !strcmp("notset", Settings.ogg_path)) {
                 bgMusic->Play();
             } else {
-                bgMusic->PlayOggFile(CFG.ogg_path);
+                bgMusic->PlayOggFile(Settings.ogg_path);
             }
             }
             nothingchanged = 1;
@@ -2191,10 +2191,10 @@ int MainMenu(int menu)
     bgMusic->SetVolume(vol);
 	bgMusic->SetLoop(1); //loop music
     // startup music
-    if(!strcmp("", CFG.oggload_path) || !strcmp("notset", CFG.ogg_path)) {
+    if(!strcmp("", Settings.oggload_path) || !strcmp("notset", Settings.ogg_path)) {
         bgMusic->Play();
     } else {
-        bgMusic->PlayOggFile(CFG.ogg_path);
+        bgMusic->PlayOggFile(Settings.ogg_path);
     }
 
 	while(currentMenu != MENU_EXIT)

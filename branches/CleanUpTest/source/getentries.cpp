@@ -123,13 +123,13 @@ s32 __Menu_GetEntries(void)
 		cnt = cnt2;
 	}
 
-	if (CFG.parentalcontrol && !CFG.godmode) {
+	if (Settings.parentalcontrol && !Settings.godmode) {
 		u32 cnt2 = 0;
 
 		for (u32 i = 0; i < cnt; i++)
 		{
 			header = &buffer[i];
-			if (get_block(header) < CFG.parentalcontrol) {
+			if (get_block(header) < Settings.parentalcontrol) {
 				buffer2 = (discHdr *) realloc(buffer2, (cnt2+1) * sizeof(struct discHdr));
 				if (!buffer2)
 				{

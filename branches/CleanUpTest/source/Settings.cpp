@@ -124,7 +124,7 @@ int MenuSettings()
 	page3Btn.SetTrigger(2, &trigPlus);
 
 	const char * text = LANGUAGE.Unlock;
-	if (CFG.godmode == 1)
+	if (Settings.godmode == 1)
 			text = LANGUAGE.Lock;
 	GuiText lockBtnTxt(text, 22, (GXColor){THEME.prompttxt_r, THEME.prompttxt_g, THEME.prompttxt_b, 255});
 	lockBtnTxt.SetMaxWidth(btnOutline.GetWidth()-30);
@@ -389,15 +389,15 @@ int MenuSettings()
 					Settings.qboot = 0;
 				if ( Settings.wsprompt > 1 )
 					Settings.wsprompt = 0;
-                if (CFG.parentalcontrol > 3 )
-					CFG.parentalcontrol = 0;
+                if (Settings.parentalcontrol > 3 )
+					Settings.parentalcontrol = 0;
 
 
-				if ( CFG.godmode != 1) options2.SetValue(0, "********");
+				if ( Settings.godmode != 1) options2.SetValue(0, "********");
 				else if (!strcmp("", Settings.unlockCode)) options2.SetValue(0, "%s",LANGUAGE.notset);
 				else options2.SetValue(0, Settings.unlockCode);
 
-                if (CFG.godmode != 1) options2.SetValue(1, "********");
+                if (Settings.godmode != 1) options2.SetValue(1, "********");
                 else if (Settings.cios == ios249) options2.SetValue(1,"cIOS 249");
 				else if (Settings.cios == ios222) options2.SetValue(1,"cIOS 222");
 
@@ -413,14 +413,14 @@ int MenuSettings()
 				if (Settings.wsprompt == no) options2.SetValue(4,"%s",LANGUAGE.Normal);
 				else if (Settings.wsprompt == yes) options2.SetValue(4,"%s",LANGUAGE.WidescreenFix);
 
-                if (CFG.godmode != 1) options2.SetValue(5, "********");
-				else if(CFG.parentalcontrol == 0) options2.SetValue(5, "0");
-				else if(CFG.parentalcontrol == 1) options2.SetValue(5, "1");
-				else if(CFG.parentalcontrol == 2) options2.SetValue(5, "2");
-				else if(CFG.parentalcontrol == 3) options2.SetValue(5, "3");
+                if (Settings.godmode != 1) options2.SetValue(5, "********");
+				else if(Settings.parentalcontrol == 0) options2.SetValue(5, "0");
+				else if(Settings.parentalcontrol == 1) options2.SetValue(5, "1");
+				else if(Settings.parentalcontrol == 2) options2.SetValue(5, "2");
+				else if(Settings.parentalcontrol == 3) options2.SetValue(5, "3");
 
-				options2.SetValue(6, "%s", CFG.covers_path);
-				options2.SetValue(7, "%s", CFG.disc_path);
+				options2.SetValue(6, "%s", Settings.covers_path);
+				options2.SetValue(7, "%s", Settings.disc_path);
 				options2.SetValue(8, "%s", CFG.theme_path);
 
 				ret = optionBrowser2.GetClickedOption();
@@ -429,7 +429,7 @@ int MenuSettings()
 				{
 
 					case 0: // Modify Password
-						if ( CFG.godmode == 1)
+						if ( Settings.godmode == 1)
 						{
 							mainWindow->Remove(&optionBrowser2);
 							mainWindow->Remove(&page1Btn);
@@ -462,7 +462,7 @@ int MenuSettings()
 						}
 						break;
 					case 1:
-                        if ( CFG.godmode == 1)
+                        if ( Settings.godmode == 1)
 						Settings.cios++;
 						break;
 					case 2:
@@ -475,11 +475,11 @@ int MenuSettings()
 						Settings.wsprompt++;
 						break;
                     case 5:
-                        if ( CFG.godmode == 1)
-                        CFG.parentalcontrol++;
+                        if ( Settings.godmode == 1)
+                        Settings.parentalcontrol++;
                         break;
                     case 6:
-                        if ( CFG.godmode == 1)
+                        if ( Settings.godmode == 1)
                         {
 							mainWindow->Remove(&optionBrowser2);
 							mainWindow->Remove(&page1Btn);
@@ -490,7 +490,7 @@ int MenuSettings()
 							w.Remove(&lockBtn);
 							w.Remove(&updateBtn);
 							char entered[43] = "";
-							strncpy(entered, CFG.covers_path, sizeof(entered));
+							strncpy(entered, Settings.covers_path, sizeof(entered));
 							int result = OnScreenKeyboard(entered,43,4);
 							mainWindow->Append(&optionBrowser2);
 							mainWindow->Append(&page1Btn);
@@ -505,7 +505,7 @@ int MenuSettings()
 								int len = (strlen(entered)-1);
 								if(entered[len] !='/')
 								strncat (entered, "/", 1);
-								strncpy(CFG.covers_path, entered, sizeof(CFG.covers_path));
+								strncpy(Settings.covers_path, entered, sizeof(Settings.covers_path));
 								WindowPrompt(LANGUAGE.CoverpathChanged,0,LANGUAGE.ok,0,0,0);
 								if(!isSdInserted()) {
                                     WindowPrompt(LANGUAGE.NoSDcardinserted, LANGUAGE.InsertaSDCardtosave, LANGUAGE.ok, 0,0,0);
@@ -518,7 +518,7 @@ int MenuSettings()
 						}
 						break;
                     case 7:
-                        if ( CFG.godmode == 1)
+                        if ( Settings.godmode == 1)
                         {
 							mainWindow->Remove(&optionBrowser2);
 							mainWindow->Remove(&page1Btn);
@@ -529,7 +529,7 @@ int MenuSettings()
 							w.Remove(&lockBtn);
 							w.Remove(&updateBtn);
 							char entered[43] = "";
-							strncpy(entered, CFG.disc_path, sizeof(entered));
+							strncpy(entered, Settings.disc_path, sizeof(entered));
 							int result = OnScreenKeyboard(entered, 43,4);
 							mainWindow->Append(&optionBrowser2);
 							mainWindow->Append(&page1Btn);
@@ -544,7 +544,7 @@ int MenuSettings()
 								int len = (strlen(entered)-1);
 								if(entered[len] !='/')
 								strncat (entered, "/", 1);
-								strncpy(CFG.disc_path, entered, sizeof(CFG.disc_path));
+								strncpy(Settings.disc_path, entered, sizeof(Settings.disc_path));
 								WindowPrompt(LANGUAGE.DiscpathChanged,0,LANGUAGE.ok,0,0,0);
 								if(!isSdInserted()) {
                                     WindowPrompt(LANGUAGE.NoSDcardinserted, LANGUAGE.InsertaSDCardtosave, LANGUAGE.ok, 0,0,0);
@@ -557,7 +557,7 @@ int MenuSettings()
 						}
 						break;
                     case 8:
-                        if ( CFG.godmode == 1)
+                        if ( Settings.godmode == 1)
                         {
 							mainWindow->Remove(&optionBrowser2);
 							mainWindow->Remove(&page1Btn);
@@ -651,9 +651,9 @@ int MenuSettings()
                 if ( Settings.patchcountrystrings > 1)
                     Settings.patchcountrystrings = 0;
 
-				options2.SetValue(0, "%s", CFG.titlestxt_path);
+				options2.SetValue(0, "%s", Settings.titlestxt_path);
 
-				options2.SetValue(1, "%s", CFG.language_path);
+				options2.SetValue(1, "%s", Settings.language_path);
 
 				if (Settings.keyset == us) options2.SetValue(2,"QWERTY");
 				else if (Settings.keyset == dvorak) options2.SetValue(2,"DVORAK");
@@ -664,16 +664,16 @@ int MenuSettings()
 				else if (Settings.unicodefix == 1) options2.SetValue(3,"%s",LANGUAGE.TChinese);
 				else if (Settings.unicodefix == 2) options2.SetValue(3,"%s",LANGUAGE.SChinese);
 
-				if(!strcmp("notset", CFG.ogg_path) || !strcmp("",CFG.oggload_path))
+				if(!strcmp("notset", Settings.ogg_path) || !strcmp("",Settings.oggload_path))
 					options2.SetValue(4, "%s", LANGUAGE.Standard);
 				else
-					options2.SetValue(4, "%s", CFG.ogg_path);
+					options2.SetValue(4, "%s", Settings.ogg_path);
 
 				if (Settings.wiilight == 0) options2.SetValue(5,"%s",LANGUAGE.OFF);
 				else if (Settings.wiilight == 1) options2.SetValue(5,"%s",LANGUAGE.ON);
 				else if (Settings.wiilight == 2) options2.SetValue(5,"%s",LANGUAGE.OnlyInstall);
 
-				options2.SetValue(6, "%s", CFG.update_path);
+				options2.SetValue(6, "%s", Settings.update_path);
 
 				if (Settings.patchcountrystrings == 0) options2.SetValue(7,"%s",LANGUAGE.OFF);
 				else if (Settings.patchcountrystrings == 1) options2.SetValue(7,"%s",LANGUAGE.ON);
@@ -685,7 +685,7 @@ int MenuSettings()
 				switch(ret)
 				{
 					case 0:
-						if ( CFG.godmode == 1)
+						if ( Settings.godmode == 1)
 						{
 							mainWindow->Remove(&optionBrowser2);
 							mainWindow->Remove(&page1Btn);
@@ -696,7 +696,7 @@ int MenuSettings()
 							w.Remove(&lockBtn);
 							w.Remove(&updateBtn);
 							char entered[43] = "";
-							strncpy(entered, CFG.titlestxt_path, sizeof(entered));
+							strncpy(entered, Settings.titlestxt_path, sizeof(entered));
 							int result = OnScreenKeyboard(entered,43,4);
 							mainWindow->Append(&optionBrowser2);
 							mainWindow->Append(&page1Btn);
@@ -711,7 +711,7 @@ int MenuSettings()
 								int len = (strlen(entered)-1);
 								if(entered[len] !='/')
 								strncat (entered, "/", 1);
-								strncpy(CFG.titlestxt_path, entered, sizeof(CFG.titlestxt_path));
+								strncpy(Settings.titlestxt_path, entered, sizeof(Settings.titlestxt_path));
 								WindowPrompt(LANGUAGE.TitlestxtpathChanged,0,LANGUAGE.ok,0,0,0);
 								if(isSdInserted()) {
 									cfg_save_global();
@@ -727,7 +727,7 @@ int MenuSettings()
 						}
 						break;
 					case 1: // language file path
-						if ( CFG.godmode == 1)
+						if ( Settings.godmode == 1)
 						{
 							mainWindow->Remove(&optionBrowser2);
 							mainWindow->Remove(&page1Btn);
@@ -738,7 +738,7 @@ int MenuSettings()
 							w.Remove(&lockBtn);
 							w.Remove(&updateBtn);
 							char entered[40] = "";
-							strncpy(entered, CFG.language_path, sizeof(entered));
+							strncpy(entered, Settings.language_path, sizeof(entered));
 							int result = OnScreenKeyboard(entered, 40,0);
 							mainWindow->Append(&optionBrowser2);
 							mainWindow->Append(&tabBtn);
@@ -749,10 +749,10 @@ int MenuSettings()
 							w.Append(&lockBtn);
 							w.Append(&updateBtn);
 							if ( result == 1 )
-							{	strncpy(CFG.language_path, entered, sizeof(CFG.language_path));
+							{	strncpy(Settings.language_path, entered, sizeof(Settings.language_path));
 								if(isSdInserted()) {
 									cfg_save_global();
-									if(!checkfile(CFG.language_path)) {
+									if(!checkfile(Settings.language_path)) {
 									WindowPrompt(LANGUAGE.Filenotfound,LANGUAGE.Loadingstandardlanguage,LANGUAGE.ok,0,0,0);
 									}
 									lang_default();
@@ -791,7 +791,7 @@ int MenuSettings()
                         Settings.patchcountrystrings++;
                         break;
 					case 6:
-						if ( CFG.godmode == 1)
+						if ( Settings.godmode == 1)
 						{
 							mainWindow->Remove(&optionBrowser2);
 							mainWindow->Remove(&page1Btn);
@@ -802,7 +802,7 @@ int MenuSettings()
 							w.Remove(&lockBtn);
 							w.Remove(&updateBtn);
 							char entered[43] = "";
-							strncpy(entered, CFG.update_path, sizeof(entered));
+							strncpy(entered, Settings.update_path, sizeof(entered));
 							int result = OnScreenKeyboard(entered,43,4);
 							mainWindow->Append(&optionBrowser2);
 							mainWindow->Append(&page1Btn);
@@ -817,7 +817,7 @@ int MenuSettings()
 								int len = (strlen(entered)-1);
 								if(entered[len] !='/')
 								strncat (entered, "/", 1);
-								strncpy(CFG.update_path, entered, sizeof(CFG.update_path));
+								strncpy(Settings.update_path, entered, sizeof(Settings.update_path));
 								WindowPrompt(LANGUAGE.Updatepathchanged,0,LANGUAGE.ok,0,0,0);
 							}
 						}
@@ -832,7 +832,6 @@ int MenuSettings()
 								remove("SD:/config/GXGlobal.cfg");
 							lang_default();
 							CFG_Load();
-							DefaultSettings();
 							menu = MENU_SETTINGS;
 							pageToDisplay = 0;
 						}
@@ -884,7 +883,7 @@ int MenuSettings()
 			}
 
 			if(updateBtn.GetState() == STATE_CLICKED) {
-			    if(isSdInserted() && CFG.godmode) {
+			    if(isSdInserted() && Settings.godmode) {
                 mainWindow->Remove(&optionBrowser2);
                 mainWindow->Remove(&page1Btn);
                 mainWindow->Remove(&page2Btn);
@@ -940,9 +939,9 @@ int MenuSettings()
 			{
 				if (!strcmp("", Settings.unlockCode))
 				{
-					CFG.godmode = !CFG.godmode;
+					Settings.godmode = !Settings.godmode;
 				}
-				else if ( CFG.godmode == 0 )
+				else if ( Settings.godmode == 0 )
 				{
 					//password check to unlock Install,Delete and Format
 							mainWindow->Remove(&optionBrowser2);
@@ -967,9 +966,9 @@ int MenuSettings()
                             if ( result == 1 ) {
                             if (!strcmp(entered, Settings.unlockCode)) //if password correct
                             {
-                            if (CFG.godmode == 0) {
+                            if (Settings.godmode == 0) {
 								WindowPrompt(LANGUAGE.CorrectPassword,LANGUAGE.InstallRenameandDeleteareunlocked,LANGUAGE.ok,0,0,0);
-								CFG.godmode = 1;
+								Settings.godmode = 1;
 								__Menu_GetEntries();
 								menu = MENU_DISCLIST;
                             }
@@ -985,12 +984,12 @@ int MenuSettings()
 					int choice = WindowPrompt (LANGUAGE.LockConsole,LANGUAGE.Areyousure,LANGUAGE.Yes,LANGUAGE.No,0,0);
 					if(choice == 1) {
 						WindowPrompt(LANGUAGE.ConsoleLocked,LANGUAGE.USBLoaderisprotected,LANGUAGE.ok,0,0,0);
-						CFG.godmode = 0;
+						Settings.godmode = 0;
 						__Menu_GetEntries();
 						menu = MENU_DISCLIST;
 					}
 				}
-				if ( CFG.godmode == 1)
+				if ( Settings.godmode == 1)
 				{
 					lockBtnTxt.SetText(LANGUAGE.Lock);
 				}
@@ -1007,13 +1006,13 @@ int MenuSettings()
 				s32 thetimeofbg = bgMusic->GetPlayTime();
 				bgMusic->Stop();
 				choice = WindowExitPrompt(LANGUAGE.ExitUSBISOLoader,0, LANGUAGE.BacktoLoader,LANGUAGE.WiiMenu,LANGUAGE.Back,0);
-				if(!strcmp("", CFG.oggload_path) || !strcmp("notset", CFG.ogg_path))
+				if(!strcmp("", Settings.oggload_path) || !strcmp("notset", Settings.ogg_path))
 				{
 					bgMusic->Play();
 				}
 				else
 				{
-					bgMusic->PlayOggFile(CFG.ogg_path);
+					bgMusic->PlayOggFile(Settings.ogg_path);
 				}
 				bgMusic->SetPlayTime(thetimeofbg);
 				SetVolumeOgg(255*(vol/100.0));
@@ -1031,7 +1030,7 @@ int MenuSettings()
 					homo.ResetState();
 				}
 			}
-			if(CFG.godmode) {
+			if(Settings.godmode) {
                 updateBtn.SetVisible(true);
                 updateBtn.SetClickable(true);
 			} else {
