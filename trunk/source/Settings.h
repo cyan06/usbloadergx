@@ -8,8 +8,6 @@
 #ifndef _SETTINGS_H_
 #define _SETTINGS_H_
 
-#include "disc.h"
-
 int MenuSettings();
 int GameSettings(struct discHdr * header);
 

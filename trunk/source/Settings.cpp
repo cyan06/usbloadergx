@@ -1047,8 +1047,8 @@ int MenuSettings()
 		}
 	}
 	HaltGui();
-	mainWindow->Remove(&optionBrowser2);
-	mainWindow->Remove(&w);
+	mainWindow->RemoveAll();
+	mainWindow->Append(bgImg);
 	ResumeGui();
 	return menu;
 }
