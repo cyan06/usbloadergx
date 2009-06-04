@@ -1,16 +1,19 @@
 #include <string.h>
 
-#include "libwiigui/gui.h"
 #include "menu.h"
-#include "audio.h"
 #include "filelist.h"
 #include "sys.h"
 #include "wbfs.h"
 #include "language.h"
+#include "libwiigui/gui.h"
 #include "libwiigui/gui_customoptionbrowser.h"
 #include "fatmounter.h"
 #include "PromptWindows.h"
 #include "getentries.h"
+
+/*** Extern functions ***/
+extern void ResumeGui();
+extern void HaltGui();
 
 /*** Extern variables ***/
 extern GuiWindow * mainWindow;
@@ -254,7 +257,6 @@ int MenuSettings()
 			mainWindow->Append(&tabBtn);
 			mainWindow->Append(&page1Btn);
 			mainWindow->Append(&page3Btn);
-
 
 			options2.SetName(0, "%s",LANGUAGE.Titlestxtpath);
 			options2.SetName(1, "%s",LANGUAGE.AppLanguage);

@@ -13,15 +13,8 @@
 #include "main.h"
 #include "cfg.h"
 
-#ifdef __cplusplus
-#endif
-void ResumeGui();
-void HaltGui();
 void InitGUIThreads(void);
 void ExitGUIThreads(void);
-#ifdef __cplusplus
-//}
-#endif
 
 int MainMenu (int menuitem);
 

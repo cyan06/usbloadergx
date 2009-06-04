@@ -5,15 +5,14 @@
 #include <string.h>
 #include <dirent.h>
 
-#include "libwiigui/gui.h"
 #include "menu.h"
-#include "audio.h"
 #include "filelist.h"
 #include "sys.h"
 #include "wpad.h"
 #include "wbfs.h"
 #include "wdvd.h"
 #include "language.h"
+#include "libwiigui/gui.h"
 #include "libwiigui/gui_diskcover.h"
 #include "fatmounter.h"
 #include "listfiles.h"
@@ -26,7 +25,6 @@
 char missingFiles[500][12];
 int cntMissFiles = 0;
 int networkisinitialized;
-float gamesize;
 
 /*** Variables used only in this file ***/
 static GuiText prTxt(NULL, 26, (GXColor){THEME.prompttxt_r, THEME.prompttxt_g, THEME.prompttxt_b, 255});
@@ -40,11 +38,15 @@ extern GuiWindow * mainWindow;
 extern GuiSound * bgMusic;
 extern u32 gameCnt;
 extern s32 gameSelected, gameStart;
+extern float gamesize;
 extern struct discHdr * gameList;
 extern u8 shutdown;
 extern u8 reset;
 extern int vol;
 
+/*** Extern functions ***/
+extern void ResumeGui();
+extern void HaltGui();
 
 /****************************************************************************
  * OnScreenKeyboard
@@ -2094,7 +2096,7 @@ ProgressDownloadWindow(int choice2)
 	}
 
     /**Temporary redownloading 1st image because of a fucking corruption bug **/
-/*
+
     char URLFile[100];
     if (choice2 == 2) {
 		sprintf(URLFile,"http://www.theotherzone.com/wii/3d/176/248/%s",missingFiles[0]); // For 3D Covers
@@ -2123,7 +2125,6 @@ ProgressDownloadWindow(int choice2)
         free(file.data);
     }
     }
-*/
 
 	HaltGui();
 	mainWindow->Remove(&promptWindow);

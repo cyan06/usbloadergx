@@ -10,8 +10,8 @@
 
 #include "partition.h"
 
-int OnScreenKeyboard(char * var, u32 maxlen, int min);
 void WindowCredits();
+int OnScreenKeyboard(char * var, u32 maxlen, int min);
 int WindowPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, const char *btn4Label);
 int WindowExitPrompt(const char *title, const char *msg, const char *btn1Label, const char *btn2Label, const char *btn3Label, const char *btn4Label);
 int GameWindowPrompt();

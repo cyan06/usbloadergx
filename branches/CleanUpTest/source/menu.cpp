@@ -10,6 +10,11 @@
 #include <stdio.h> //CLOCK
 #include <time.h>
 
+#include "libwiigui/gui.h"
+#include "libwiigui/gui_gamegrid.h"
+#include "libwiigui/gui_gamecarousel.h"
+#include "libwiigui/gui_customoptionbrowser.h"
+#include "libwiigui/gui_gamebrowser.h"
 #include "menu.h"
 #include "audio.h"
 #include "Settings.h"
@@ -18,13 +23,9 @@
 #include "disc.h"
 #include "filelist.h"
 #include "sys.h"
-#include "libwiigui/gui_gamegrid.h"
-#include "libwiigui/gui_gamecarousel.h"
 #include "patchcode.h"
 #include "wpad.h"
 #include "language.h"
-#include "libwiigui/gui_customoptionbrowser.h"
-#include "libwiigui/gui_gamebrowser.h"
 #include "listfiles.h"
 #include "fatmounter.h"
 #include "getentries.h"
@@ -40,6 +41,7 @@ GuiImage * bgImg = NULL;
 GuiImageData * background = NULL;
 GuiSound * bgMusic = NULL;
 int vol = Settings.volume;
+float gamesize;
 
 /*** Variables used only in menu.cpp ***/
 static GuiImage * coverImg = NULL;
@@ -52,19 +54,17 @@ static int ExitRequested = 0;
 static char gameregion[7];
 
 /*** Extern variables ***/
-extern FreeTypeGX *fontClock; //CLOCK
+extern FreeTypeGX *fontClock;
 extern u8 shutdown;
 extern u8 reset;
 extern char alldirfiles[300][70];
 extern char missingFiles[500][12];
 extern int cntMissFiles;
 extern int networkisinitialized;
-extern float gamesize;
 extern struct discHdr * gameList;
 extern u32 gameCnt;
 extern s32 gameSelected, gameStart;
 extern const u8 data1;
-
 
 /****************************************************************************
  * ResumeGui
@@ -103,7 +103,6 @@ HaltGui()
  *
  * Primary thread to allow GUI to respond to state changes, and draws GUI
  ***************************************************************************/
-//int noControllers=0;
 static void *
 UpdateGUI (void *arg)
 {
@@ -129,17 +128,6 @@ UpdateGUI (void *arg)
 				{
 					DoRumble(i);
 				}
-				/*if(WPAD_Probe(i, NULL) == WPAD_ERR_NO_CONTROLLER){
-					noControllers++;
-					if (noControllers == 4){
-						mainWindow->SetState(STATE_DISABLED);
-					}
-				}
-				else {noControllers =0;
-					if (mainWindow->GetState()==STATE_DISABLED);
-
-					mainWindow->SetState(STATE_DEFAULT);}*/
-
 			}
 			#endif
 
@@ -169,182 +157,14 @@ UpdateGUI (void *arg)
  *
  * Startup GUI threads
  ***************************************************************************/
-void
-InitGUIThreads()
+void InitGUIThreads()
 {
-	LWP_CreateThread (&guithread, UpdateGUI, NULL, NULL, 0, 70);
+	LWP_CreateThread(&guithread, UpdateGUI, NULL, NULL, 0, 70);
 }
-void
-ExitGUIThreads()
+void ExitGUIThreads()
 {
 	ExitRequested = 1;
 	LWP_JoinThread(guithread, NULL);
-}
-
-/****************************************************************************
- * MenuInstall
- ***************************************************************************/
-
-static int MenuInstall()
-{
-	int menu = MENU_NONE;
-    static struct discHdr headerdisc ATTRIBUTE_ALIGN(32);
-
-    if(Settings.cios == ios222) {
-    Disc_SetUSB(NULL, 1);
-    } else {
-    Disc_SetUSB(NULL, 0);
-    }
-
-    int ret, choice = 0;
-	char *name;
-	static char buffer[MAX_CHARACTERS + 4];
-
-	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
-
-    char imgPath[100];
-
-	snprintf(imgPath, sizeof(imgPath), "%sbattery.png", CFG.theme_path);
-	GuiImageData battery(imgPath, battery_png);
-	snprintf(imgPath, sizeof(imgPath), "%sbattery_red.png", CFG.theme_path);
-	GuiImageData batteryRed(imgPath, battery_red_png);
-	snprintf(imgPath, sizeof(imgPath), "%sbattery_bar.png", CFG.theme_path);
-	GuiImageData batteryBar(imgPath, battery_bar_png);
-
-    HaltGui();
-	GuiWindow w(screenwidth, screenheight);
-
-    mainWindow->Append(&w);
-
-	ResumeGui();
-
-	while(menu == MENU_NONE)
-	{
-	    VIDEO_WaitVSync ();
-
-		ret = DiscWait(LANGUAGE.InsertDisk,LANGUAGE.Waiting,LANGUAGE.Cancel,0,0);
-		if (ret < 0) {
-			WindowPrompt (LANGUAGE.ErrorreadingDisc,0,LANGUAGE.Back,0,0,0);
-			menu = MENU_DISCLIST;
-			break;
-		}
-		ret = Disc_Open();
-		if (ret < 0) {
-			WindowPrompt (LANGUAGE.CouldnotopenDisc,0,LANGUAGE.Back,0,0,0);
-			menu = MENU_DISCLIST;
-			break;
-		}
-
-		ret = Disc_IsWii();
-		if (ret < 0) {
-			choice = WindowPrompt (LANGUAGE.NotaWiiDisc,LANGUAGE.InsertaWiiDisc,LANGUAGE.ok,LANGUAGE.Back,0,0);
-
-			if (choice == 1) {
-				menu = MENU_INSTALL;
-				break;
-			} else
-				menu = MENU_DISCLIST;
-				break;
-			}
-
-		Disc_ReadHeader(&headerdisc);
-		name = headerdisc.title;
-		if (strlen(name) < (MAX_CHARACTERS + 3)) {
-			memset(buffer, 0, sizeof(buffer));
-			sprintf(name, "%s", name);
-			} else {
-			strncpy(buffer, name,  MAX_CHARACTERS);
-			buffer[MAX_CHARACTERS] = '\0';
-			strncat(buffer, "...", 3);
-			sprintf(name, "%s", buffer);
-		}
-
-		ret = WBFS_CheckGame(headerdisc.id);
-		if (ret) {
-			WindowPrompt (LANGUAGE.Gameisalreadyinstalled,name,LANGUAGE.Back,0,0,0);
-			menu = MENU_DISCLIST;
-			break;
-		}
-
-		f32 freespace, used;
-
-		WBFS_DiskSpace(&used, &freespace);
-		float estimation = WBFS_EstimeGameSize();
-		gamesize =  estimation/1073741824;
-		char gametxt[50];
-
-		sprintf(gametxt, "%s : %.2fGB", name, gamesize);
-
-        wiilight(1);
-		choice = WindowPrompt(LANGUAGE.Continueinstallgame,gametxt,LANGUAGE.ok,LANGUAGE.Cancel,0,0);
-
-		if(choice == 1) {
-
-		sprintf(gametxt, "%s", LANGUAGE.Installinggame);
-
-		if (gamesize > freespace) {
-			char errortxt[50];
-			sprintf(errortxt, "%s: %.2fGB, %s: %.2fGB",LANGUAGE.GameSize, gamesize, LANGUAGE.FreeSpace, freespace);
-			choice = WindowPrompt(LANGUAGE.Notenoughfreespace,errortxt,LANGUAGE.ok, LANGUAGE.Return,0,0);
-			if (choice == 1) {
-			    wiilight(1);
-				ret = ProgressWindow(gametxt, name);
-				if (ret != 0) {
-					WindowPrompt (LANGUAGE.Installerror,0,LANGUAGE.Back,0,0,0);
-					menu = MENU_DISCLIST;
-					break;
-				}
-				else {
-				    wiilight(1);
-					__Menu_GetEntries(); //get the entries again
-					WindowPrompt (LANGUAGE.Successfullyinstalled,name,LANGUAGE.ok,0,0,0);
-					menu = MENU_DISCLIST;
-					break;
-				}
-			} else {
-				menu = MENU_DISCLIST;
-				break;
-			}
-
-		}
-		else {
-			ret = ProgressWindow(gametxt, name);
-			if (ret != 0) {
-				WindowPrompt (LANGUAGE.Installerror,0,LANGUAGE.Back,0,0,0);
-				menu = MENU_DISCLIST;
-					break;
-			} else {
-				__Menu_GetEntries(); //get the entries again
-				WindowPrompt (LANGUAGE.Successfullyinstalled,name,LANGUAGE.ok,0,0,0);
-				menu = MENU_DISCLIST;
-				break;
-			}
-		}
-		} else {
-		    menu = MENU_DISCLIST;
-		    break;
-		}
-
-		if (shutdown == 1) {
-		    wiilight(0);
-			Sys_Shutdown();
-		}
-		if(reset == 1) {
-		    wiilight(0);
-			Sys_Reboot();
-		}
-	}
-
-    //Turn off the WiiLight
-    wiilight(0);
-
-	HaltGui();
-
-	mainWindow->Remove(&w);
-	ResumeGui();
-///	SDCard_deInit();
-///	SDCard_Init();
-	return menu;
 }
 
 /****************************************************************************
@@ -1554,6 +1374,170 @@ static int MenuDiscList()
 	return menu;
 }
 
+/****************************************************************************
+ * MenuInstall
+ ***************************************************************************/
+
+static int MenuInstall()
+{
+	int menu = MENU_NONE;
+    static struct discHdr headerdisc ATTRIBUTE_ALIGN(32);
+
+    if(Settings.cios == ios222) {
+    Disc_SetUSB(NULL, 1);
+    } else {
+    Disc_SetUSB(NULL, 0);
+    }
+
+    int ret, choice = 0;
+	char *name;
+	static char buffer[MAX_CHARACTERS + 4];
+
+	GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, SOUND_PCM, vol);
+
+    char imgPath[100];
+
+	snprintf(imgPath, sizeof(imgPath), "%sbattery.png", CFG.theme_path);
+	GuiImageData battery(imgPath, battery_png);
+	snprintf(imgPath, sizeof(imgPath), "%sbattery_red.png", CFG.theme_path);
+	GuiImageData batteryRed(imgPath, battery_red_png);
+	snprintf(imgPath, sizeof(imgPath), "%sbattery_bar.png", CFG.theme_path);
+	GuiImageData batteryBar(imgPath, battery_bar_png);
+
+    HaltGui();
+	GuiWindow w(screenwidth, screenheight);
+
+    mainWindow->Append(&w);
+
+	ResumeGui();
+
+	while(menu == MENU_NONE)
+	{
+	    VIDEO_WaitVSync ();
+
+		ret = DiscWait(LANGUAGE.InsertDisk,LANGUAGE.Waiting,LANGUAGE.Cancel,0,0);
+		if (ret < 0) {
+			WindowPrompt (LANGUAGE.ErrorreadingDisc,0,LANGUAGE.Back,0,0,0);
+			menu = MENU_DISCLIST;
+			break;
+		}
+		ret = Disc_Open();
+		if (ret < 0) {
+			WindowPrompt (LANGUAGE.CouldnotopenDisc,0,LANGUAGE.Back,0,0,0);
+			menu = MENU_DISCLIST;
+			break;
+		}
+
+		ret = Disc_IsWii();
+		if (ret < 0) {
+			choice = WindowPrompt (LANGUAGE.NotaWiiDisc,LANGUAGE.InsertaWiiDisc,LANGUAGE.ok,LANGUAGE.Back,0,0);
+
+			if (choice == 1) {
+				menu = MENU_INSTALL;
+				break;
+			} else
+				menu = MENU_DISCLIST;
+				break;
+			}
+
+		Disc_ReadHeader(&headerdisc);
+		name = headerdisc.title;
+		if (strlen(name) < (MAX_CHARACTERS + 3)) {
+			memset(buffer, 0, sizeof(buffer));
+			sprintf(name, "%s", name);
+			} else {
+			strncpy(buffer, name,  MAX_CHARACTERS);
+			buffer[MAX_CHARACTERS] = '\0';
+			strncat(buffer, "...", 3);
+			sprintf(name, "%s", buffer);
+		}
+
+		ret = WBFS_CheckGame(headerdisc.id);
+		if (ret) {
+			WindowPrompt (LANGUAGE.Gameisalreadyinstalled,name,LANGUAGE.Back,0,0,0);
+			menu = MENU_DISCLIST;
+			break;
+		}
+
+		f32 freespace, used;
+
+		WBFS_DiskSpace(&used, &freespace);
+		float gamesize = WBFS_EstimeGameSize()/GB_SIZE;
+		char gametxt[50];
+
+		sprintf(gametxt, "%s : %.2fGB", name, gamesize);
+
+        wiilight(1);
+		choice = WindowPrompt(LANGUAGE.Continueinstallgame,gametxt,LANGUAGE.ok,LANGUAGE.Cancel,0,0);
+
+		if(choice == 1) {
+
+		sprintf(gametxt, "%s", LANGUAGE.Installinggame);
+
+		if (gamesize > freespace) {
+			char errortxt[50];
+			sprintf(errortxt, "%s: %.2fGB, %s: %.2fGB",LANGUAGE.GameSize, gamesize, LANGUAGE.FreeSpace, freespace);
+			choice = WindowPrompt(LANGUAGE.Notenoughfreespace,errortxt,LANGUAGE.ok, LANGUAGE.Return,0,0);
+			if (choice == 1) {
+			    wiilight(1);
+				ret = ProgressWindow(gametxt, name);
+				if (ret != 0) {
+					WindowPrompt (LANGUAGE.Installerror,0,LANGUAGE.Back,0,0,0);
+					menu = MENU_DISCLIST;
+					break;
+				}
+				else {
+				    wiilight(1);
+					__Menu_GetEntries(); //get the entries again
+					WindowPrompt (LANGUAGE.Successfullyinstalled,name,LANGUAGE.ok,0,0,0);
+					menu = MENU_DISCLIST;
+					break;
+				}
+			} else {
+				menu = MENU_DISCLIST;
+				break;
+			}
+
+		}
+		else {
+			ret = ProgressWindow(gametxt, name);
+			if (ret != 0) {
+				WindowPrompt (LANGUAGE.Installerror,0,LANGUAGE.Back,0,0,0);
+				menu = MENU_DISCLIST;
+					break;
+			} else {
+				__Menu_GetEntries(); //get the entries again
+				WindowPrompt (LANGUAGE.Successfullyinstalled,name,LANGUAGE.ok,0,0,0);
+				menu = MENU_DISCLIST;
+				break;
+			}
+		}
+		} else {
+		    menu = MENU_DISCLIST;
+		    break;
+		}
+
+		if (shutdown == 1) {
+		    wiilight(0);
+			Sys_Shutdown();
+		}
+		if(reset == 1) {
+		    wiilight(0);
+			Sys_Reboot();
+		}
+	}
+
+    //Turn off the WiiLight
+    wiilight(0);
+
+	HaltGui();
+
+	mainWindow->Remove(&w);
+	ResumeGui();
+///	SDCard_deInit();
+///	SDCard_Init();
+	return menu;
+}
 /****************************************************************************
  * MenuFormat
  ***************************************************************************/
