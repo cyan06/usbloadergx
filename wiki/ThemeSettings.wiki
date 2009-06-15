@@ -73,6 +73,8 @@ theme_path = SD:/mytheme/ (or the theme folder you use)
 
   * *battery_bar.png* is the 4 units that indicate battery life 
 
+  * *font.ttf* is the loaders systemfont (*new*)
+
   * more to add later
 
   * *CAUTION*: All png files should have dimensions of *multiple of 4*
