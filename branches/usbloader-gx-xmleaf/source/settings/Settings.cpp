@@ -477,7 +477,7 @@ int MenuSettings()
                     options2.SetName(6, "%s",LANGUAGE.keyboard);
                     options2.SetName(7, "%s",LANGUAGE.Wiilight);
                     options2.SetName(8, "%s",LANGUAGE.Rumble);
-                    options2.SetName(9, "%s",LANGUAGE.Unicodefix);
+                    //options2.SetName(9, "%s",LANGUAGE.Unicodefix);
                     options2.SetName(10, "%s",LANGUAGE.XMLTitles);
                     for(int i = 0; i <= MAXOPTIONS; i++) options2.SetValue(i, NULL);
                     optionBrowser2.SetScrollbar(1);
@@ -515,8 +515,8 @@ int MenuSettings()
                             Settings.wiilight = 0;
                         if(Settings.rumble >= settings_rumble_max)
                             Settings.rumble = 0; //RUMBLE
-                        if ( Settings.unicodefix > 3 )
-                            Settings.unicodefix = 0;
+                        //if ( Settings.unicodefix > 3 )
+                        //   Settings.unicodefix = 0;
 						if(Settings.titlesOverride >= 2)
 							Settings.titlesOverride = 0;
                         if(!strcmp("notset", Settings.language_path))
@@ -557,11 +557,12 @@ int MenuSettings()
                         if (Settings.rumble == RumbleOn) options2.SetValue(8,"%s",LANGUAGE.ON);
                         else if (Settings.rumble == RumbleOff) options2.SetValue(8,"%s",LANGUAGE.OFF);
 
+						/*
                         if (Settings.unicodefix == 0) options2.SetValue(9,"%s",LANGUAGE.OFF);
                         else if (Settings.unicodefix == 1) options2.SetValue(9,"%s",LANGUAGE.TChinese);
                         else if (Settings.unicodefix == 2) options2.SetValue(9,"%s",LANGUAGE.SChinese);
                         else if (Settings.unicodefix == 3) options2.SetValue(9,"%s",LANGUAGE.Japanese);
-
+						*/
                         if (Settings.titlesOverride == 0) options2.SetValue(10,"%s",LANGUAGE.OFF);
                         else if (Settings.titlesOverride == 1) options2.SetValue(10,"%s",LANGUAGE.ON);
 
@@ -668,7 +669,7 @@ int MenuSettings()
                                 Settings.rumble++;
                                 break;
                             case 9:
-                                Settings.unicodefix++;
+                            //   Settings.unicodefix++;
                                 break;
                             case 10:
 								//HaltGui();  this isn't done on the fly yet.  you have to restart the loader for it to take effect

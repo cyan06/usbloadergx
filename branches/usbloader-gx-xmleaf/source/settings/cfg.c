@@ -326,7 +326,7 @@ void Global_Default(void)
 	Settings.cios = ios249;
 	Settings.xflip = no;
 	Settings.qboot = no;
-	Settings.unicodefix = 0;
+	//Settings.unicodefix = 0;
 	Settings.wiilight = 1;
 	Settings.patchcountrystrings = 0;
 	Settings.error002 = 0;
@@ -942,6 +942,7 @@ void global_cfg_set(char *name, char *val)
 			}
 		return;
 	}
+	/*
 	else if (strcmp(name, "unicodefix") == 0) {
 		int i;
 		if (sscanf(val, "%d", &i) == 1) {
@@ -949,6 +950,7 @@ void global_cfg_set(char *name, char *val)
 		}
 		return;
 	}
+	*/
 	else if (strcmp(name, "wiilight") == 0) {
 		int i;
 		if (sscanf(val, "%d", &i) == 1) {
@@ -1198,7 +1200,7 @@ bool cfg_save_global()// save global settings
 	fprintf(f, "keyset = %d\n ", Settings.keyset);
 	fprintf(f, "xflip = %d\n ", Settings.xflip);
 	fprintf(f, "qboot = %d\n ", Settings.qboot);
-	fprintf(f, "unicodefix = %d\n ", Settings.unicodefix);
+	//fprintf(f, "unicodefix = %d\n ", Settings.unicodefix);
 	fprintf(f, "wsprompt = %d\n", Settings.wsprompt);
 	fprintf(f, "parentalcontrol = %d\n ", Settings.parentalcontrol);
 	fprintf(f, "cover_path = %s\n ", Settings.covers_path);

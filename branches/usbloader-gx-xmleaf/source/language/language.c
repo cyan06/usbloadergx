@@ -237,7 +237,7 @@ snprintf(LANGUAGE.Timeleft, sizeof(LANGUAGE.Timeleft), "Time left:");
 snprintf(LANGUAGE.updating, sizeof(LANGUAGE.updating), "Updating");
 snprintf(LANGUAGE.Unlocked, sizeof(LANGUAGE.Unlocked), "Unlocked");
 snprintf(LANGUAGE.UnlockConsoletousethisOption, sizeof(LANGUAGE.UnlockConsoletousethisOption), "Unlock console to use this option.");
-snprintf(LANGUAGE.Unicodefix, sizeof(LANGUAGE.Unicodefix), "Unicode Fix");
+//snprintf(LANGUAGE.Unicodefix, sizeof(LANGUAGE.Unicodefix), "Unicode Fix");
 snprintf(LANGUAGE.Uninstall, sizeof(LANGUAGE.Uninstall), "Uninstall");
 snprintf(LANGUAGE.Updatepath, sizeof(LANGUAGE.Updatepath), "Updatepath");
 snprintf(LANGUAGE.Updatepathchanged, sizeof(LANGUAGE.Updatepathchanged), "Updatepath changed.");
@@ -1093,10 +1093,12 @@ void language_set(char *name, char *val)
 		strcopy(LANGUAGE.UnlockConsoletousethisOption, val, sizeof(LANGUAGE.UnlockConsoletousethisOption));
 		return;
 	}
+	/*
 	if (strcmp(name, "Unicodefix") == 0) {
 		strcopy(LANGUAGE.Unicodefix, val, sizeof(LANGUAGE.Unicodefix));
 		return;
 	}
+	*/
 	if (strcmp(name, "Uninstall") == 0) {
 		strcopy(LANGUAGE.Uninstall, val, sizeof(LANGUAGE.Uninstall));
 		return;

@@ -37,8 +37,6 @@
 #include "listfiles.h"
 #include "fatmounter.h"
 
-//#include "xml.h" /* XML - Lustar*/
-
 #define MAX_CHARACTERS		38
 #define GB_SIZE		1073741824.0
 
@@ -1065,14 +1063,12 @@ static int MenuDiscList()
             }
                 }
 				else if (gameInfo.GetState() == STATE_CLICKED) {
-				struct discHdr *header = &gameList[selectImg1];
-					snprintf (ID,sizeof(ID),"%c%c%c", header->id[0], header->id[1], header->id[2]);
-					snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
-				choice = showGameInfo(IDfull);
-				if (choice>0){
-				gameInfo.ResetState();
-			//break;
-			}
+					struct discHdr *header = &gameList[selectImg1];
+                    snprintf (IDfull,sizeof(IDfull),"%c%c%c%c%c%c", header->id[0], header->id[1], header->id[2],header->id[3], header->id[4], header->id[5]);
+					choice = showGameInfo(IDfull);
+					//if (choice>0){
+						gameInfo.ResetState();
+					//}
 		}
 
                 if (Settings.gameDisplay==grid){

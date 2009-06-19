@@ -13,6 +13,9 @@ bool OpenXMLDatabase(char* xmlfilepath, char* argdblang, bool argJPtoEN, bool op
 void CloseXMLDatabase();
 bool LoadGameInfoFromXML(char* gameid, char* langcode);
 
+
+#define XML_ELEMMAX 15
+
 struct gameXMLinfo
 {	
 	char id[7];
@@ -22,7 +25,8 @@ struct gameXMLinfo
 	char synopsis[2000];
 	char title_EN[100];
 	char synopsis_EN[2000];
-	char locales[20][3];
+	char locales[XML_ELEMMAX+1][3];
+	int localeCnt;
 	char developer[75];
 	char publisher[75];
 	char publisherfromid[75];
@@ -30,26 +34,26 @@ struct gameXMLinfo
 	char month[3];
 	char day[3];
 	char genre[75];
-	char genresplit[10][20];
+	char genresplit[XML_ELEMMAX+1][20];
+	int genreCnt;
 	char ratingtype[5];
 	char ratingvalue[5];
-	char ratingdescriptors[10][40];
+	char ratingdescriptors[XML_ELEMMAX+1][40];
+	int descriptorCnt;
 	char ratingvalueCERO[5];
 	char ratingvalueESRB[5];
 	char ratingvaluePEGI[5];
 	char wifiplayers[4];
-	char wififeatures[10][20];
+	char wififeatures[XML_ELEMMAX+1][20];
+	int wifiCnt;
 	char players[4];
-	char accessories[10][20];
-	char accessories_required[10][20];
+	char accessories[XML_ELEMMAX+1][20];
+	int accessoryCnt;
+	char accessoriesReq[XML_ELEMMAX+1][20];
+	int accessoryReqCnt;
 	char iso_crc[9];
 	char iso_md5[33];
 	char iso_sha1[41];
-	int genreCnt;
-	int descriptorCnt;
-	int accessoryCnt;
-	int accessoryReqCnt;
-	int wifiCnt;
 } ;
 
 struct gameXMLinfo gameinfo;

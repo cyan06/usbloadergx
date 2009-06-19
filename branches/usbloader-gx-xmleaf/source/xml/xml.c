@@ -19,8 +19,7 @@ static bool xmldebug = false;
 static char xmlcfg_filename[100] = "wiitdb.zip";
 
 
-// for loader GX
-extern struct SSettings Settings;
+extern struct SSettings Settings; // for loader GX
 
 
 
@@ -51,7 +50,6 @@ static char langcodes[11][3] =
 {"KO"}};
 
 static char element_text[5000];
-
 static mxml_node_t *nodetree=NULL;
 static mxml_node_t *nodedata=NULL;
 static mxml_node_t *nodeid=NULL;
@@ -59,28 +57,29 @@ static mxml_node_t *nodeidtmp=NULL;
 static mxml_node_t *nodefound=NULL;
 static mxml_index_t *nodeindex=NULL;
 static mxml_index_t *nodeindextmp=NULL;
-
 int xmlloadtime = 0;
+static char * get_text(mxml_node_t *node, char *buffer, int buflen);
 bool xml_loaded = false;
 
-static char * get_text(mxml_node_t *node, char *buffer, int buflen);
 
-
-bool OpenXMLDatabase(char* xmlfilepath, char* argdblang, bool argJPtoEN,
-							bool openfile, bool loadtitles, bool keepopen)
+/* load renamed titles from proper names and game info XML, needs to be after cfg_load_games */
+bool OpenXMLDatabase(char* xmlfilepath, char* argdblang, bool argJPtoEN, bool openfile, bool loadtitles, bool keepopen)
 {
-	/* load renamed titles from proper names and game info XML, needs to be after cfg_load_games */
-	bool opensuccess = false;
-	char pathname[200];
-	snprintf(pathname, sizeof(pathname), "%s", xmlfilepath);
-	if (xmlfilepath[strlen(xmlfilepath) - 1] != '/') snprintf(pathname, sizeof(pathname), "%s/",pathname);
-	snprintf(pathname, sizeof(pathname), "%s%s", pathname, xmlcfg_filename);
-	
-	if (openfile) opensuccess = OpenXMLFile(pathname);
-	if (loadtitles) LoadTitlesFromXML(argdblang, argJPtoEN); 						
-	if (!keepopen) CloseXMLDatabase();	
-	
-	return opensuccess;
+	if (!xml_loaded) {
+		bool opensuccess = false;
+		char pathname[200];
+		snprintf(pathname, sizeof(pathname), "%s", xmlfilepath);
+		if (xmlfilepath[strlen(xmlfilepath) - 1] != '/') snprintf(pathname, sizeof(pathname), "%s/",pathname);
+		snprintf(pathname, sizeof(pathname), "%s%s", pathname, xmlcfg_filename);
+		if (openfile) opensuccess = OpenXMLFile(pathname);
+		if (!opensuccess) {
+			CloseXMLDatabase();
+			return false;
+		}
+		if (loadtitles) LoadTitlesFromXML(argdblang, argJPtoEN); 						
+		if (!keepopen) CloseXMLDatabase();
+	}
+	return true;
 }
 
 void CloseXMLDatabase()
@@ -117,8 +116,9 @@ bool OpenXMLFile(char *filename)
 	//if (xmldebug) dbg_time1();
 	
 	if (xml_loaded) 
-		return false;
-
+		 return false;
+	
+	gameinfo = gameinfo_reset;
 	nodedata=NULL;
 	nodetree=NULL;
 	nodeid=NULL;
@@ -369,7 +369,7 @@ bool LoadGameInfoFromXML(char* gameid, char* langtxt)
 /* langtxt: "English","French","German" */
 {	
 	bool exist=false;
-	if (nodedata == NULL)
+	if (!xml_loaded || nodedata == NULL) 		 
 		return exist;
 
 	// load game info using forced language, or game individual setting, or main language setting
@@ -392,7 +392,6 @@ bool LoadGameInfoFromXML(char* gameid, char* langtxt)
 	    if (nodeid != NULL) {
 			get_text(nodeid, element_text, sizeof(element_text));
 			if (!strcmp(element_text,gameid)) {
-				exist=true;
 				break;
 			}
 	    } else {
@@ -469,9 +468,11 @@ bool LoadGameInfoFromXML(char* gameid, char* langtxt)
 					GetTextFromNode(nodeidtmp, nodedata, "feature", NULL, NULL, MXML_DESCEND, gameinfo.wififeatures[gameinfo.wifiCnt],
 																					sizeof(gameinfo.wififeatures[gameinfo.wifiCnt]));
 					gameinfo.wififeatures[gameinfo.wifiCnt][0] = toupper(gameinfo.wififeatures[gameinfo.wifiCnt][0]);
+					if (gameinfo.wifiCnt == XML_ELEMMAX)
+						break;
 				}
 			}
-			mxmlIndexDelete(nodeindextmp); // needs to be used after each mxmlIndexNew to prevent a memory leak
+			mxmlIndexDelete(nodeindextmp); // placed after each mxmlIndexNew to prevent memory leak
 		}
 
 		nodefound = mxmlFindElement(nodeid, nodedata, "rating", NULL, NULL, MXML_NO_DESCEND);
@@ -486,6 +487,8 @@ bool LoadGameInfoFromXML(char* gameid, char* langtxt)
 					++gameinfo.descriptorCnt;
 					GetTextFromNode(nodeidtmp, nodedata, "descriptor", NULL, NULL, MXML_DESCEND,
 						gameinfo.ratingdescriptors[gameinfo.descriptorCnt], sizeof(gameinfo.ratingdescriptors[gameinfo.descriptorCnt]));
+					if (gameinfo.descriptorCnt == XML_ELEMMAX)
+						break;
 				}
 			}
 			mxmlIndexDelete(nodeindextmp);
@@ -502,14 +505,14 @@ bool LoadGameInfoFromXML(char* gameid, char* langtxt)
 			{
 				nodeidtmp = mxmlIndexFind(nodeindextmp,"control", NULL);
 				if (nodeidtmp != NULL) {
-					if (!strcmp(mxmlElementGetAttr(nodeidtmp, "required"),"true"))	{
+					if (!strcmp(mxmlElementGetAttr(nodeidtmp, "required"),"true")  && gameinfo.accessoryReqCnt < XML_ELEMMAX)	{
 						++gameinfo.accessoryReqCnt;
-						strlcpy(gameinfo.accessories_required[gameinfo.accessoryReqCnt],mxmlElementGetAttr(nodeidtmp, "type"),
-							sizeof(gameinfo.accessories_required[gameinfo.accessoryReqCnt]));
-					} else {
+						strlcpy(gameinfo.accessoriesReq[gameinfo.accessoryReqCnt],mxmlElementGetAttr(nodeidtmp, "type"),
+															sizeof(gameinfo.accessoriesReq[gameinfo.accessoryReqCnt]));
+					} else if (gameinfo.accessoryCnt < XML_ELEMMAX) {
 						++gameinfo.accessoryCnt;
 						strlcpy(gameinfo.accessories[gameinfo.accessoryCnt],mxmlElementGetAttr(nodeidtmp, "type"),
-							sizeof(gameinfo.accessories[gameinfo.accessoryCnt]));
+															sizeof(gameinfo.accessories[gameinfo.accessoryCnt]));
 					}
 				}
 			}
@@ -542,6 +545,8 @@ bool LoadGameInfoFromXML(char* gameid, char* langtxt)
 						trimcopy(splitresult,splitresult,strlen(splitresult)+1);
 						strlcpy(gameinfo.genresplit[gameinfo.genreCnt],splitresult,sizeof(gameinfo.genresplit[gameinfo.genreCnt]));
 						gameinfo.genresplit[gameinfo.genreCnt][0] = toupper(gameinfo.genresplit[gameinfo.genreCnt][0]);
+						if (gameinfo.genreCnt == XML_ELEMMAX)
+							break;
 					}
 				}
 			}
@@ -620,9 +625,9 @@ void PrintGameInfo(bool showfullinfo)
 			}
 		printf("\n");
 		printf("required accessories:");
-		for (i=1;strcmp(gameinfo.accessories_required[i],"") != 0;i++)
+		for (i=1;strcmp(gameinfo.accessoriesReq[i],"") != 0;i++)
 			{
-				printf(" %s",gameinfo.accessories_required[i]);
+				printf(" %s",gameinfo.accessoriesReq[i]);
 			}
 		printf("\n");
 		printf("accessories:");
