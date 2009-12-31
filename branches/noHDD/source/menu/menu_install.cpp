@@ -26,7 +26,7 @@ int MenuInstall() {
     GuiSound btnSoundOver(button_over_pcm, button_over_pcm_size, Settings.sfxvolume);
 
     char imgPath[100];
-
+/*
     snprintf(imgPath, sizeof(imgPath), "%sbattery.png", CFG.theme_path);
     GuiImageData battery(imgPath, battery_png);
 	snprintf(imgPath, sizeof(imgPath), "%sbattery_bar.png", CFG.theme_path);
@@ -35,7 +35,7 @@ int MenuInstall() {
     GuiImageData batteryRed(imgPath, battery_red_png);
     snprintf(imgPath, sizeof(imgPath), "%sbattery_bar_red.png", CFG.theme_path);
     GuiImageData batteryBarRed(imgPath, battery_bar_red_png);
-
+*/
     HaltGui();
     GuiWindow w(screenwidth, screenheight);
 
@@ -115,7 +115,8 @@ int MenuInstall() {
                     menu = MENU_DISCLIST;
                     break;
                 } else {
-                    __Menu_GetEntries(); //get the entries again
+                                        //needToReloadGamelist=1;
+                //__Menu_GetEntries(); //get the entries again
 					GuiSound * instsuccess = NULL;
 					bgMusic->Pause();
 					instsuccess = new GuiSound(success_ogg, success_ogg_size, Settings.sfxvolume);
@@ -135,14 +136,14 @@ int MenuInstall() {
             break;
         }
 
-        if (shutdown == 1) {
+       /* if (shutdown == 1) {
             wiilight(0);
             Sys_Shutdown();
         }
         if (reset == 1) {
             wiilight(0);
             Sys_Reboot();
-        }
+        }*/
     }
 
     //Turn off the WiiLight

@@ -19,6 +19,8 @@
 #include "gameinfo.h"
 #include "usbloader/getentries.h"
 #include "../gecko.h"
+#include "../menu.h"
+#include "../menu/menus.h"
 
 
 /*** Extern variables ***/
@@ -32,8 +34,8 @@ extern u32 gameCnt;
 extern struct discHdr * gameList;
 
 /*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
+//extern void ResumeGui();
+//extern void HaltGui();
 
 
 /****************************************************************************

@@ -10,6 +10,7 @@
 #include "prompts/PromptWindows.h"
 #include "filelist.h"
 #include "menu.h"
+#include "../menu/menus.h"
 #include "usbloader/disc.h"
 #include "usbloader/fstfile.h"
 #include "usbloader/wdvd.h"
@@ -22,8 +23,8 @@
 #include "../patches/dvd_broadway.h"
 
 /*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
+//extern void ResumeGui(int startcheck =1);
+//extern void HaltGui(int stopcheck =1);
 
 /*** Extern variables ***/
 extern GuiWindow * mainWindow;
@@ -501,7 +502,7 @@ void __dvd_readidcb(s32 result)
 	dvddone = result;
 }
 
-u8 DiscMount(discHdr *header) {
+u8 DiscMount1(discHdr *header) {
 	gprintf("\nDiscMount() ");
     int ret;
 	HaltGui();
@@ -532,4 +533,54 @@ u8 DiscMount(discHdr *header) {
 		return 0;
 	}
 	return (header->magic == 0x5D1C9EA3) ? 1 : 2; // Don't check gamecube magic (0xC2339F3D)
+}
+
+u8 DiscMount(discHdr *header) {
+        gprintf("\nDiscMount() ");
+
+	HaltGui();
+    GuiWindow w(screenwidth, screenheight);
+
+    mainWindow->Append(&w);
+
+    ResumeGui(0);
+
+//HaltCheck();
+    int ret = Disc_SetUSB(NULL);
+	    ret = WDVD_Close();
+	    ret = Disc_Init();
+
+
+
+
+    ret = DiscWait(tr("Insert Disk"),tr("Waiting..."),tr("Cancel"),0,0);
+        if (ret < 0) {
+            WindowPrompt (tr("Error reading Disc"),0,tr("Back"));
+            goto OUT;
+        }
+        mainWindow->SetState(STATE_DISABLED);
+        //gprintf("..1");
+        ret = Disc_Open();
+        if (ret < 0) {
+            WindowPrompt (tr("Could not open Disc"),0,tr("Back"));
+            goto OUT;
+        }
+        //gprintf("..2");
+        Disc_ReadHeader(header);
+        //gprintf("..3");
+        ret = Disc_IsWii();
+        //gprintf("..4");
+	//ResumeCheck();
+        if (ret < 0) {
+            ret = 2;
+        }
+        ret = 1;
+
+
+ OUT:
+        HaltGui(0);
+    mainWindow->Remove(&w);
+    mainWindow->SetState(STATE_DEFAULT);
+    ResumeGui();
+    return ret;
 }

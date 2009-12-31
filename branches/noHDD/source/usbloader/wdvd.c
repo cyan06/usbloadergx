@@ -338,6 +338,35 @@ s32 WDVD_SetUSBMode(const u8 *id, s32 partition) {
     return (ret == 1) ? 0 : -ret;
 }
 
+#define DI_SETWBFSMODE_IOS249		0xf4
+#define DI_SETWBFSMODE_IOS222		0xfe
+static s32 __dvd_fd = -1;
+s32 SetWBFSMode(u8 device, void*discid)
+{
+        u8 ioctl;
+        if (IOS_GetVersion() == 222)
+        {
+                ioctl = DI_SETWBFSMODE_IOS222;
+        } else
+        {
+                ioctl = DI_SETWBFSMODE_IOS249;
+        }
+        u32 *bufferin = memalign (32, 0x20);
+        u32 *bufferout = memalign (32, 0x20);
+
+        memset(bufferin, 0, 0x20);
+        bufferin[0] = ioctl << 24;
+        bufferin[1] = device;
+    if (discid)
+        {
+                memcpy(&bufferin[2],discid,6);
+        }
+
+        int Ret = IOS_Ioctl(__dvd_fd, ioctl, bufferin, 0x20, bufferout, 0x20);
+
+        return ((Ret == 1) ? 0 : -Ret);
+}
+
 s32 WDVD_Read_Disc_BCA(void *buf)
 {
 	s32 ret;

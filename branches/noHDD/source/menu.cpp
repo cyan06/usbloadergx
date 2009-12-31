@@ -21,7 +21,9 @@
 #include "settings/cfg.h"
 #include "themes/Theme_Downloader.h"
 #include "usbloader/disc.h"
+#include "usbloader/wdvd.h"
 #include "usbloader/getentries.h"
+#include "usbloader/usbstorage.h"
 #include "wad/title.h"
 #include "xml/xml.h"
 #include "audio.h"
@@ -44,7 +46,7 @@ GuiSound *btnClick2 = NULL;
 
 struct discHdr *dvdheader = NULL;
 int currentMenu;
-u8 mountMethod=0;
+u8 mountMethod=3;
 
 char game_partition[6];
 int load_from_fs;
@@ -79,7 +81,10 @@ extern u8 dbvideo;
  * after finishing the removal/insertion of new elements, and after initial
  * GUI setup.
  ***************************************************************************/
-void ResumeGui() {
+void ResumeGui(int startcheck) {
+
+    if (startcheck)
+        ResumeCheck();
     guiHalt = false;
     LWP_ResumeThread (guithread);
 }
@@ -92,7 +97,10 @@ void ResumeGui() {
  * This eliminates the possibility that the GUI is in the middle of accessing
  * an element that is being changed.
  ***************************************************************************/
-void HaltGui() {
+void HaltGui(int stopcheck) {
+
+    if (stopcheck)
+        HaltCheck();
 	if (guiHalt)return;
     guiHalt = true;
 
@@ -179,9 +187,10 @@ static void * UpdateGUI (void *arg) {
  * Startup GUI threads
  ***************************************************************************/
 void InitGUIThreads() {
-    LWP_CreateThread(&guithread, UpdateGUI, NULL, NULL, 0, LWP_PRIO_HIGHEST);
+    LWP_CreateThread(&guithread, UpdateGUI, NULL, NULL, 0, 75);
     InitProgressThread();
     InitNetworkThread();
+    InitCheckThread();
 
     if (Settings.autonetwork)
         ResumeNetworkThread();
@@ -189,6 +198,7 @@ void InitGUIThreads() {
 
 void ExitGUIThreads() {
     ExitRequested = 1;
+    ExitCheckThread();
     LWP_JoinThread(guithread, NULL);
     guithread = LWP_THREAD_NULL;
 }
@@ -248,13 +258,11 @@ GuiImageData *LoadCoverImage(struct discHdr *header, bool Prefere3D, bool noCove
 /****************************************************************************
  * MainMenu
  ***************************************************************************/
-int MainMenu(int menu) {
+int MainMenu(int menu, const char *headless) {
 
+    if (menu==MENU_EXIT)menuBootgame(headless);
     currentMenu = menu;
     char imgPath[100];
-
-	//if (strcmp(headlessID,"")!=0)HaltGui();
-	//WindowPrompt("Can you see me now",0,"ok");
 
     snprintf(imgPath, sizeof(imgPath), "%splayer1_point.png", CFG.theme_path);
     pointer[0] = new GuiImageData(imgPath, player1_point_png);
@@ -277,8 +285,8 @@ int MainMenu(int menu) {
     bgImg = new GuiImage(background);
     mainWindow->Append(bgImg);
 
-    if (strcmp(headlessID,"")==0)
-		ResumeGui();
+    //if (strcmp(headless,"")==0)
+                ResumeGui();
 
 	bgMusic = new GuiSound(bg_music_ogg, bg_music_ogg_size, Settings.volume);
     bgMusic->SetLoop(1); //loop music
@@ -288,6 +296,7 @@ int MainMenu(int menu) {
     }
 	bgMusic->Play();
 
+    //while (currentMenu != MENU_EXIT && strcmp(headless,"")==0) {
     while (currentMenu != MENU_EXIT) {
         bgMusic->SetVolume(Settings.volume);
 
@@ -326,8 +335,11 @@ int MainMenu(int menu) {
 
 	CloseXMLDatabase();
     NewTitles::DestroyInstance();
-    if (strcmp(headlessID,"")!=0)//the GUIthread was never started, so it cant be ended and joined properly if headless mode was used.  so we resume it and close it.
-		ResumeGui();
+   /* if (strcmp(headless,"")!=0)//the GUIthread was never started, so it cant be ended and joined properly if headless mode was used.  so we resume it and close it.
+    {
+        checkthreadState =-1;
+        ResumeGui();
+    }*/
 	ExitGUIThreads();
 
     bgMusic->Stop();
@@ -347,70 +359,76 @@ int MainMenu(int menu) {
     StopGX();
 	gettextCleanUp();
 
-    if(dbvideo)
+    /*if(dbvideo)
 	{
 	InitVideodebug ();
 	printf("\n\n\n\n\n");
-    }
-	if (mountMethod==3)
-	{
-			struct discHdr *header = &gameList[gameSelected];
-			char tmp[20];
-			u32 tid;
-			sprintf(tmp,"%c%c%c%c",header->id[0],header->id[1],header->id[2],header->id[3]);
-			memcpy(&tid, tmp, 4);
-			gprintf("\nBooting title %016llx",TITLE_ID((header->id[5]=='1'?0x00010001:0x00010002),tid));
-			WII_Initialize();
-			WII_LaunchTitle(TITLE_ID((header->id[5]=='1'?0x00010001:0x00010002),tid));
-	}
-	if (mountMethod==2)
-	{
-		gprintf("\nLoading BC for GameCube");
-		WII_Initialize();
-		WII_LaunchTitle(0x0000000100000100ULL);
-	}
+    }*/
+        menuBootgame("");
+	return 0;
+}
+
+void menuBootgame(const char *headless)
+{
+    if (mountMethod==3)
+        {
+                        struct discHdr *header = &gameList[gameSelected];
+                        char tmp[20];
+                        u32 tid;
+                        sprintf(tmp,"%c%c%c%c",header->id[0],header->id[1],header->id[2],header->id[3]);
+                        memcpy(&tid, tmp, 4);
+                        gprintf("\nBooting title %016llx",TITLE_ID((header->id[5]=='1'?0x00010001:0x00010002),tid));
+                        WII_Initialize();
+                        WII_LaunchTitle(TITLE_ID((header->id[5]=='1'?0x00010001:0x00010002),tid));
+        }
+        if (mountMethod==2)
+        {
+                gprintf("\nLoading BC for GameCube");
+                WII_Initialize();
+                WII_LaunchTitle(0x0000000100000100ULL);
+        }
 
     else if (boothomebrew == 1) {
-		gprintf("\nBootHomebrew");
+                gprintf("\nBootHomebrew");
         BootHomebrew(Settings.selected_homebrew);
     }
-	else if (boothomebrew == 2) {
-		gprintf("\nBootHomebrewFromMenu");
+        else if (boothomebrew == 2) {
+                gprintf("\nBootHomebrewFromMenu");
         BootHomebrewFromMem();
     }
-	else {
-		gprintf("\n\tSettings.partition:%d",Settings.partition);
-		struct discHdr *header = NULL;
-		//if the GUI was "skipped" to boot a game from main(argv[1])
-		if (strcmp(headlessID,"")!=0)
-		{
-			gprintf("\n\tHeadless mode (%s)",headlessID);
-			__Menu_GetEntries(1);
-			if (!gameCnt)
-			{
-				gprintf("  ERROR : !gameCnt");
-				exit(0);
-			}
-			//gprintf("\n\tgameCnt:%d",gameCnt);
-			for(u32 i=0;i<gameCnt;i++)
-			{
-				header = &gameList[i];
-				char tmp[8];
-				sprintf(tmp,"%c%c%c%c%c%c",header->id[0],header->id[1],header->id[2],header->id[3],header->id[4],header->id[5]);
-				if (strcmp(tmp,headlessID)==0)
-				{
-					gameSelected = i;
-					gprintf("  found (%d)",i);
-					break;
-				}
-				//if the game was not found
-				if (i==gameCnt-1)
-				{
-					gprintf("  not found (%d IDs checked)",i);
-					exit(0);
-				}
-			}
-		}
+        else {
+                gprintf("\n\tSettings.partition:%d",Settings.partition);
+                struct discHdr *header = NULL;
+                //if the GUI was "skipped" to boot a game from main(argv[1])
+                if (strcmp(headless,"")!=0)
+                {
+                        gprintf("\n\tHeadless mode (%s)",headless);
+                        __Menu_GetEntries(1);
+                        if (!gameCnt)
+                        {
+                                gprintf("  ERROR : !gameCnt");
+                                exit(0);
+                        }
+                        gprintf("\n\tgameCnt:%d",gameCnt);
+                        for(u32 i=0;i<gameCnt;i++)
+                        {
+                                header = &gameList[i];
+                                char tmp[8];
+                                sprintf(tmp,"%c%c%c%c%c%c",header->id[0],header->id[1],header->id[2],header->id[3],header->id[4],header->id[5]);
+                                if (strcmp(tmp,headless)==0)
+                                {
+                                        gameSelected = i;
+                                        gprintf("  found (%d)",i);
+                                        break;
+                                }
+                                //if the game was not found
+                                if (i==gameCnt-1)
+                                {
+                                        gprintf("  not found (%d IDs checked)",i);
+                                        exit(0);
+                                }
+                        }
+                }
 
 
         int ret = 0;
@@ -426,10 +444,10 @@ int MainMenu(int menu) {
             fix002 = game_cfg->errorfix002;
             iosChoice = game_cfg->ios;
             countrystrings = game_cfg->patchcountrystrings;
-			if (!altdoldefault) {
-				alternatedol = game_cfg->loadalternatedol;
-				alternatedoloffset = game_cfg->alternatedolstart;
-			}
+                        if (!altdoldefault) {
+                                alternatedol = game_cfg->loadalternatedol;
+                                alternatedoloffset = game_cfg->alternatedolstart;
+                        }
             reloadblock = game_cfg->iosreloadblock;
         } else {
             videoChoice = Settings.video;
@@ -443,81 +461,91 @@ int MainMenu(int menu) {
             }
             fix002 = Settings.error002;
             countrystrings = Settings.patchcountrystrings;
-			if (!altdoldefault) {
-				alternatedol = off;
-				alternatedoloffset = 0;
-			}
+                        if (!altdoldefault) {
+                                alternatedol = off;
+                                alternatedoloffset = 0;
+                        }
             reloadblock = off;
         }
-		int ios2;
+                int ios2;
 
-		switch (iosChoice) {
-		case i249:
-			ios2 = 249;
-			break;
+                switch (iosChoice) {
+                case i249:
+                        ios2 = 249;
+                        break;
 
-		case i222:
-			ios2 = 222;
-			break;
+                case i222:
+                        ios2 = 222;
+                        break;
 
-		case i223:
-			ios2 = 223;
-			break;
+                case i223:
+                        ios2 = 223;
+                        break;
 
-		default:
-			ios2 = 249;
-			break;
-		}
+                default:
+                        ios2 = 249;
+                        break;
+                }
 
-		// When the selected ios is 249, and you're loading from FAT, reset ios to 222
-		if (load_from_fs != PART_FS_WBFS && ios2 == 249) {
-			ios2 = 222;
-		}
+                // When the selected ios is 249, and you're loading from FAT, reset ios to 222
+                if (load_from_fs != PART_FS_WBFS && ios2 == 249) {
+                        ios2 = 222;
+                }
         bool onlinefix = ShutdownWC24();
+//gprintf("..netfix OK");
+//gprintf("..%d -> %d",IOS_GetVersion() , ios2);
 
-		// You cannot reload ios when loading from fat
+                // You cannot reload ios when loading from fat
         if (IOS_GetVersion() != ios2 || onlinefix) {
             ret = Sys_ChangeIos(ios2);
             if (ret < 0) {
                 Sys_ChangeIos(249);
             }
         }
-		if (!mountMethod)
-		{
-			gprintf("\nLoading fragment list...");
-			ret = get_frag_list(header->id);
-			gprintf("%d\n", ret);
+                if (!mountMethod)
+                {
+                        gprintf("\nLoading fragment list...");
+                        ret = get_frag_list(header->id);
+                        gprintf("%d\n", ret);
 
-			gprintf("\nSetting fragment list...");
-			ret = set_frag_list(header->id);
-			gprintf("%d\n", ret);
+                        gprintf("\nSetting fragment list...");
+                        ret = set_frag_list(header->id);
+                        gprintf("%d\n", ret);
 
-			ret = Disc_SetUSB(header->id);
-			if (ret < 0) Sys_BackToLoader();
-			gprintf("\n\tUSB set to game");
-		}
-		else {
-			gprintf("\n\tUSB not set, loading DVD");
-		}
+                        ret = Disc_SetUSB(header->id);
+                        if (ret < 0) Sys_BackToLoader();
+                        gprintf("\n\tUSB set to game");
+                }
+                else {
+                        gprintf("\n\tUSB not set, loading DVD");
+            int butt = Disc_SetUSB(NULL);
+            ret = WDVD_Close();
+            ret = Disc_Init();
+            gprintf("\n\tWDVD_SetUSBMode(0, NULL):%d",butt);
+            //USBStorage_Init();
+            //WBFS_Init(WBFS_DEVICE_USB);
+            //Disc_SetUSB(-1);
+                }
         ret = Disc_Open();
+        gprintf("\n\tDisc_Open():%d",ret);
 
-        if (ret < 0) Sys_BackToLoader();
+       if (ret < 0 && !mountMethod) Sys_BackToLoader();
 
         if (gameList){
-			free(gameList);
-		}
-		if(dvdheader)
-			delete dvdheader;
+                        free(gameList);
+                }
+                if(dvdheader)
+                        delete dvdheader;
 
-		gprintf("\nLoading BCA data...");
-		ret = do_bca_code(header->id);
-		gprintf("%d\n", ret);
+                gprintf("\nLoading BCA data...");
+                ret = do_bca_code(header->id);
+                gprintf("%d\n", ret);
 
-		if (reloadblock == on && Sys_IsHermes()) {
+                if (reloadblock == on && Sys_IsHermes()) {
             patch_cios_data();
-			if (load_from_fs == PART_FS_WBFS) {
-				mload_close();
-			}
+                        if (load_from_fs == PART_FS_WBFS) {
+                                mload_close();
+                        }
         }
 
         u8 errorfixer002 = 0;
@@ -644,14 +672,13 @@ int MainMenu(int menu) {
             vipatch = 0;
             break;
         }
-		gprintf("\n\tDisc_wiiBoot");
+                gprintf("\n\tDisc_wiiBoot");
 
         ret = Disc_WiiBoot(videoselected, cheat, vipatch, countrystrings, errorfixer002, alternatedol, alternatedoloffset);
         if (ret < 0) {
             Sys_LoadMenu();
         }
 
-		printf("Returning entry point: 0x%0x\n", ret);
+                printf("Returning entry point: 0x%0x\n", ret);
     }
-	return 0;
-}
+    }

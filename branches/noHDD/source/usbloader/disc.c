@@ -15,7 +15,7 @@
 #include "wbfs.h"
 #include "../gecko.h"
 #include "../fatmounter.h"
-    
+
 /* Constants */
 #define PTABLE_OFFSET	0x40000
 #define WII_MAGIC	0x5D1C9EA3
@@ -152,7 +152,7 @@ void __Disc_SetVMode(u8 videoselected) {
             VIDEO_WaitVSync();
     }
 	gprintf("\nVideo mode - %s",((progressive)?"progressive":"interlaced"));
-    
+
 }
 
 void __Disc_SetTime(void) {
@@ -338,6 +338,7 @@ s32 Disc_WiiBoot(u8 videoselected, u8 cheat, u8 vipatch, u8 patchcountrystring, 
 
     /* Find game partition offset */
     ret = __Disc_FindPartition(&offset);
+    gprintf("\n__Disc_FindPartition(&offset):%d", ret);
     if (ret < 0)
         return ret;
 

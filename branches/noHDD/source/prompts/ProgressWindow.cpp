@@ -12,6 +12,7 @@
 #include <time.h>
 
 #include "menu.h"
+#include "../menu/menus.h"
 #include "language/gettext.h"
 #include "libwiigui/gui.h"
 #include "prompts/ProgressWindow.h"
@@ -41,8 +42,8 @@ extern GuiWindow * mainWindow;
 extern float gamesize;
 
 /*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
+//extern void ResumeGui();
+//extern void HaltGui();
 
 
 /****************************************************************************

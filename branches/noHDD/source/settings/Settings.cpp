@@ -13,6 +13,7 @@
 #include "cheats/cheatmenu.h"
 #include "fatmounter.h"
 #include "menu.h"
+#include "menu/menus.h"
 #include "filelist.h"
 #include "listfiles.h"
 #include "sys.h"
@@ -24,8 +25,8 @@
 #define MAXOPTIONS 13
 
 /*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
+//extern void ResumeGui();
+//extern void HaltGui();
 extern void titles_default();
 
 /*** Extern variables ***/
@@ -537,7 +538,7 @@ int MenuSettings()
 
 			snprintf(MainButtonText, sizeof(MainButtonText), "%s", tr("Theme Downloader"));
 			MainButton1Txt.SetText(MainButtonText);
-			snprintf(MainButtonText, sizeof(MainButtonText), "%s", tr(" "));
+			snprintf(MainButtonText, sizeof(MainButtonText), "%s", tr("Partition Format"));
 			MainButton2Txt.SetText(MainButtonText);
 			snprintf(MainButtonText, sizeof(MainButtonText), "%s", tr(" "));
 			MainButton3Txt.SetText(MainButtonText);
@@ -557,6 +558,10 @@ int MenuSettings()
 			w.Append(&GoRightBtn);
 			w.Append(&GoLeftBtn);
 			w.Append(&MainButton1);
+
+			//leaving this commented for now because the logic needs re-thought out
+			//a bit since the HDD check stuff is on a different thread
+			//if(Settings.godmode == 1)w.Append(&MainButton2);
 
 			PageIndicatorBtn1.SetAlpha(50);
 			PageIndicatorBtn2.SetAlpha(50);
@@ -2045,6 +2050,14 @@ int MenuSettings()
 					if (isInserted(bootDevice))
 						cfg_save_global();
 					menu = MENU_THEMEDOWNLOADER;
+					pageToDisplay = 0;
+					break;
+				}
+				if (MainButton2.GetState() == STATE_CLICKED)
+				{
+					if (isInserted(bootDevice))
+						cfg_save_global();
+					menu = MENU_FORMAT;
 					pageToDisplay = 0;
 					break;
 				}

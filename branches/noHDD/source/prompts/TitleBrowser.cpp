@@ -20,6 +20,7 @@
 #include "settings/cfg.h"
 #include "sys.h"
 #include "menu.h"
+#include "../menu/menus.h"
 #include "audio.h"
 #include "wad/wad.h"
 #include "xml/xml.h"
@@ -36,10 +37,6 @@ u32 titleCnt;
 
 extern struct discHdr * gameList;
 extern u32 gameCnt;
-
-/*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
 
 /*** Extern variables ***/
 extern GuiWindow * mainWindow;

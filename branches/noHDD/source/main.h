@@ -12,6 +12,7 @@
 
 
 void DefaultSettings();
+void InitTextVideo ();
 extern FreeTypeGX *fontSystem;
 
 #endif

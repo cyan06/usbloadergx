@@ -20,6 +20,7 @@
 #include <algorithm>
 
 #include "menu.h"
+#include "../menu/menus.h"
 
 #include "listfiles.h"
 #include "language/gettext.h"
@@ -27,6 +28,7 @@
 #include "libwiigui/gui.h"
 #include "sys.h"
 #include "filebrowser.h"
+#include "../menu.h"
 
 /*** Extern variables ***/
 extern GuiWindow * mainWindow;
@@ -34,8 +36,8 @@ extern u8 shutdown;
 extern u8 reset;
 
 /*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
+//extern void ResumeGui();
+//extern void HaltGui();
 
 static int curDevice = -1;
 static std::vector<BROWSERINFO> browsers;

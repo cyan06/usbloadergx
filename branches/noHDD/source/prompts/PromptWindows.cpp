@@ -23,7 +23,7 @@
 #include "fatmounter.h"
 #include "listfiles.h"
 #include "menu.h"
-#include "menu.h"
+//#include "menu.h"
 #include "filelist.h"
 #include "sys.h"
 #include "wpad.h"
@@ -60,8 +60,8 @@ extern struct discHdr *dvdheader;
 extern char game_partition[6];
 
 /*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
+extern void ResumeGui(int startcheck =1);
+extern void HaltGui(int stopcheck =1);
 
 /****************************************************************************
  * OnScreenNumpad
@@ -112,7 +112,7 @@ int OnScreenNumpad(char * var, u32 maxlen) {
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&numpad);
     mainWindow->ChangeFocus(&numpad);
-    ResumeGui();
+    ResumeGui(0);
 
     while (save == -1) {
         VIDEO_WaitVSync();
@@ -127,7 +127,7 @@ int OnScreenNumpad(char * var, u32 maxlen) {
         snprintf(var, maxlen, "%s", numpad.kbtextstr);
     }
 
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&numpad);
     mainWindow->SetState(STATE_DEFAULT);
     ResumeGui();
@@ -194,7 +194,7 @@ int OnScreenKeyboard(char * var, u32 maxlen, int min) {
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&keyboard);
     mainWindow->ChangeFocus(&keyboard);
-    ResumeGui();
+    ResumeGui(0);
 
     while (save == -1) {
         VIDEO_WaitVSync();
@@ -209,7 +209,7 @@ int OnScreenKeyboard(char * var, u32 maxlen, int min) {
         snprintf(var, maxlen, "%s", keyboard.kbtextstr);
     }
 
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&keyboard);
     mainWindow->SetState(STATE_DEFAULT);
     ResumeGui();
@@ -417,7 +417,7 @@ void WindowCredits() {
     HaltGui();
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&creditsWindow);
-    ResumeGui();
+    ResumeGui(0);
 
     while (!exit) {
         angle++;
@@ -436,7 +436,7 @@ void WindowCredits() {
 
     creditsWindow.SetEffect(EFFECT_FADE, -30);
     while (creditsWindow.GetEffect() > 0) usleep(50);
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&creditsWindow);
     mainWindow->SetState(STATE_DEFAULT);
     for (i=0; i < numEntries; i++) {
@@ -479,7 +479,7 @@ int WindowScreensaver() {
 	HaltGui();
 	mainWindow->SetState(STATE_DISABLED);
 	mainWindow->Append(&screensaverWindow);
-	ResumeGui();
+        ResumeGui(0);
 
     while (!exit) {
         i++;
@@ -494,7 +494,7 @@ int WindowScreensaver() {
 
     }
 
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&screensaverWindow);
     mainWindow->SetState(STATE_DEFAULT);
     ResumeGui();
@@ -722,7 +722,7 @@ int WindowPrompt(const char *title, const char *msg, const char *btn1Label,
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&promptWindow);
     mainWindow->ChangeFocus(&promptWindow);
-    ResumeGui();
+    ResumeGui(0);
 
     while (choice == -1) {
         VIDEO_WaitVSync();
@@ -758,7 +758,7 @@ int WindowPrompt(const char *title, const char *msg, const char *btn1Label,
 
     promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
     while (promptWindow.GetEffect() > 0) usleep(50);
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&promptWindow);
     mainWindow->SetState(STATE_DEFAULT);
     ResumeGui();
@@ -950,7 +950,7 @@ int WindowExitPrompt()
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&promptWindow);
     mainWindow->ChangeFocus(&promptWindow);
-    ResumeGui();
+    ResumeGui(0);
 
     while (choice == -1) {
         VIDEO_WaitVSync();
@@ -1042,7 +1042,7 @@ int WindowExitPrompt()
     homeout->Play();
     while (btn1.GetEffect() > 0) usleep(50);
     while (promptWindow.GetEffect() > 0) usleep(50);
-    HaltGui();
+    HaltGui(0);
     homein->Stop();
     delete homein;
     mainWindow->Remove(&promptWindow);
@@ -1443,7 +1443,7 @@ int GameWindowPrompt() {
             mainWindow->Append(&promptWindow);
             mainWindow->ChangeFocus(&promptWindow);
         }
-        ResumeGui();
+        ResumeGui(0);
 
         changed = 0;
         while (choice == -1)
@@ -1452,7 +1452,7 @@ int GameWindowPrompt() {
 
             diskImg.SetSpin(btn1.GetState() == STATE_SELECTED);
             diskImg2.SetSpin(btn1.GetState() == STATE_SELECTED);
-            if (shutdown == 1) { //for power button
+  /*          if (shutdown == 1) { //for power button
 				promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
                 mainWindow->SetState(STATE_DEFAULT);
 				while (promptWindow.GetEffect() > 0) usleep(50);
@@ -1465,7 +1465,7 @@ int GameWindowPrompt() {
 
             if (reset == 1) //for reset button
                 Sys_Reboot();
-
+*/
             if(gameSound)
             {
                 if(!gameSound->IsPlaying())
@@ -1645,7 +1645,7 @@ int GameWindowPrompt() {
 
 
         while (promptWindow.GetEffect() > 0) usleep(50);
-        HaltGui();
+        HaltGui(0);
         if (changed != 3 && changed != 4) { // changed==3 or changed==4 --> only Halt the GUI
             mainWindow->Remove(&promptWindow);
             ResumeGui();
@@ -1673,6 +1673,19 @@ int
 DiscWait(const char *title, const char *msg, const char *btn1Label, const char *btn2Label, int IsDeviceWait) {
     int i = 30, ret = 0;
     u32 cover = 0;
+    HaltGui(0);
+    mainWindow->SetState(STATE_DISABLED);
+
+    if(!IsDeviceWait)
+    {
+        ret = WDVD_GetCoverStatus(&cover);
+        if(cover & 0x2)
+        {
+	    ResumeGui(0);
+            mainWindow->SetState(STATE_DEFAULT);
+            return ret;
+        }
+    }
 
     GuiWindow promptWindow(472,320);
     promptWindow.SetAlignment(ALIGN_CENTRE, ALIGN_MIDDLE);
@@ -1762,31 +1775,28 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
         promptWindow.Append(&timerTxt);
 
     promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_IN, 50);
-    HaltGui();
-    mainWindow->SetState(STATE_DISABLED);
+    //HaltGui();
+    //mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&promptWindow);
     mainWindow->ChangeFocus(&promptWindow);
-    ResumeGui();
+    ResumeGui(0);
 
     if (IsDeviceWait) {
         while (i >= 0) {
             VIDEO_WaitVSync();
             timerTxt.SetTextf("%u %s", i,tr("seconds left"));
-           /* HaltGui();
+            HaltGui();
             if (Settings.cios == ios222) {
                 ret = IOS_ReloadIOS(222);
                 load_ehc_module();
             } else {
                 ret = IOS_ReloadIOS(249);
             }
-            ResumeGui();*/
+            ResumeGui();
             sleep(1);
-            USBDevice_deInit();
-            USBDevice_Init();
             ret = WBFS_Init(WBFS_DEVICE_USB);
             if (ret>=0)
                 break;
-
 
             i--;
         }
@@ -1805,10 +1815,10 @@ DiscWait(const char *title, const char *msg, const char *btn1Label, const char *
 
     promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
     while (promptWindow.GetEffect() > 0) usleep(50);
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&promptWindow);
     mainWindow->SetState(STATE_DEFAULT);
-    ResumeGui();
+    ResumeGui(0);
     return ret;
 }
 
@@ -1913,7 +1923,7 @@ bool SearchMissingImages(int choice2) {
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&promptWindow);
     mainWindow->ChangeFocus(&promptWindow);
-    ResumeGui();
+    ResumeGui(0);
 
     //make sure that all games are added to the gamelist
     __Menu_GetEntries(1);
@@ -1965,7 +1975,7 @@ bool SearchMissingImages(int choice2) {
 	promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
     while (promptWindow.GetEffect() > 0) usleep(50);
 
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&promptWindow);
     mainWindow->SetState(STATE_DEFAULT);
 	__Menu_GetEntries();
@@ -2050,7 +2060,7 @@ bool NetworkInitPrompt() {
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&promptWindow);
     mainWindow->ChangeFocus(&promptWindow);
-    ResumeGui();
+    ResumeGui(0);
 
     while (!IsNetworkInit()) {
 
@@ -2075,7 +2085,7 @@ bool NetworkInitPrompt() {
     promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
     while (promptWindow.GetEffect() > 0) usleep(50);
 
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&promptWindow);
     mainWindow->SetState(STATE_DEFAULT);
     ResumeGui();
@@ -2187,7 +2197,7 @@ ProgressDownloadWindow(int choice2) {
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&promptWindow);
     mainWindow->ChangeFocus(&promptWindow);
-    ResumeGui();
+    ResumeGui(0);
 
     int offset=0, tries=0;
     int serverCnt3d = 1,serverCnt2d = 1,serverCntDisc = 2;
@@ -2528,7 +2538,7 @@ ProgressDownloadWindow(int choice2) {
         }
     }
 #endif
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&promptWindow);
     mainWindow->SetState(STATE_DEFAULT);
     ResumeGui();
@@ -2986,7 +2996,7 @@ int ProgressUpdateWindow() {
     mainWindow->SetState(STATE_DISABLED);
     mainWindow->Append(&promptWindow);
     mainWindow->ChangeFocus(&promptWindow);
-    ResumeGui();
+    ResumeGui(0);
 
     struct stat st;
     if (stat(Settings.update_path, &st) != 0) {
@@ -3213,7 +3223,7 @@ int ProgressUpdateWindow() {
     promptWindow.SetEffect(EFFECT_SLIDE_TOP | EFFECT_SLIDE_OUT, 50);
     while (promptWindow.GetEffect() > 0) usleep(50);
 
-    HaltGui();
+    HaltGui(0);
     mainWindow->Remove(&promptWindow);
     mainWindow->SetState(STATE_DEFAULT);
     ResumeGui();

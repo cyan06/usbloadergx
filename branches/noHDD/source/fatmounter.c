@@ -46,7 +46,7 @@ int   fs_ntfs_mount = 0;
 sec_t fs_ntfs_sec = 0;
 
 int USBDevice_Init() {
-	gprintf("\nUSBDevice_Init()");
+//	gprintf("\nUSBDevice_Init()");
 
 	//closing all open Files write back the cache and then shutdown em!
     fatUnmount("USB:/");
@@ -56,19 +56,19 @@ int USBDevice_Init() {
     if (!fatMount("USB", &__io_wiiums, 0, CACHE, SECTORS)) {
 		//try now mount with libogc
 		if (!fatMount("USB", &__io_usbstorage, 0, CACHE, SECTORS)) {
-			gprintf(":-1");
+//			gprintf(":-1");
 			return -1;
 		}
 	}
 	
 	fat_usb_mount = 1;
 	fat_usb_sec = _FAT_startSector;
-	gprintf(":0");
+//	gprintf(":0");
 	return 0;
 }
 
 void USBDevice_deInit() {
-	gprintf("\nUSBDevice_deInit()");
+//	gprintf("\nUSBDevice_deInit()");
     //closing all open Files write back the cache and then shutdown em!
     fatUnmount("USB:/");
 

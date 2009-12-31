@@ -8,17 +8,12 @@
 #include "utils.h"
 #include "video.h"
 #include "wad.h"
-
-
-
+#include "../menu/menus.h"
 #include "prompts/PromptWindows.h"
 #include "libwiigui/gui.h"
 #include "language/gettext.h"
 #include "menu.h"
 #include "filelist.h"
-/*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
 /*** Extern variables ***/
 extern GuiWindow * mainWindow;
 

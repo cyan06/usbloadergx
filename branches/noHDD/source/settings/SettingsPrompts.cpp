@@ -24,9 +24,10 @@ extern u8 shutdown;
 extern u8 reset;
 
 /*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
-
+//extern void ResumeGui();
+//extern void HaltGui();
+extern void ResumeGui(int startcheck =1);
+extern void HaltGui(int stopcheck =1);
 
 /****************************************************************************
  * MenuOGG

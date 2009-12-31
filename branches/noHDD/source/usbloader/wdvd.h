@@ -23,7 +23,8 @@ extern "C" {
     s32 WDVD_GetCoverStatus(u32 *);
     s32 WDVD_DisableReset(u8);
     s32 WDVD_SetUSBMode(const u8 *, s32 partition);
-	s32 WDVD_Read_Disc_BCA(void *buf);
+    s32 SetWBFSMode(u8 device, void*discid);
+    s32 WDVD_Read_Disc_BCA(void *buf);
 
 #ifdef __cplusplus
 }

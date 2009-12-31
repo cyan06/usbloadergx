@@ -28,9 +28,7 @@
 #include "unzip/miniunz.h"
 #include "usbloader/utils.h"
 
-/*** Extern functions ***/
-extern void ResumeGui();
-extern void HaltGui();
+#include "../menu/menus.h"
 
 /*** Extern variables ***/
 extern GuiWindow * mainWindow;

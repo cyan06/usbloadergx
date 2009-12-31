@@ -9,6 +9,7 @@
 
 #include "../prompts/TitleBrowser.h"
 
+#include "../gecko.h"
 #include "wad/wad.h"
 #include "xml/xml.h"
 #include "../wad/title.h"
@@ -407,14 +408,14 @@ int buildTitleList(int t, wchar_t* gameFilter, discHdr ** PgameList, u32 *PgameC
 				continue;
 		}*/
 		
-		if(gameFilter && *gameFilter) {
+                /*if(gameFilter && *gameFilter) {
 			u32 filter_len = wcslen(gameFilter);
 			wchar_t *gameName = FreeTypeGX::charToWideChar(get_title(header));
 			if (!gameName || wcsnicmp(gameName, gameFilter, filter_len)) {
 				delete [] gameName;
 				continue;
 			}
-		}
+                }*/
 		if(i != cnt2)
 			buffer[cnt2] = buffer[i];
 		cnt2++;
@@ -469,7 +470,7 @@ int __Menu_GetGameList(int t, wchar_t* gameFilter, discHdr ** PgameList, u32 *Pg
     ret = WBFS_GetCount(&cnt);
     if (ret < 0)
         return ret;
-
+//gprintf("\n WBFS_GetCount:%d",cnt);
     /* Buffer length */
     len = sizeof(struct discHdr) * cnt;
 
@@ -506,7 +507,7 @@ int __Menu_GetGameList(int t, wchar_t* gameFilter, discHdr ** PgameList, u32 *Pg
                     header->id[2]=='C'&&header->id[3]=='F'&&
                     header->id[4]=='G'&&header->id[5]=='_')
                     continue;
-		
+
 		if (Settings.parentalcontrol && !Settings.godmode && t==0) {
 			if (get_block(header) >= Settings.parentalcontrol)
 				continue;
@@ -562,7 +563,7 @@ int __Menu_GetGameList(int t, wchar_t* gameFilter, discHdr ** PgameList, u32 *Pg
 }
 
 int __Menu_GetEntries(int t, const wchar_t* Filter) {
-
+//gprintf("\n__Menu_GetEntries()");
 	/*if (mountMethod==3)
 	{	
 		return buildTitleList();
@@ -576,32 +577,50 @@ int __Menu_GetEntries(int t, const wchar_t* Filter) {
 	wchar_t			*new_gameFilterPrev		= NULL;
 
 	new_gameFilter = wcsdup_new(Filter ? Filter : (gameFilter ? gameFilter : L"") );
-	if(new_gameFilter == NULL) return -1;
+        if(new_gameFilter == NULL)
+        {
+            //gprintf("\nnew_gameFilter == NULL");
+            return -1;
+        }
 	
 	for(;;)
 	{
 		if (mountMethod==3)
-		{if(buildTitleList(t, new_gameFilter, &new_gameList, &new_gameCnt) < 0)
-			return -1;}
+                {int butt =buildTitleList(t, new_gameFilter, &new_gameList, &new_gameCnt);
+                           if (butt < 0)
+                            {
+                               gprintf("\nbutt:%d", butt);
+                               return -1;
+                            }
+                       }
 			
 		else 
-		{if(__Menu_GetGameList(t, new_gameFilter, &new_gameList, &new_gameCnt) < 0)
-			return -1;}
+                {
+                    if(__Menu_GetGameList(t, new_gameFilter, &new_gameList, &new_gameCnt) < 0)
+                    {
+                        gprintf("\n__Menu_GetGameList(t, new_gameFilter, &new_gameList, &new_gameCnt) < 0");
+                        return -1;
+                    }
+                }
 			
 			
 		if(new_gameCnt > 0 || new_gameFilter[0] == 0)
+                {
+                    //gprintf("\nnew_gameCnt:%d",new_gameCnt);
 			break;
+                    }
 		new_gameFilter[wcslen(new_gameFilter)-1] = 0;
 	}
+        if (mountMethod!=3)
+        {
+                /* init GameFilterNextList */
+                if(__Menu_GetGameFilter_NextList(new_gameList, new_gameCnt, &new_gameFilter, &new_gameFilterNextList) < 0)
+                        goto error;
 
-	/* init GameFilterNextList */
-	if(__Menu_GetGameFilter_NextList(new_gameList, new_gameCnt, &new_gameFilter, &new_gameFilterNextList) < 0)
-		goto error;
-	
-	/* init GameFilterPrev */
-	if(__Menu_GetPrevFilter(t, new_gameFilter, new_gameCnt, &new_gameFilterPrev) < 0)
-		goto error;
-	
+                /* init GameFilterPrev */
+                if(__Menu_GetPrevFilter(t, new_gameFilter, new_gameCnt, &new_gameFilterPrev) < 0)
+                        goto error;
+        }
 	/* Set values */
 	if(gameList) 			free(gameList);
 	if(gameFilter)			delete [] gameFilter;
@@ -610,14 +629,19 @@ int __Menu_GetEntries(int t, const wchar_t* Filter) {
 
 	gameList			= new_gameList;
 	gameCnt				= new_gameCnt;
-	gameFilter			= new_gameFilter;
-	gameFilterNextList	= new_gameFilterNextList;
-	gameFilterPrev		= new_gameFilterPrev;
+        gameFilter			= new_gameFilter;
+        gameFilterNextList	= new_gameFilterNextList;
+        gameFilterPrev		= new_gameFilterPrev;
 
-	/* Reset variables */
+
+        /* Reset variables */
 	gameSelected = gameStart = 0;
-	return 0;
+        //gprintf("\ncnt:%d", gameCnt);
+
+
+        return 0;
 error: // clean up
+        gprintf("\nERROR");
 	if(new_gameList)			free(new_gameList);
 	if(new_gameFilter)			delete [] new_gameFilter;
 	if(new_gameFilterNextList)	delete [] new_gameFilterNextList;

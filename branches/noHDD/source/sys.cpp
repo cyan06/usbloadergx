@@ -14,6 +14,7 @@
 #include "fatmounter.h"
 #include "sys.h"
 #include "wpad.h"
+#include "menu/menus.h"
 
 extern char game_partition[6];
 extern u8 load_from_fs;
@@ -70,15 +71,15 @@ int Sys_ChangeIos(int ios) {
 	s32 prevIos = IOS_GetVersion();
 	
 	SDCard_deInit();
-	USBDevice_deInit();
+        if (hddOK)USBDevice_deInit();
 	
 	WPAD_Flush(0);
 	WPAD_Disconnect(0);
 	WPAD_Shutdown();
 	
-	WDVD_Close();
+        if (hddOK)WDVD_Close();
 	
-	USBStorage_Deinit();
+        if (hddOK)USBStorage_Deinit();
 	
 	s32 ret = IOS_ReloadIOSsafe(ios);
 	if (ret < 0) {
@@ -90,13 +91,15 @@ int Sys_ChangeIos(int ios) {
 	if (ios == 222 || ios == 223) {
 		load_ehc_module();
 	}
-	USBDevice_Init();
+        if (hddOK)USBDevice_Init();
 
     PAD_Init();
     Wpad_Init();
     WPAD_SetDataFormat(WPAD_CHAN_ALL,WPAD_FMT_BTNS_ACC_IR);
     WPAD_SetVRes(WPAD_CHAN_ALL, screenwidth, screenheight);
 
+    if (hddOK)
+    {
 	WBFS_Init(WBFS_DEVICE_USB);
 	Disc_Init();
 	
@@ -105,6 +108,7 @@ int Sys_ChangeIos(int ios) {
 	} else { 
 		WBFS_Open();
 	}
+    }
 	
 	return ret;
 }
@@ -114,20 +118,25 @@ int Sys_IosReload(int IOS) {
 
     //shutdown SD and USB before IOS Reload in DiscWait
     SDCard_deInit();
-    USBDevice_deInit();
+    if (hddOK)USBDevice_deInit();
 
     WPAD_Flush(0);
     WPAD_Disconnect(0);
     WPAD_Shutdown();
 
-    WDVD_Close();
+    if (hddOK)
+    {
+        WDVD_Close();
 
-    USBStorage_Deinit();
+        USBStorage_Deinit();
+    }
 
-    if (IOS == 249 || IOS == 222 || IOS == 223) {
+    ret = IOS_ReloadIOSsafe(IOS);
+    if (ret < 0) return ret;
+    if ((IOS == 249 || IOS == 222 || IOS == 223) && hddOK) {
         for (int i = 0; i < 10; i++) {
-            ret = IOS_ReloadIOSsafe(IOS);
-            if (ret < 0) return ret;
+            //ret = IOS_ReloadIOSsafe(IOS);
+            //if (ret < 0) return ret;
             if (IOS == 222 || IOS == 223) load_ehc_module();
             ret = WBFS_Init(WBFS_DEVICE_USB);
             if (!(ret < 0)) break;
@@ -148,7 +157,7 @@ int Sys_IosReload(int IOS) {
     WPAD_SetVRes(WPAD_CHAN_ALL, screenwidth, screenheight);
     //reinitialize SD and USB
     SDCard_Init();
-    USBDevice_Init();
+    if (hddOK)USBDevice_Init();
 
     return ret;
 }
