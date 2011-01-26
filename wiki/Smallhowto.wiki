@@ -1,9 +1,0 @@
-= Small How-To =
-
-To get the USB Loader working you need to follow a few rules.
-
--cover images need to have dimensions which is *a multiple of 4* and must be place in *SDRoot:/images/*
-
--DVD covers image need a resolution of *160x160* and must be placed in *SDRoot:/images/disc/*
-
--It doesn´t matter if you use Boxart/DVD images with 6 or 3 characters if the USB Loader can´t find the 6 character images the USB Loader will load the images with 3 characters. ;)
