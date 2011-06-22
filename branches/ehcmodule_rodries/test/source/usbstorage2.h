@@ -10,7 +10,7 @@ extern "C"
 
     /* Prototypes */
     s32 USBStorage2_Init(u32 port);
-    void USBStorage2_Deinit();
+    void USBStorage2_Deinit(u32 port);
     s32 USBStorage2_GetCapacity(u32 port, u32 *size);
 
     s32 USBStorage2_ReadSectors(u32 port, u32 sector, u32 numSectors, void *buffer);

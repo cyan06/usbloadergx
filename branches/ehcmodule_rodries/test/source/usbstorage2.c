@@ -33,8 +33,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "usbstorage2.h"
-#include "memory/mem2.h"
-#include "gecko.h"
+//#include "memory/mem2.h"
+//#include "gecko.h"
 
 
 /* IOCTL commands */
@@ -61,7 +61,7 @@
 
 #define MAX_SECTOR_SIZE         4096
 #define MAX_BUFFER_SECTORS      128
-#define UMS_HEAPSIZE            2*1024
+#define UMS_HEAPSIZE            2*1024 //it's enoguh, only used for ipc calls, don't waste ios heap
 
 /* Variables */
 static char fs[] ATTRIBUTE_ALIGN(32) = "/dev/usb2";
@@ -76,26 +76,28 @@ u32 hdd_sector_size[2] = { 512, 512 };
 
 s32 USBStorage2_Init(u32 port)
 {
-    if(hddInUse[port])
-        return 0;
+    s32 ret;
 
     /* Create heap */
     if (hid < 0)
     {
-        hid = iosCreateHeap(UMS_HEAPSIZE);
+        hid = iosCreateHeap(UMS_HEAPSIZE + 4*1024); //added 4kb for testing, must be deleted because mem2_ptr will be created with mem2 manager
         if (hid < 0) return IPC_ENOMEM;
     }
 
     /* Open USB device */
-    if (fd < 0) fd = IOS_Open(fs, 0);
-    if (fd < 0) fd = IOS_Open(fs2, 0);
-    if (fd < 0) fd = IOS_Open(fs3, 0);
-    if (fd < 0) return fd;
-
+    if (fd < 0)
+    {
+	    if (fd < 0) fd = IOS_Open(fs, 0);
+	    if (fd < 0) fd = IOS_Open(fs2, 0);
+	    if (fd < 0) fd = IOS_Open(fs3, 0);
+	    if (fd < 0) return fd;
+	}
     USBStorage2_SetPort(port);
 
     /* Initialize USB storage */
-    IOS_IoctlvFormat(hid, fd, USB_IOCTL_UMS_INIT, ":");
+    ret = IOS_IoctlvFormat(hid, fd, USB_IOCTL_UMS_INIT, ":");
+    if(ret!=port) return -1;
 
     /* Get device capacity */
     if (USBStorage2_GetCapacity(port, &hdd_sector_size[port]) == 0)
@@ -106,19 +108,25 @@ s32 USBStorage2_Init(u32 port)
     return 0; // 0->HDD, 1->DVD
 }
 
-void USBStorage2_Deinit()
+void USBStorage2_Deinit(u32 port)
 {
     /* Close USB device */
     if (fd >= 0)
     {
-        IOS_Close(fd);  // not sure to close the fd is needed
-        fd = -1;
+        if(!hddInUse[!port])
+        {
+            IOS_Close(fd);  // not sure to close the fd is needed
+            fd = -1;
+        }
+        hddInUse[port] = false;
     }
+
+    hdd_sector_size[port] = 512;
 }
 
 s32 USBStorage2_SetPort(u32 port)
 {
-    //! Port = 2 is handle in the loader, no need to handle it in cIOS
+    //! Port = 2 is handle in the loader, no need to handle it in cIOS 
     if(port > 1)
         return -1;
 
@@ -128,7 +136,7 @@ s32 USBStorage2_SetPort(u32 port)
     s32 ret = -1;
 	usb2_port = port;
 
-    gprintf("Changing USB port to port %i....\n", port);
+    //gprintf("Changing USB port to port %i....\n", port);
     //must be called before USBStorage2_Init (default port 0)
 	if (fd >= 0)
 	    ret = IOS_IoctlvFormat(hid, fd, USB_IOCTL_SET_PORT, "i:", usb2_port);
@@ -168,7 +176,8 @@ s32 USBStorage2_ReadSectors(u32 port, u32 sector, u32 numSectors, void *buffer)
     if (fd < 0) return fd;
 
     if (!mem2_ptr)
-        mem2_ptr = (u8 *) MEM2_alloc(MAX_SECTOR_SIZE * MAX_BUFFER_SECTORS);
+        //mem2_ptr = (u8 *) MEM2_alloc(MAX_SECTOR_SIZE * MAX_BUFFER_SECTORS);        
+		mem2_ptr = (u8 *) __lwp_heap_allocate(&hid, 4*1024);  //patch for testing mem2 manager must be used
 
     USBStorage2_SetPort(port);
 
@@ -214,7 +223,8 @@ s32 USBStorage2_WriteSectors(u32 port, u32 sector, u32 numSectors, const void *b
 
     /* Device not opened */
     if (!mem2_ptr)
-        mem2_ptr = (u8 *) MEM2_alloc(MAX_SECTOR_SIZE * MAX_BUFFER_SECTORS);
+        //mem2_ptr = (u8 *) MEM2_alloc(MAX_SECTOR_SIZE * MAX_BUFFER_SECTORS);
+        mem2_ptr = (u8 *) __lwp_heap_allocate(&hid, 4*1024);  //patch for testing mem2 manager must be used
 
     USBStorage2_SetPort(port);
 
@@ -278,8 +288,7 @@ static bool __usbstorage_ClearStatus(void)
 
 static bool __usbstorage_Shutdown(void)
 {
-    hddInUse[0] = false;
-    hdd_sector_size[0] = 512;
+    USBStorage2_Deinit(0);
     return true;
 }
 
@@ -313,10 +322,14 @@ static bool __usbstorage_WriteSectors2(u32 sector, u32 numSectors, const void *b
     return (USBStorage2_WriteSectors(1, sector, numSectors, buffer) >= 0);
 }
 
+static bool __usbstorage_ClearStatus2(void)
+{
+    return true;
+}
+
 static bool __usbstorage_Shutdown2(void)
 {
-    hddInUse[1] = false;
-    hdd_sector_size[1] = 512;
+    USBStorage2_Deinit(1);
     return true;
 }
 
@@ -326,6 +339,6 @@ const DISC_INTERFACE __io_usbstorage2_port1 = {
     (FN_MEDIUM_ISINSERTED) &__usbstorage_IsInserted2,
     (FN_MEDIUM_READSECTORS) &__usbstorage_ReadSectors2,
     (FN_MEDIUM_WRITESECTORS) &__usbstorage_WriteSectors2,
-    (FN_MEDIUM_CLEARSTATUS) &__usbstorage_ClearStatus,
+    (FN_MEDIUM_CLEARSTATUS) &__usbstorage_ClearStatus2,
     (FN_MEDIUM_SHUTDOWN) &__usbstorage_Shutdown2
 };
