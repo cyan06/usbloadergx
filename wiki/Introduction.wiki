@@ -6,6 +6,26 @@ USB Loader GX is based off of Waninkoko's original USB loader, with a gui based 
 
 = Features =
 
+ * Disc channel banner support (coming soon!)
+ * Virtual pointer support (via nunchuck)
+ * DML support (big thanks to the DML team!)
+ * GameTDB database
+ * Native widescreen detection/support
+ * Alternative dol loading: most alt dols are automatically loaded when necessary
+ * Loading from USB or SD (requires FAT32, NTFS, or EXT2/3/4 partition)
+ * Global Settings and individual game settings 
+ * Parental controls
+ * View modes: simple List Mode, Game Grid and Game Carousel. 
+ * Supports custom and downloadable themes
+ * Cover download: Download custom or original flat, 3D, and disc images
+ * Language file support
+ * Custom sounds
+ * Play stats and add to Wii Message Board: shows you how many times you played the game
+ * Custom sorting 
+ * Internal update function: Update to the latest version from inside the loader (Requires active Wi-Fi connection)
+ * Homebrew & Title Launcher: Launch you favorite homebrew apps and channels from within the loader.
+
+
 = Useful Links =
 Find the latest svn revisions here: http://code.google.com/p/usbloader-gui/source/list
 
@@ -14,10 +34,9 @@ Browse or download the source: http://code.google.com/p/usbloader-gui/source/che
 WBFS Managers: http://wiki.gbatemp.net/wiki/WBFS_Managers
 
 cIOS installers?
-*d2x* (preferred)
-Download d2x here: http://code.google.com/p/d2x-cios/downloads/list
-and learn how to install here: http://code.google.com/p/d2x-cios/wiki/How_To_Install
-Or use ModMii: http://modmii.zzl.org/
 
-*Hermes* 
-Download 
+Download d2x here: http://code.google.com/p/d2x-cios/downloads/list
+
+and learn how to install here: http://code.google.com/p/d2x-cios/wiki/How_To_Install
+
+Or use ModMii: http://modmii.zzl.org/
