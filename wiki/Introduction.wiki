@@ -1,0 +1,23 @@
+#summary Getting started with USB Loader GX
+
+= Introduction =
+
+USB Loader GX is based off of Waninkoko's original USB loader, with a gui based off of libwiigui by Tantric. This loader has the look and feel of the original system menu for the Wii by Nintendo, and offers many powerful functions.
+
+= Features =
+
+= Useful Links =
+Find the latest svn revisions here: http://code.google.com/p/usbloader-gui/source/list
+
+Browse or download the source: http://code.google.com/p/usbloader-gui/source/checkout
+
+WBFS Managers: http://wiki.gbatemp.net/wiki/WBFS_Managers
+
+cIOS installers?
+*d2x* (preferred)
+Download d2x here: http://code.google.com/p/d2x-cios/downloads/list
+and learn how to install here: http://code.google.com/p/d2x-cios/wiki/How_To_Install
+Or use ModMii: http://modmii.zzl.org/
+
+*Hermes* 
+Download 
