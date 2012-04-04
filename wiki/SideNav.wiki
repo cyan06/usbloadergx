@@ -1,0 +1,19 @@
+#sidebar SideNav
+ * [Introduction]
+ * [WhatsNew What's New?]
+ * Customizing
+  ** [Settings]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings?ts=1333505867&updated=Settings#GUI_Settings GUI Settings]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Loader_Settings Loader Settings]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Hard_Drive_Settings Hard Drive Settings]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Features Features]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Banner_Animation_Settings Banner Animation Settings]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Sound Sound]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Parental_Control Parental Control]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Custom_Paths Custom Paths]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Theme_Menu Theme Menu]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Theme_Downloader Theme Downloader]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Update Update]
+   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Default_Settings Default Settings]
+  ** [Themes]
+  
