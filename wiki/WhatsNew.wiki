@@ -1,0 +1,10 @@
+Google decided to disable the Updates/Activity tab so here is a temporarily replacement using Wiki gadgets.
+
+= Recent Commits to trunk =
+<wiki:gadget url="http://wiki-updates-proj.googlecode.com/svn/trunk/com.xml" up_projectName="usbloader-gui" width="800" height="100"/>
+= Updates to All Issues (including closed/fixed issues) =
+<wiki:gadget url="http://wiki-updates-proj.googlecode.com/svn/trunk/qc23.xml" up_projectName="usbloader-gui" width="800" height="250"/>
+= Detailed Updates to Open Issues =
+<wiki:gadget url="http://wiki-updates-proj.googlecode.com/svn/trunk/t6.xml" up_projectName="usbloader-gui" width="800" height="250"/> 
+
+Thanks to http://code.google.com/p/bullet/wiki/Updates for this page.
