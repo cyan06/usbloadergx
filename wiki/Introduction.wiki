@@ -1,33 +1,36 @@
 #summary Getting started with USB Loader GX
 
+http://usbguiwikicolab.googlecode.com/svn/wiki/images/logo.png
 = Introduction =
 
 Welcome to the Wiki for USB Loader GX. USB Loader GX is a USB loader for the Wii, and it's purpose is to allow playing your game backups from your USB drive. It is based off of Waninkoko's original USB loader, with a gui based off of libwiigui by Tantric. This loader has the look and feel of the original system menu for the Wii by Nintendo, and offers many powerful functions.
 
-If you're looking for the newest updates to this project, visit the [WhatsNew What's New?] page. Google decided to remove the updates page from Google code, so here is a temporary work around. 
+This wiki was written by Shano56 and Cyan.
 
 = Features =
+
  * Backup and play your Wii games using an external USB device.
- * Play your Gamecube games from SD card using DML (coming soon!) (big thanks to the DML team!)
+ * Backup and play your !GameCube games from SD card using DML (big thanks to the DML team!)
  * Homebrew & Channel launcher: Launch you favorite homebrew apps and channels from within the loader.
- * Supported Hard Drive format: WBFS, FAT32, NTFS, Ext2/3/4
- * Supports multiple partitions at the same time
- * 4 different display modes: Game List, Game Cover Grid, Game Carousel, and Channel Mode (channel mode coming soon!). 
- * Display the banner animation from the Disc Channel (coming soon!)
+ * Supported Hard Drive format: WBFS, FAT32, NTFS, Ext2/3/4.
+ * Supports multiple partitions at the same time.
+ * 4 different display modes: Game List, Game Cover Grid, Game Carousel, and Channel Mode.
+ * Display the banner animation like on the Wii System Menu.
  * Custom game sorting and advanced filtering (game title, game genre, favorites level, user defined categories, etc.)
- * Native widescreen detection/support
- * Multiple languages support
- * Supports custom themes you can make or download from inside the loader. (custom themes support images and sounds)
- * Supports all controllers (Wiimote, nunchuck, Gamecube controller, Classic Controller, etc.)
+ * Native widescreen detection/support.
+ * Multiple languages support.
+ * Supports custom themes you can make or download from inside the loader. (Custom themes support images, sounds and fonts)
+ * Supports all controllers (Wiimote, Nunchuck, !GameCube controller, Classic Controller, etc.)
  * Internal update function: Update to the latest version from inside the loader (Requires active Wi-Fi connection)
  * [http://www.gametdb.com/ GameTDB]: Automatically renames all game titles correctly and retrieves game's details (developer, publisher, genre, year, rating, etc.)
- * Cover download: Download custom or original flat, 3D, and disc images
- * Play stats and add game to official Wii Message Board: shows you how many times you played the game
- * Supports Gamer tags: Send your last played game to websites to create a dynamic forum's signature.
- * Global Settings and individual game settings
- * NAND Emulation: Emulates your Wii internal memory and store the save games and channels to SD or USB (unlimited Wii memory space)
- * Alternative dol loading: most alt dols are automatically loaded when necessary
- * Ocarina support: Download and enable cheat codes for your games
+ * Cover download: Download custom or original flat covers, 3D covers, and disc images.
+ * Play stats: Shows you how many times you played a game and adds its title and playtime to official Wii Message Board.
+ * Supports Gamer's Tags: Sends your last played game to websites which create dynamic tags and forum's signatures.
+ * Global settings and individual game's settings.
+ * NAND Emulation: Emulate your Wii internal memory and store the save games and channels to SD or USB (unlimited Wii memory space)
+ * Alternative dol loading: most alt dols are automatically loaded when necessary.
+ * Supports dol-reloading games.
+ * Ocarina support: Download and enable cheat codes for your games.
  * Full parental controls
 
 
@@ -40,4 +43,9 @@ If you're looking for the newest updates to this project, visit the [WhatsNew Wh
  * cIOS installers?
   ** Download d2x here: http://code.google.com/p/d2x-cios/downloads/list
   ** and learn how to install here: http://code.google.com/p/d2x-cios/wiki/How_To_Install
-  ** Or use ModMii: http://modmii.zzl.org/
+  ** Or use ModMii: http://modmii.zzl.org
+  
+  
+<br/>
+----
+Guide for USB Loader GX, Copyright © 2012. Created by Shano56 and Cyan. All rights reserved.

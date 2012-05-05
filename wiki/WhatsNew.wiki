@@ -1,3 +1,4 @@
+#summary Project updates
 Google decided to disable the Updates/Activity tab so here is a temporarily replacement using Wiki gadgets.
 
 = Recent Commits to trunk =
@@ -8,3 +9,7 @@ Google decided to disable the Updates/Activity tab so here is a temporarily repl
 <wiki:gadget url="http://wiki-updates-proj.googlecode.com/svn/trunk/t6.xml" up_projectName="usbloader-gui" width="800" height="250"/> 
 
 Thanks to http://code.google.com/p/bullet/wiki/Updates for this page.
+
+<br/>
+----
+Guide for USB Loader GX, Copyright © 2012. Created by Shano56 and Cyan. All rights reserved.

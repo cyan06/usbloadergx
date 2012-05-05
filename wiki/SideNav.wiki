@@ -1,19 +1,72 @@
 #sidebar SideNav
  * [Introduction]
  * [WhatsNew What's New?]
+ * [Installation]
+ * [FirstLaunch First launch]
+  ** [http://code.google.com/p/usbguiwikicolab/wiki/Interface User Interface]
+   **● Top menu
+   **● Layouts
+   **● Favorite games
+   **● Sorting game
+   **● Title's origin
+   **● Title's categories
+   **● Parental lock
+   **● Add games
+   **● Global settings
+   **● SD card icon
+   **● Homebrew launcher
+   **● Home menu
+   **● Power off
+   **● Game window
+   **● Game covers
+   **● Game details
+  ** [http://code.google.com/p/usbguiwikicolab/wiki/Global_Settings The Global Settings]
+  ** Creating a Backup
+ * Using USB Loader GX
+  ** Launching a game
+  ** Returning to USB Loader GX
+  ** Renaming game titles
+  ** The Game Settings
+  ** Deleting a game
+  ** Filtering and sorting
+  ** Parental control
+  ** Ocarina (Cheats)
+  ** Gamer tags
+  ** DML (Gamecube backup)
+  ** NAND Emulation
+   **● Dumping your NAND
+   **● Creating a new EmuNAND
+   **● NAND settings
+   **● Partial and full EmuNAND
+   **● Managing Channels
+  ** Multiple partitions and HDD
+  ** Listing duplicated games
+  ** Taking a screenshot
+  ** USB Loader GX on Wii boot
  * Customizing
   ** [Settings]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings?ts=1333505867&updated=Settings#GUI_Settings GUI Settings]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Loader_Settings Loader Settings]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Hard_Drive_Settings Hard Drive Settings]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Features Features]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Banner_Animation_Settings Banner Animation Settings]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Sound Sound]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Parental_Control Parental Control]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Custom_Paths Custom Paths]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Theme_Menu Theme Menu]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Theme_Downloader Theme Downloader]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Update Update]
-   ***[http://code.google.com/p/usbguiwikicolab/wiki/Settings#Default_Settings Default Settings]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#GUI_Settings GUI Settings]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Loader_Settings Loader Settings]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Hard_Drive_Settings Hard Drive Settings]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Features Features]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Banner_Animation_Settings Banner Animation Settings]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Sound Sound]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Parental_Control Parental Control]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Custom_Paths Custom Paths]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Theme_Menu Theme Menu]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Theme_Downloader Theme Downloader]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Update Update]
+   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Default_Settings Default Settings]
   ** [Themes]
-  
+ * [Troubleshooting]
+  ** [http://code.google.com/p/usbguiwikicolab/wiki/Troubleshooting#General_FAQ General FAQ]
+  ** [http://code.google.com/p/usbguiwikicolab/wiki/Troubleshooting#Known_Problematic_Games Known Problematic Games]
+  ** Dol reloading games
+  ** Call of Duty: Black Ops
+  ** Tintin
+  ** Games using external peripherals
+ * [Changelog]
+ 
+<br/>
+----
+Guide for USB Loader GX, Copyright © 2012. Created by Shano56 and Cyan. All rights reserved.
