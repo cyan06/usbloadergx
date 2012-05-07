@@ -122,7 +122,7 @@ Section "USB Loader GX" SecMain
   SetOutPath "$INSTDIR"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/boot.dol boot.dol
   NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/icon.png icon.png
-  NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/meta.file meta.xml
+  NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/meta.xml meta.xml
   NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/update_dol.txt rev.txt
   Pop $0
   StrCmp $0 success success
@@ -134,7 +134,7 @@ Section "USB Loader GX" SecMain
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)
+  Pop $0 ;output string (read from meta.txt)
 
   CreateDirectory "$INSTDIR\..\..\images"
   CreateDirectory "$INSTDIR\..\..\images\disc"
@@ -198,7 +198,7 @@ SectionGroup "$(DESC_Op_Lang)" SecOptional1
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)
+  Pop $0 ;output string (read from meta.txt)
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "czech.lang"
@@ -218,7 +218,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)
+  Pop $0 ;output string (read from meta.txt)
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "danish.lang"
@@ -238,7 +238,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "dutch.lang"
@@ -258,7 +258,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "english.lang"
@@ -278,7 +278,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "finnish.lang"
@@ -298,7 +298,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "french.lang"
@@ -318,7 +318,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)
+  Pop $0 ;output string (read from meta.txt)
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "german.lang"
@@ -338,7 +338,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)
+  Pop $0 ;output string (read from meta.txt)
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "hungarian.lang"
@@ -358,7 +358,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "italian.lang"
@@ -378,7 +378,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "japanese.lang"
@@ -398,7 +398,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "korean.lang"
@@ -418,7 +418,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "norwegian.lang"
@@ -438,7 +438,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "polish.lang"
@@ -458,7 +458,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "portuguese_br.lang"
@@ -478,7 +478,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "portuguese_pt.lang"
@@ -498,7 +498,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "russian.lang"
@@ -518,7 +518,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "schinese.lang"
@@ -538,7 +538,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "tchinese.lang"
@@ -558,7 +558,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "spanish.lang"
@@ -578,7 +578,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)  
+  Pop $0 ;output string (read from meta.txt)  
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "swedish.lang"
@@ -598,7 +598,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt) 
+  Pop $0 ;output string (read from meta.txt) 
 FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "turkish.lang"
@@ -625,7 +625,7 @@ Section /o  "$(DESC_Op_Chan)" SecOptional3
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)
+  Pop $0 ;output string (read from meta.txt)
 
 SectionEnd
 
@@ -644,7 +644,7 @@ SectionEnd
 ;  Push 1 ;line number to read from
 ;  Push "$INSTDIR\rev.txt" ;text file to read
 ;   Call ReadFileLine
-;  Pop $0 ;output string (read from file.txt)
+;  Pop $0 ;output string (read from meta.txt)
 ;
 ;SectionEnd
 
@@ -665,7 +665,7 @@ Section /o  "$(DESC_Cheats)" SecOptional4
   Push 1 ;line number to read from
   Push "$INSTDIR\rev.txt" ;text file to read
    Call ReadFileLine
-  Pop $0 ;output string (read from file.txt)
+  Pop $0 ;output string (read from meta.txt)
 
 SectionEnd
 
@@ -675,7 +675,7 @@ SectionGroup "!$(DESC_clean)" SecOptional5
     Push 1 ;line number to read from
     Push "$INSTDIR\rev.txt" ;text file to read
      Call ReadFileLine
-    Pop $0 ;output string (read from file.txt)
+    Pop $0 ;output string (read from meta.txt)
   SectionEnd
   Section /o  "$(DESC_Folder2)" SecOptional7  
     AddSize "0"
@@ -683,7 +683,7 @@ SectionGroup "!$(DESC_clean)" SecOptional5
     Push 1 ;line number to read from
     Push "$INSTDIR\rev.txt" ;text file to read
      Call ReadFileLine
-    Pop $0 ;output string (read from file.txt)
+    Pop $0 ;output string (read from meta.txt)
   SectionEnd
 SectionGroupEnd
 
