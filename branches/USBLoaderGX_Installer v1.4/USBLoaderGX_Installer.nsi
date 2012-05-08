@@ -111,83 +111,103 @@ BrandingText "${NAME2} - GUI for Waninkoko´s USB Loader (based on libwiigui)"
   
   ;insertmacro MUI_RESERVEFILE_LANGDLL
 
+;=== Tools
+!macro CharStrip Char InStr OutVar
+ Push '${InStr}'
+ Push '${Char}'
+  Call CharStrip
+ Pop '${OutVar}'
+!macroend
+!define CharStrip '!insertmacro CharStrip'
 
 ;=== Installer Sections
 
 Section "USB Loader GX" SecMain
 ;SectionIn RO
-
-  
-  AddSize "2832"
+  AddSize "4832"
   SetOutPath "$INSTDIR"
-  NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/boot.dol boot.dol
+
+  NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/update_dol.txt rev.txt
+  ;get revision number
+  Push 1 ;line number to read from
+  Push "$INSTDIR\rev.txt" ;text file to read
+   Call ReadFileLine
+  Pop $R5 ;output string (read from meta.txt)
+  ; remove line endings
+  ${CharStrip} "$\n" $R5 $R5
+  ${CharStrip} "$\r" $R5 $R5
+  ;get download link
+  Push 2 ;line number to read from
+  Push "$INSTDIR\rev.txt" ;text file to read
+   Call ReadFileLine
+  Pop $R0 ;output string (read from meta.txt)
+  ; remove line endings
+  ${CharStrip} "$\n" $R0 $R0
+  ${CharStrip} "$\r" $R0 $R0
+  ; remove file again
+  Delete "$INSTDIR\rev.txt"
+  
   NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/icon.png icon.png
   NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/meta.xml meta.xml
-  NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/update_dol.txt rev.txt
+  NSISdl::download $R0 boot.dol
   Pop $0
   StrCmp $0 success success
     SetDetailsView show
     DetailPrint "download failed: $0"
     Abort
-  success:  
-
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)
-
-  CreateDirectory "$INSTDIR\..\..\images"
-  CreateDirectory "$INSTDIR\..\..\images\disc"
-  CreateDirectory "$INSTDIR\..\..\config"
-  CreateDirectory "$INSTDIR\..\..\config\language"
-  CreateDirectory "$INSTDIR\..\..\config\backgroundmusic"
-  CreateDirectory "$INSTDIR\..\..\codes"
-  CreateDirectory "$INSTDIR\..\..\txtcodes"
+  success:
+  CreateDirectory "$INSTDIR"
+  CreateDirectory "$INSTDIR\images"
+  CreateDirectory "$INSTDIR\images\disc"
+  CreateDirectory "$INSTDIR\language"
+  ;CreateDirectory "$INSTDIR\backgroundmusic"
+  ;CreateDirectory "$INSTDIR\..\..\codes"
+  ;CreateDirectory "$INSTDIR\..\..\txtcodes"
 
 SectionEnd
 
 SectionGroup "$(DESC_Op_Lang)" SecOptional1
  Section "!$(DESC_SD)" g2o1
   AddSize "0"
-	SetOutPath $INSTDIR\..\..\config
+	SetOutPath $INSTDIR
 	;File /r "readMii.txt"
-	Push "$INSTDIR\..\..\config\GXGlobal.cfg" ; file to modify
+	Push "$INSTDIR\GXGlobal.cfg" ; file to modify
 	Push "language_path" ; string that a line must begin with *WS Sensitive*
 	Push "" ; string to replace whole line with
 	Call ReplaceLineStr
-	Push "$INSTDIR\..\..\config\GXGlobal.cfg" ; file to modify
+	Push "$INSTDIR\GXGlobal.cfg" ; file to modify
 	Push " language_path" ; string that a line must begin with *WS Sensitive*
 	Push "" ; string to replace whole line with
 	Call ReplaceLineStr
-	FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+	FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
-	FileWrite $4 "$\r$\n" ; we write a new line
-	FileWrite $4 "language_path = SD:/config/language/"
+	FileWrite $4 "# USB Loader GX R$R5 - Main settings file$\r$\n" ; we write a new line
+	FileWrite $4 "language_path = sd:/apps/${SHORTNAME}/language/"
 	FileClose $4 ; and close the file  
  SectionEnd
 
  Section /o "!$(DESC_USB)" g2o2
   AddSize "0"
-	SetOutPath $INSTDIR\..\..\config
+	SetOutPath $INSTDIR
 	;File /r "readMii.txt"
-	Push "$INSTDIR\..\..\config\GXGlobal.cfg" ; file to modify
+	Push "$INSTDIR\GXGlobal.cfg" ; file to modify
 	Push "language_path" ; string that a line must begin with *WS Sensitive*
 	Push "" ; string to replace whole line with
 	Call ReplaceLineStr
-	Push "$INSTDIR\..\..\config\GXGlobal.cfg" ; file to modify
+	Push "$INSTDIR\GXGlobal.cfg" ; file to modify
 	Push " language_path" ; string that a line must begin with *WS Sensitive*
 	Push "" ; string to replace whole line with
 	Call ReplaceLineStr
-	FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+	FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "$\r$\n" ; we write a new line
-	FileWrite $4 "language_path = USB:/config/language/"
+	FileWrite $4 "language_path = usb1:/apps/${SHORTNAME}/language/"
 	FileClose $4 ; and close the file  
  SectionEnd
 
  Section /o "Czech" g1o19
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/czech.lang czech.lang
   Pop $0
   StrCmp $0 success success
@@ -195,11 +215,7 @@ SectionGroup "$(DESC_Op_Lang)" SecOptional1
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "czech.lang"
 	FileClose $4 ; and close the file  
@@ -207,7 +223,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Danish" g1o2
   AddSize "13"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/danish.lang danish.lang
   Pop $0
   StrCmp $0 success success
@@ -215,11 +231,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "danish.lang"
 	FileClose $4 ; and close the file  
@@ -227,19 +239,15 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Dutch" g1o3
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/dutch.lang dutch.lang
   Pop $0
   StrCmp $0 success success
     SetDetailsView show
     DetailPrint "download failed: $0"
     Abort
-  success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+  success:  
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "dutch.lang"
 	FileClose $4 ; and close the file
@@ -247,19 +255,15 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section "English" g1o4
   AddSize "9"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/english.lang english.lang
   Pop $0
   StrCmp $0 success success
     SetDetailsView show
     DetailPrint "download failed: $0"
     Abort
-  success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+  success: 
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "english.lang"
 	FileClose $4 ; and close the file
@@ -267,19 +271,15 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Finnish" g1o5
   AddSize "13"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/finnish.lang finnish.lang
   Pop $0
   StrCmp $0 success success
     SetDetailsView show
     DetailPrint "download failed: $0"
     Abort
-  success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+  success: 
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "finnish.lang"
 	FileClose $4 ; and close the file
@@ -287,7 +287,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "French" g1o6
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/french.lang french.lang
   Pop $0
   StrCmp $0 success success
@@ -295,11 +295,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "french.lang"
 	FileClose $4 ; and close the file
@@ -307,7 +303,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "German" g1o1
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/german.lang german.lang
   Pop $0
   StrCmp $0 success success
@@ -315,11 +311,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "german.lang"
 	FileClose $4 ; and close the file  
@@ -327,7 +319,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Hungarian" g1o20
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/hungarian.lang hungarian.lang
   Pop $0
   StrCmp $0 success success
@@ -335,11 +327,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "hungarian.lang"
 	FileClose $4 ; and close the file  
@@ -347,7 +335,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Italian" g1o7
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/italian.lang italian.lang
   Pop $0
   StrCmp $0 success success
@@ -355,11 +343,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "italian.lang"
 	FileClose $4 ; and close the file
@@ -367,7 +351,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Japanese" g1o8
   AddSize "16"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/japanese.lang japanese.lang
   Pop $0
   StrCmp $0 success success
@@ -375,11 +359,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "japanese.lang"
 	FileClose $4 ; and close the file
@@ -387,7 +367,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Korean" g1o9
   AddSize "13"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/korean.lang korean.lang
   Pop $0
   StrCmp $0 success success
@@ -395,11 +375,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "korean.lang"
 	FileClose $4 ; and close the file
@@ -407,7 +383,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Norwegian" g1o10
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/norwegian.lang norwegian.lang
   Pop $0
   StrCmp $0 success success
@@ -415,11 +391,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "norwegian.lang"
 	FileClose $4 ; and close the file
@@ -427,7 +399,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Polish" g1o21
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/polish.lang polish.lang
   Pop $0
   StrCmp $0 success success
@@ -435,11 +407,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "polish.lang"
 	FileClose $4 ; and close the file
@@ -447,19 +415,15 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Portuguese_br" g1o11
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/portuguese_br.lang portuguese_br.lang
   Pop $0
   StrCmp $0 success success
     SetDetailsView show
     DetailPrint "download failed: $0"
     Abort
-  success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+  success: 
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "portuguese_br.lang"
 	FileClose $4 ; and close the file
@@ -467,7 +431,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Portuguese_pt" g1o12
   AddSize "15"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/portuguese_pt.lang portuguese_pt.lang
   Pop $0
   StrCmp $0 success success
@@ -475,11 +439,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "portuguese_pt.lang"
 	FileClose $4 ; and close the file
@@ -487,7 +447,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Russian" g1o13
   AddSize "16"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/russian.lang russian.lang
   Pop $0
   StrCmp $0 success success
@@ -495,11 +455,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "russian.lang"
 	FileClose $4 ; and close the file
@@ -507,7 +463,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "S.Chinese" g1o14
   AddSize "12"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/schinese.lang schinese.lang
   Pop $0
   StrCmp $0 success success
@@ -515,11 +471,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "schinese.lang"
 	FileClose $4 ; and close the file
@@ -527,7 +479,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "T.Chinese" g1o15
   AddSize "13"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/tchinese.lang tchinese.lang
   Pop $0
   StrCmp $0 success success
@@ -535,11 +487,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "tchinese.lang"
 	FileClose $4 ; and close the file
@@ -547,7 +495,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Spanish" g1o16
   AddSize "14"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/spanish.lang spanish.lang
   Pop $0
   StrCmp $0 success success
@@ -555,11 +503,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "spanish.lang"
 	FileClose $4 ; and close the file
@@ -567,7 +511,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Swedish" g1o17
   AddSize "13"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/swedish.lang swedish.lang
   Pop $0
   StrCmp $0 success success
@@ -575,11 +519,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)  
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "swedish.lang"
 	FileClose $4 ; and close the file
@@ -587,7 +527,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
 
  Section /o "Turkish" g1o18
   AddSize "13"
-  SetOutPath "$INSTDIR\..\..\config\language"
+  SetOutPath "$INSTDIR\language"
   NSISdl::download http://usbloader-gui.googlecode.com/svn/trunk/Languages/turkish.lang turkish.lang
   Pop $0
   StrCmp $0 success success
@@ -595,11 +535,7 @@ FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
     DetailPrint "download failed: $0"
     Abort
   success:
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt) 
-FileOpen $4 "$INSTDIR\..\..\config\GXGlobal.cfg" a
+FileOpen $4 "$INSTDIR\GXGlobal.cfg" a
 	FileSeek $4 0 END
 	FileWrite $4 "turkish.lang"
 	FileClose $4 ; and close the file
@@ -608,24 +544,39 @@ SectionGroupEnd
 
 Section /o  "$(DESC_Op_Chan)" SecOptional3
   
-  CreateDirectory "$INSTDIR\..\..\wad"
-  
-  AddSize "4773"
   SetOutPath "$INSTDIR\..\..\wad"
-  NSISdl::download http://www.techjawa.com/usbloadergx/dat4inst.zip dat4inst.zip
+  CreateDirectory "$INSTDIR\..\..\wad"
+  AddSize "6773"
+  
+  NSISdl::download http://usbloader-gui.googlecode.com/svn/branches/updates/update_wad.txt rev.txt
+  ;get revision number
+  Push 1 ;line number to read from
+  Push "$INSTDIR\..\..\wad\rev.txt" ;text file to read
+   Call ReadFileLine
+  Pop $R5 ;output string (read from meta.txt)
+  ; remove line endings
+  ${CharStrip} "$\n" $R5 $R5
+  ${CharStrip} "$\r" $R5 $R5
+  ;get download link
+  Push 2 ;line number to read from
+  Push "$INSTDIR\..\..\wad\rev.txt" ;text file to read
+   Call ReadFileLine
+  Pop $R0 ;output string (read from meta.txt)
+  ; remove line endings
+  ${CharStrip} "$\n" $R0 $R0
+  ${CharStrip} "$\r" $R0 $R0
+  ; remove file again
+  Delete "$INSTDIR\..\..\wad\rev.txt"
+  
+  NSISdl::download $R0 USBLoaderGX_UNLR.wad
   Pop $0
   StrCmp $0 success success
     SetDetailsView show
-    DetailPrint "download failed: $0"
+    DetailPrint "download failed: $0 $R0"
     Abort
   success:  
-  ZipDLL::extractall "$INSTDIR\..\..\wad\dat4inst.zip" "$INSTDIR\..\..\wad"
-  Delete "$INSTDIR\..\..\wad\dat4inst.zip"
-
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)
+  ;ZipDLL::extractall "$INSTDIR\..\..\wad\dat4inst.zip" "$INSTDIR\..\..\wad"
+  ;Delete "$INSTDIR\..\..\wad\dat4inst.zip"
 
 SectionEnd
 
@@ -648,42 +599,34 @@ SectionEnd
 ;
 ;SectionEnd
 
-Section /o  "$(DESC_Cheats)" SecOptional4
+; Section /o  "$(DESC_Cheats)" SecOptional4
   
-  AddSize "15"
-  SetOutPath "$INSTDIR\..\..\txtcodes"
-  NSISdl::download http://usbloader-gui.googlecode.com/files/txtcodes.zip txtcodes.zip
-  Pop $0
-  StrCmp $0 success success
-    SetDetailsView show
-    DetailPrint "download failed: $0"
-    Abort
-  success:  
-  ZipDLL::extractall "$INSTDIR\..\..\txtcodes\txtcodes.zip" "$INSTDIR\..\..\txtcodes"
-  Delete "$INSTDIR\..\..\txtcodes\txtcodes.zip"
+  ; AddSize "15"
+  ; SetOutPath "$INSTDIR\..\..\txtcodes"
+  ; NSISdl::download http://usbloader-gui.googlecode.com/files/txtcodes.zip txtcodes.zip
+  ; Pop $0
+  ; StrCmp $0 success success
+    ; SetDetailsView show
+    ; DetailPrint "download failed: $0"
+    ; Abort
+  ; success:  
+  ; ZipDLL::extractall "$INSTDIR\..\..\txtcodes\txtcodes.zip" "$INSTDIR\..\..\txtcodes"
+  ; Delete "$INSTDIR\..\..\txtcodes\txtcodes.zip"
 
-  Push 1 ;line number to read from
-  Push "$INSTDIR\rev.txt" ;text file to read
-   Call ReadFileLine
-  Pop $0 ;output string (read from meta.txt)
+  ; Push 1 ;line number to read from
+  ; Push "$INSTDIR\rev.txt" ;text file to read
+   ; Call ReadFileLine
+  ; Pop $0 ;output string (read from meta.txt)
 
-SectionEnd
+; SectionEnd
 
 SectionGroup "!$(DESC_clean)" SecOptional5
   Section /o  "$(DESC_Folder1)" SecOptional6  
-    Delete $INSTDIR\..\..\images\*.*
-    Push 1 ;line number to read from
-    Push "$INSTDIR\rev.txt" ;text file to read
-     Call ReadFileLine
-    Pop $0 ;output string (read from meta.txt)
+    Delete $INSTDIR\images\*.*
   SectionEnd
   Section /o  "$(DESC_Folder2)" SecOptional7  
     AddSize "0"
-    Delete $INSTDIR\..\..\images\disc\*.*
-    Push 1 ;line number to read from
-    Push "$INSTDIR\rev.txt" ;text file to read
-     Call ReadFileLine
-    Pop $0 ;output string (read from meta.txt)
+    Delete $INSTDIR\images\disc\*.*
   SectionEnd
 SectionGroupEnd
 
@@ -776,7 +719,7 @@ FunctionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${SecOptional1} $(DESC_SecOptional1)
     ;!insertmacro MUI_DESCRIPTION_TEXT ${SecOptional2} $(DESC_SecOptional2)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecOptional3} $(DESC_SecOptional3)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecOptional4} $(DESC_SecOptional4)
+    ;!insertmacro MUI_DESCRIPTION_TEXT ${SecOptional4} $(DESC_SecOptional4)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecOptional5} $(DESC_SecOptional5)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecOptional6} $(DESC_SecOptional6)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecOptional7} $(DESC_SecOptional7)
@@ -883,4 +826,30 @@ Function ReplaceLineStr
  Pop $R2
  Pop $R1
  Pop $R0
+FunctionEnd
+
+Function CharStrip
+Exch $R0 #char
+Exch
+Exch $R1 #in string
+Push $R2
+Push $R3
+Push $R4
+ StrCpy $R2 -1
+ IntOp $R2 $R2 + 1
+ StrCpy $R3 $R1 1 $R2
+ StrCmp $R3 "" +8
+ StrCmp $R3 $R0 0 -3
+  StrCpy $R3 $R1 $R2
+  IntOp $R2 $R2 + 1
+  StrCpy $R4 $R1 "" $R2
+  StrCpy $R1 $R3$R4
+  IntOp $R2 $R2 - 2
+  Goto -9
+  StrCpy $R0 $R1
+Pop $R4
+Pop $R3
+Pop $R2
+Pop $R1
+Exch $R0
 FunctionEnd

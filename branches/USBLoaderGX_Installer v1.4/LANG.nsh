@@ -1,7 +1,7 @@
 ;=== Deutsch
 
 LangString welcome ${LANG_GERMAN} "Dieser Assistent wird Sie bei der Installation von ${NAME2} unterstützen.$\r$\rWichtig: Für die Installation wird eine Internetverbindung benötigt. $\r$\n$\r$\nKlicken Sie bitte auf Weiter, um fortzusetzen."
-LangString finish ${LANG_GERMAN} "${NAME2} rev.$0 wurde auf Ihrer SD Karte installiert.$\r$\n$\r$\nBitte Beenden klicken, um diesen Assistenten zu verlassen."
+LangString finish ${LANG_GERMAN} "${NAME2} rev.$R5 wurde auf Ihrer SD Karte installiert.$\r$\n$\r$\nBitte Beenden klicken, um diesen Assistenten zu verlassen."
 
 ;Language strings 
 LangString DESC_SecMain ${LANG_German} "Installiert ${NAME2} und alle benötigten Dateien auf Ihre SD Karte."
@@ -27,14 +27,14 @@ LangString DESC_USB_Des ${LANG_German} "Wähle Sie diese Option wenn Sie ${NAME2}
 ${ReadmeLanguage} "${LANG_GERMAN}" \
           "Read Mii" \
           "Bitte lesen Sie die folgenden und wichtigen Informationen." \
-          "Über $(^name) rev.$0:" \
+          "Über $(^name) rev.$R5:" \
           "$\n  Klicken Sie auf die Scrollbar Pfeile oder drücken sie Bild runter um den vollstädigen Text zu $\n  lesen."
 
 
 ;=== English
 
 LangString welcome ${LANG_ENGLISH} "This wizard will guide you through the installation of ${NAME2}.$\r$\rImportant: The installation requires an Internet connection. $\r$\n$\r$\nClick Next to continue."
-LangString finish ${LANG_ENGLISH} "${NAME2} rev.$0 has been installed on your SD Card.$\r$\n$\r$\nClick Finish to close this wizard."
+LangString finish ${LANG_ENGLISH} "${NAME2} rev.$R5 has been installed on your SD Card.$\r$\n$\r$\nClick Finish to close this wizard."
 
 ;Language strings 
 LangString DESC_SecMain ${LANG_ENGLISH} "Install ${NAME2} and all needed files on your SD Card."
@@ -60,14 +60,14 @@ LangString DESC_USB_Des ${LANG_ENGLISH} "Choose this option if you install ${NAM
 ${ReadmeLanguage} "${LANG_ENGLISH}" \
           "Read Mii" \
           "Please review the following important information." \
-          "About $(^name) rev.$0:" \
+          "About $(^name) rev.$R5:" \
           "$\n  Click on scrollbar arrows or press Page Down to review the entire text."
 
 
 ;=== French
 
 LangString welcome ${LANG_FRENCH} "Suivez les étapes pour installer ${NAME2}.$\r$\rImportant: l'installation nécessite un accès à internet. $\r$\n$\r$\nCliquez sur suivant pour continuer."
-LangString finish ${LANG_FRENCH} "${NAME2} rev.$0 est installé sur votre carte SD.$\r$\n$\r$\nCliquez sur Terminer pour fermer cet installateur."
+LangString finish ${LANG_FRENCH} "${NAME2} rev.$R5 est installé sur votre carte SD.$\r$\n$\r$\nCliquez sur Terminer pour fermer cet installateur."
 
 ;Language strings 
 LangString DESC_SecMain ${LANG_FRENCH} "Installer ${NAME2} et tous les fichiers nécessaires sur votre carte SD."
@@ -94,5 +94,5 @@ LangString DESC_USB_Des ${LANG_FRENCH} "Choisissez cette option si vous installe
 ${ReadmeLanguage} "${LANG_FRENCH}" \
           "Read Mii" \
           "Veuillez prendre note des informations ci-dessous." \
-          "About $(^name) rev.$0:" \
+          "About $(^name) rev.$R5:" \
           "$\n  Cliquez sur la barre latérale ou appuyez sur Page Suivante pour faire défiler le texte."
