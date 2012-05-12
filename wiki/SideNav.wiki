@@ -3,24 +3,17 @@
  * [WhatsNew What's New?]
  * [Installation]
  * [FirstLaunch First launch]
-  ** [http://code.google.com/p/usbguiwikicolab/wiki/Interface User Interface]
-   **● Top menu
-   **● Layouts
-   **● Favorite games
-   **● Sorting game
-   **● Title's origin
-   **● Title's categories
-   **● Parental lock
-   **● Add games
-   **● Global settings
-   **● SD card icon
-   **● Homebrew launcher
-   **● Home menu
-   **● Power off
-   **● Game window
-   **● Game covers
-   **● Game details
-  ** [http://code.google.com/p/usbguiwikicolab/wiki/Global_Settings The Global Settings]
+  ** [http://code.google.com/p/usbloader-gui/wiki/Interface User Interface]
+   **● Presentation
+   **● The Toolbar
+   **● The Bottom Menu
+   **● The Layouts
+   **● The List Layout
+   **● The Wall Layout
+   **● The Carousel Layout
+   **● The Channels Layout
+   **● The Prompt Windows
+  ** [http://code.google.com/p/usbloader-gui/wiki/GlobalSettings The Global Settings]
   ** Creating a Backup
  * Using USB Loader GX
   ** Launching a game
@@ -31,6 +24,7 @@
   ** Filtering and sorting
   ** Parental control
   ** Ocarina (Cheats)
+  ** Alternative dol
   ** Gamer tags
   ** DML (Gamecube backup)
   ** NAND Emulation
@@ -43,28 +37,29 @@
   ** Listing duplicated games
   ** Taking a screenshot
   ** USB Loader GX on Wii boot
+  ** The meta.xml arguments
  * Customizing
   ** [Settings]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#GUI_Settings GUI Settings]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Loader_Settings Loader Settings]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Hard_Drive_Settings Hard Drive Settings]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Features Features]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Banner_Animation_Settings Banner Animation Settings]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Sound Sound]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Parental_Control Parental Control]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Custom_Paths Custom Paths]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Theme_Menu Theme Menu]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Theme_Downloader Theme Downloader]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Update Update]
-   **● [http://code.google.com/p/usbguiwikicolab/wiki/Settings#Default_Settings Default Settings]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#GUI_Settings GUI Settings]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Loader_Settings Loader Settings]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Hard_Drive_Settings Hard Drive Settings]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Features Features]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Banner_Animation_Settings Banner Animation Settings]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Sound Sound]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Parental_Control Parental Control]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Custom_Paths Custom Paths]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Theme_Menu Theme Menu]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Theme_Downloader Theme Downloader]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Update Update]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Settings#Default_Settings Default Settings]
   ** [Themes]
  * [Troubleshooting]
-  ** [http://code.google.com/p/usbguiwikicolab/wiki/Troubleshooting#General_FAQ General FAQ]
-  ** [http://code.google.com/p/usbguiwikicolab/wiki/Troubleshooting#Known_Problematic_Games Known Problematic Games]
-  ** Dol reloading games
-  ** Call of Duty: Black Ops
-  ** Tintin
-  ** Games using external peripherals
+  ** [http://code.google.com/p/usbloader-gui/wiki/Troubleshooting#General_FAQ General FAQ]
+  ** [http://code.google.com/p/usbloader-gui/wiki/Troubleshooting#Known_Problematic_Games Known Problematic Games]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Troubleshooting#Dol_Reloading_Games Dol Reloading Games]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Troubleshooting#Call_of_Duty:_Black_Ops Call of Duty: Black Ops]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Troubleshooting#Tintin Tintin]
+   **● [http://code.google.com/p/usbloader-gui/wiki/Troubleshooting#Games_using_external_peripherals Games using external peripherals]
  * [Changelog]
  
 <br/>

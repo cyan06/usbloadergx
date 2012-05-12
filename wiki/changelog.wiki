@@ -1,0 +1,274 @@
+#summary Changelog for USB Loader GX
+
+This page will list all important changes since version 2.0.
+
+<br>
+<wiki:toc max_depth="2" />
+<br>
+
+
+==USB Loader GX v3.0==
+----
+*Released on 2012 05 12*
+
+_*ATTENTION:*_<br>
+USB Loader GX Version 3.0 introduces a new auto-update mechanism which is not compatible with old versions. (The old host is offline)<br>If you are still using an old version of USB Loader GX, you need to update manually. <br>
+Download the latest version or use our easy installer for Windows available on our website's [http://code.google.com/p/usbloader-gui/downloads/list Download page]. <br>
+You can also check how to install or update manually on our [Installation] page<br>
+We are sorry for the inconvenience.
+
+===New===
+ * Added a new Layout: Channel grid mode! Channel grid displays games as channels and plays banner animations like the real Wii System Menu.<br> Channel grid mode and banner animation requires AHBPROT flags to load resource files directly from your Wii.<br> If you use an old HBC you should use our latest forwarder or update the HBC otherwise you wont have that support.
+ * Added Channel launching from Emulated NAND. (big thanks to [http://code.google.com/p/triiforce/ TriiForce] guys and Miigotu)
+ * Added !GameCube games launching from SD Card through Dios Mios Lite (DML). (thanks to !G0dLiKe, crediar, all DML devs and FIX94)<br> Check [http://code.google.com/p/dios-mios-lite-source-project/ DML website]. 
+ * Added direct install/uninstall of WAD files to the Emulated NAND Channel path in the features settings menu.
+ * Added a new icon in the toolbar to select the origin of the titles: Wii games, Channels from Wii, Channels from [NANDEmulation EmuNand], !GameCube games.
+ * Added the possibility to boot USB Loader GX without an HDD connected (It will fall back to "Channel from Wii" title's origin).
+ * Added an option to choose which Game Window mode to use between the old "Rotating Disc" or the new "Banner Animation".
+ * Added the favorite level setting to the game settings since it is no longer displayed when using "Banner Animation" game window mode.
+ * Added an option to adjust the screen size for overscan TVs (Use negative values to shrink the display).
+ * Added display of game's size from Wii disc games on the game window prompt (Rotating disc mode only).
+ * Added a button in the search window to switch between "Beginning" and "Content" search methods.
+ * Added auto-complete function to the search window.
+ * Added a new GUI numpad for entering numbers.
+ * Added setting for tooltip delay time.
+ * Added resize of widescreen screenshots to 768px width.
+ * Added cover download for the currently inserted disc.
+ * Added delete of full cover on art work uninstall and game uninstall.
+ * Added a parental control option to block priiloader override on return to system menu.
+ * Added a prompt asking for downloading new language files when trying to update and no language files exist yet.
+ * Added translation parsing for rating descriptors and for genres from wiitdb.xml. Requires a one time update of wiitdb.xml for cache rebuild.
+ * Added a new option to force reading the game's titles from disc header.
+ * Added renaming of internal TitleID of all HBC versions to JODI for GameTDB to find it.
+ * Added a cheat update button to re-download the cheat text file.
+ * Added a cancel button to several progress bar windows: Game installation, NAND extraction, etc.
+ * Added separate path and setting for Emulated NAND Saves and Emulated NAND Channels.
+ * Added per game NAND emulation path setting.
+ * Added Mii extractor and SYSCONF file extractor to Emulated NAND. It always overwrites old files.
+ * Added automatic Mii extraction on save game extract if the Mii file does not exist yet on Emulated NAND.
+ * Added keep of AHBPROT flag on IOS Reload. Homebrews booted now have AHBPROT. (thanks to davebaol)
+ * Added a new feature to force aspect ratio on games/channels. (thanks to giantpune for help with disassembler)
+ * Added Zelda Skyward Sword Alternative dol offset (PAL and NTSC-U) for automatic dol selection.
+ * Added detection of enabled cheat codes from an already created .gct file.
+ * Added support for 2 USB drives for d2x cIOS (Requires d2x v9+).
+
+===Changes===
+ * Removed buggy focus system completely and added support to control screen pointer with analog sticks from respective controllers if the wiimote is not pointing to the screen. Compatible with Nunchuk, Classic Controller and !GameCube controller. A speed factor is available in the GUI settings.
+ * Restructured game's settings for different types of games (Wii/GC/Channels).
+ * Added auto position of progress window messages in vertical direction depending of how many are used at the same time.
+ * If "Titles from GameTDB" is not enabled the title will be read from the folder name if possible or from the game disc header.<br> Title caching can still be used and is recommended in that case.
+ * Settings title, keyboard text and key color can be changed by themes now.
+ * Added optional background image for list/carousel/grid layouts (unused by default theme).
+ * Use of old built-in font for credits window because it doesn't look good with the system menu one.
+ * Removed the need of a cIOS to launch the loader (if anyone uses it with IOS58 for whatever reason).
+ * Improved detection of game partition when starting the loader without configs (fresh start).
+ * Isfs is now initiated once and deinitiated when cleaning up only, instead of the whole init/deinit every single access.
+ * Updated file system libraries.
+ * Removed pngu which is not needed, changed screenshot function to use libgd instead
+ * added init of network into background thread so it is cancelable and has a timeout
+ * changed wifi gecko to UDP socket
+ * Converted all ogg sounds from 44.1 khz to 48 khz.
+ * Optimized use of memory:<br> Sizes over 30kb go to mem2 now first till it runs out ; Avoid use of mem2 area used on IOS_Reload (first 2 mb) ; Change font character texture to I4 which uses half as much memory (less cache memory).
+ * Changed update function to get the files from googlecode website, since old update host website isn't accessible anymore.
+
+===Fixes===
+ * Fixed small scrollbar bug when having only 1 item.
+ * Fixed reloading of cover image on game list when only 1 item is left after a change (e.g. filtering).
+ * Improved calculation of progress speed. Now it is always the last 15 secs average instead of overall progress speed.
+ * Fixed "new" game showing even with a parental control setting.
+ * Fixed removing of unused cached titles on wiitdb load.
+ * Fixed ocarina codes when using more than 255 codes (brawl+) (untested).
+ * Fixed bug where entering "-1" (Use global) for cIOS was not possible in game settings.
+ * Fixed playback of some BNS banner sounds.
+ * Fixed reloading into another IOS before launch of game.
+ * Removed buggy lz77 implementation and use the one known working.
+ * Fixed launching of dollz compressed dol files. (thanks FIX94)
+ * Fixed reading game's titles from disc header on fat32/ntfs/ext.
+ * Fixed crash on missing *`<app>`* tag on meta.xml files.
+ * Forwarder: Fixed crash on drives with physical sector size > 512 bytes.
+ * Forwarder: Fixed endless waiting for slow HDD. (thanks to FIX94)
+ * Forwarder: Added missing ext2 unmount. (thanks to FIX94)
+ * Supports new !WiiMotion+ controllers by using latest libraries.
+ * Lots of string handling improvements (thanks to gerbilsoft for his patch)
+
+===New Channel Grid Mode specific features===
+ * New settings section for all banner's settings.
+ * Use of BNR (banner animation) cache setting to load banners and icon's animation faster. (Enabled by default. Takes ~35MB/100 Banners)<br> Wii games/Channels also accept ID3.bnr for custom-made multi-region banners.
+ * BNR cache path setting.
+ * Pulsing "new" icon on banner grid layout for new games.
+ * Centering and size setting for banner's animation resources.
+ * Channel's zooming speed setting.
+ * Page's scrolling speed setting.
+
+===New !GameCube specific features===
+ * Supports Dios Mios Lite (DML) v1.2+
+ * Uses of a custom banner for !GameCube games which loads the game's internal opening.bnr informations (big thanks to diddy from the wiithemeteam for creating the brlyt/brlan for the banner).
+ * DML settings editable from the loader (global and per game settings).
+ * Supported formats for !GameCubes are ISO/GCM and GCRegEx.
+ * Custom game paths. The following paths are accepted:
+  # configpath/ID6/
+  # configpath/ID6_Title/
+  # configpath/Title `[`ID6`]`/
+  # configpath/gamepath/ (slow loading speed)
+ Accepted game's filenames: title.iso, title.gcm, GAMEID6.iso, GAMEID6.gcm
+ * DML cheats now work the same way as for other Wii games, gct goes to "GCT Cheatcode Path" as GAMEID.gct
+ * !GameCube games copy from USB to SD on demand with choice menu to delete SD games to make space, If you want to use this feature then set the "Main GC path" to USB and the "SD !GameCube path" to SD card.<br> If duplicated games are detected on SD and USB, the games on SD will be prioritized.
+ * Added !GameCube disc dump functionality with multi-disc menu game selection, compress and align support (thanks to FIX94 and Overjoy for their disc dump sources on which this is based).
+ * Use of the BNR cache path to load ID6.bnr or ID3.bnr if available for custom-made banners. (Loading only)
+ * Video mode option to force interlace mode on !GameCube.
+ * Fixed force prog mode on DML 1.4
+
+
+<br/>
+==USB Loader GX v2.3==
+----
+*Released on 2011 10 23*
+
+===New===
+ * Added the possibility to use the internal Wii System Menu font (thanks to giantpune and r-win).
+ * Added proper message to install progress bar to show when install is really finished.
+ * Added a GUI option for Play count display.
+ * Added "Remember Unlock" option in parental control menu to set whether the lock should always be enabled on launch if a password is set.
+ * Added Priiloader override on returning to Wii System Menu.
+ * Added different hooktype and wiird debugger (Thanks to GeckoOS for the sources).
+ * Added NAND emulation to redirect Wii NAND access to SD or USB. Default !NandEmu path set to sd:/nand/ (Requires d2x cIOS v7 alpha or later).
+   * Partial emulation: Load and save the game saves to the !NandEmu path instead of the Wii internal memory.<br> The Mii, Wiimote configuration and Wii settings are loaded from the real Wii.
+   * Full emulation: Load everything from the NandEmu path instead of the Wii internal memory.<br> Attention: if you play on someone else's Wii, you'll need to use your own Wiimote and network might not work.
+ * Added a NAND extract feature. You can extract everything or enter a path to a directory or file which to extract.
+ * Added a save game extraction menu to extract all save games at once from real NAND to !NandEmu path.
+ * Added a per game save game extraction to !NandEmu path.
+ * Added a per game !NandEmu, Hooktype, !WiirdDebugger setting.
+ * Added possibility for network re-init (Wifi-Button in Homebrew Launcher).
+
+===Changes===
+ * Using new app_booter for homebrew booting (see [http://code.google.com/p/wiixplorer/ WiiXplorer] changelog).
+ * Reload back to entry IOS when starting homebrew instead of starting it in cIOS.
+ * Removed limit of .csv and .txt game list creation.
+ * Entered characters for the password field are now hidden.
+ * Improved detection of not existing cheat txt files.
+ * Forwarder: Centered the background image and corrected the aspect ratio.
+
+===Fixes===
+ * Fixed META.XML format.
+ * Disabled try to mount of drive when no disc is inserted.
+ * Fixed issue with file browser not jumping back to first directory entry on directory change.
+
+
+
+<br/>
+==USB Loader GX v2.2==
+----
+*Released on 2011 06 29*
+===New===
+ * Added game categories and filter games list by categories (Can be imported from !WiiTDB.xml).
+ * Wiinertag support.
+ * Supporting arguments from meta.xml on boot (--ios=xxx and --usbport=x) (Requires Homebrew Channel 1.0.7+ or UNEO Forwarder v3.0).
+ * New ehci modules by Rodries with better drive compatibility.
+ * Added two new video modes to force progressive video mode, 'FORCE PAL480p' and 'FORCE NTSC480p'.
+ * Added Sneek Video Patch mode.
+ * Added new 'Inherit' setting for game settings named "Use global". If that option is set then the main loader setting is used.
+ * Full d2x cIOS support with it's new features (Block IOS Reload, Return To, Sector Sizes > 512).
+ * Support for sector sizes > 512B with FAT32/NTFS (Requires d2x v6+)
+ * Real support for simultaneous use of both USB ports without switching the 2nd drive temporary off. (Requires Hermes cIOS or Rodries MOD of the Hermes cIOS (recommended)) (thanks Rodries)
+ * Added two new settings menus
+ * Added saving of game browser position when returning to USB Loader GX
+
+===Changes===
+ * Improved several GUI controls/navigations
+ * Changed settings menu layout and sorted the items to their correct place (HDD menu, features menu)
+ * Set games settings to use the global setting by default, set to "use global" to use the main loader settings.
+ * Use TinyXML instead of MXML (better XML support)
+ * Updated to new libs (libogc, libfat, libext2fs, libntfs)
+
+===Fixes===
+ * "Return to" option now work for all games, even problematic games like Prince of Persia. (Requires d2x v4+)
+ * Xflip setting fixed.
+ * Fix the parental lock of Individual game settings (Thanks to NJ7)
+ * Fix Theme downloader
+ * Fixed reset of the loader when loading game with IOS reload and disabled !WiiTDB titles
+ * Fixed timeout timer on startup to count correctly.
+ * Fixed reversed disc image download when Custom/Original option is selected
+ * Fixed reload of game list after a game rename
+ * Fixed horizontal text scrolling
+ * Fixed booting games by arguments (headless id feature)
+ * Fixed We Dare game boot (thx oggzee)
+
+
+
+<br/>
+==USB Loader GX v2.1==
+----
+*Released on 2011 03 20*
+===New===
+ * Auto-patch New Super Mario Bros. Wii AP (no Wip file needed).
+ * Games marked as "New" will also appear in favorite mode.
+ * !AltDol+ feature added. Select AltDol method "Prompt when launching" to see a list of dols when launching the game.<br> If a wdm file is found in wdm path, it will be used to rename the found dol files to friendly names.
+ * Automatic AltDol for known problematic games (SSX, Red Steel, Wii Sports Resort, etc.)
+ * Carousel arrow position is now themable.
+ * Individual Parental control option for every menus and buttons.
+ * When deleting a game, you will be prompt for deleting everything related (covers, cheats, etc.).
+ * New setting for Home menu layout.
+ * Added support for physical sector sizes other than 512 bytes per sector for wbfs partitions only!<br> Tested with a 3TB drive with a sector size 4096 on wbfs partition (thanks to Dexter).
+ * Added download for Full covers. If a Full cover is found, 3D box will appear in the game info page.
+ * Added additional sort mode "Sort by number of players".
+ * Added support for Multiple partitions. When active, all games from all partitions of the current USB port will be listed.<br> The selected partition in the GUI Setting will be used for game installation.
+ * Added support for Wiimms virtual sector sizes for WBFS to store more than 500 games.
+ * New Theme menu to manage downloaded themes.
+ * Added support for using USB port 1 (ONLY ON HERMES CIOS).
+ * Added support for using both USB ports at once (ONLY ON HERMES CIOS).<br> Use this option with Multiple partitions option to list all the games from all partitions from both ports at once.<br> *ATTENTION:* Set all your user defined paths to SD card or you can corrupt your data.
+ * Added cache of game titles. This will speed up the startup of the loader. It can be deactivate in the settings.
+ * Added left/right on game info screen to go to the next/previous game.
+ * Added a widescreen and font scale factor.
+
+===Changes===
+ * WiiTDB cover download logic changed. Missing cover's localization won't fall-back to English.
+ * Libfat now use FS info sector on FAT32 partitions to improve free space reading speed.<br> You need to run "Synch FAT32 FS info" once in the Loader setting if free space reading is still slow or free size inaccurate.
+ * Cover download menu now uses checkboxes. Choose Discart download priority in the GUI Settings.
+ * Changed USB Loader GX WBFS formatter to choose 2048 as virtual sector size if a drive with a size > 500GB is formatted.
+ * Removed playcount limit (Previously set to 255).
+ * Changed default setting for video mode back to disc default (Correct black screen on game launch).
+ * Changed title/channel browser to use WiiTDB for displaying title names if no name is found in WiiTDB the old method is used
+
+===Fixes===
+ * SD Card icon no longer reset the currently loaded Theme.
+ * Fixed bug in the homebrew browser and the homebrew launcher when received via network.
+
+
+
+<br/>
+==USB Loader GX v2.0==
+----
+*Released on 2011 01 09*
+ * Support for all cIOS (up to Hermes 5.1 and Waninkoko r21)
+ * Support for all IOS slot from 200 to 255.
+ * Support for WBFS/FAT32/NTFS/Ext2/3/4 with Hermes v5+ and Waninkoko r18+
+ * Support for multiple WBFS partitions (Hermes v5+ and Waninkoko r18+)
+ * Support up to 8 partitions to store the boot.dol and data (config, images, themes, etc.)
+ * Support drives >1Tb
+ * Support for Primary/Logical partitions and GUID Partitions Table (GPT).
+ * Added configuration file version checking. It will reset the old one automatically if important changes occurred.
+ * Added URL to hosting websites (www.spiffy360.com for theme and www.techjawa.com for update files).
+ * Added screenshot feature while in the loader (Press Z+c).
+ * Support more sound formats: AIF/MP3/OGG/BNS/WAV now with no file size limit (streaming).
+ * Support for the new Homebrew Channel (1.0.7+) when exiting the loader.
+ * Support for the *`<no_ios_reload/>`* tag in the meta.xml for AHBPROT enabled with HBC 1.0.7+
+ * New homebrew launching engine
+ * New Theme format (Now uses the same format than the language files).
+ * Per game lock feature for better parental control.
+ * Choose the sub-directory naming convention when installing a game (Ignored on WBFS partition).
+ * Select the split size when installing a game: 2GB or 4GB or none.
+ * BCA files support.
+ * WIP patch files support.
+ * Automatic patch for "Prince of Persia: The forgotten sands" (no Wip file needed). (Disable "Return to" option in Prince of Persia preferences)
+ * Added Wii message board update (Playlog) when exiting a game to the Wii menu.
+ * Brawl+ support.
+ * Return to a channel when exiting a game.
+ * Removed 1:1 install mode, use install all partition instead or use a real dumper if you want a clean dump.
+ * Changed the default folders layout, now the themes and images folders are sub-folders of the loader (apps/usbloader_gx/themes, etc.)
+ * Changed the way the Parental control is working and don't read the one from the wii setting anymore. The password is crypted in the config file.
+ * Now uses the full Wiitdb.xml instead of the user generated file.
+
+ 
+<br/>
+----
+Guide for USB Loader GX, Copyright © 2012. Created by Shano56 and Cyan. All rights reserved.

@@ -6,8 +6,9 @@ This guide will explain how to install USB Loader GX on your Nintendo Wii.
 There are two different installation methods (automatic or manual), and two different installed channels which will be displayed on your Wii (Full channel or Forwarder).
 The differences will be detailed on this page.
 
+<br>
 <wiki:toc max_depth="1" />
-<br/>
+<br>
 
 = Requirements =
 ----
@@ -24,8 +25,8 @@ The differences will be detailed on this page.
   * [ExternalLinkToSoftModGuide ModMii guide]
   * [ExternalLinkToSoftModGuide Modify any Wii 4.3 and bellow]
  
- * In all this _USB Loader GX_ guide, you will see references to things like _\apps\usbloader_gx\_ or _\wad\_. This is simply the location of the folder or file in question on your SD card or USB drive. For example:
-|| http://usbguiwikicolab.googlecode.com/svn/wiki/images/examplescreenie1.png <br>See how my usb drive is _E:\_. Well yours might be _D:\_ or _G:\_. We remove the drive letter path (E:) in this guide to avoid confusion. ||
+ * Throughout this guide, you will see references to things like _\apps\usbloader_gx\_ or _\wad\_. This is simply the location of the folder or file in question on your SD card or USB drive. For example:
+|| http://usbloader-gui.googlecode.com/svn/wiki/images/examplescreenie1.png <br>See how my usb drive is _E:\_. Well yours might be _D:\_ or _G:\_. We remove the drive letter path (E:) in this guide to avoid confusion. ||
 
  * SD or USB? The Homebrew Channel can only recognize devices formatted as FAT32. If you choose to use a USB drive for the installation then you need a FAT32 partition. If you want to keep your USB drive only with NTFS partition(s) then choose a FAT32 SD/SDHC card for the installation.
 
@@ -38,7 +39,7 @@ The differences will be detailed on this page.
 _USB Loader GX_ can either be installed as *Homebrew Channel application* (HBC) or as a *Channel* on the Wii.
 
 
-|| http://usbguiwikicolab.googlecode.com/svn/wiki/images/hbc-001.png <br>USB Loader GX on _The Homebrew Channel_  || http://usbguiwikicolab.googlecode.com/svn/wiki/images/system-menu-001.png <br>USB Loader GX as a Channel on the Wii System Menu || 
+|| http://usbloader-gui.googlecode.com/svn/wiki/images/hbc-001.png <br>USB Loader GX on _The Homebrew Channel_  || http://usbloader-gui.googlecode.com/svn/wiki/images/system-menu-001.png <br>USB Loader GX as a Channel on the Wii System Menu || 
 
 
  The *Homebrew Channel* mode means that _USB Loader GX_ is not physically installed on your Wii, it is only copied on your SD Card or your USB device and is launched from the Homebrew Channel. The advantage of this installation is that it is very easy to install and update the loader manually (place the executable on the SD card or USB device using your computer).
@@ -47,7 +48,7 @@ _USB Loader GX_ can either be installed as *Homebrew Channel application* (HBC) 
  The Full *Channel* mode means that _USB Loader GX_ executable is copied on the Wii internal memory. It appears as a channel directly on the Wii System Menu. You don't need the executable on a SD card or USB device to launch the _USB Loader GX_, but you need a USB or SD to store the configuration files. To update the loader you can reinstall a new channel over the old one, or use the loader's internal online update feature. Updating a *Channel* is not as simple as when updating from the HBC or forwarder.
  
 
- There is a third installation mode which is called *Forwarder*. The Forwarder mode is a mixed method from both previous modes. It installs a Channel on the Wii System Menu but it does not include the _USB Loader GX_ executable. Instead, this Forwarder Channel launch the _USB Loader GX_ executable located on your SD card or your USB Device.
+ The *Forwarder* mode is a mixed method from both previous modes. It installs a Channel on the Wii System Menu but it does not include the _USB Loader GX_ executable. Instead, this Forwarder Channel launch the _USB Loader GX_ executable located on your SD card or your USB Device.
 
 The *Forwarder* is the preferred installation of many users, and it shares the advantage of both first modes: "Easy update" from the computer, and a "Channel" available on the Wii System Menu. You don't need to go into the Homebrew Channel anymore to launch the loader and all the needed files are kept on your external device.
 
@@ -57,20 +58,20 @@ The *Forwarder* is the preferred installation of many users, and it shares the a
 
 The installation can be done by a program on your computer (Windows only).
 
- To install _USB Loader GX_ on your SD or USB, you can use the [http://usbloader-gui.googlecode.com/files/USBLoaderGX_Installer.exe USB Loader GX Installer v1.0]. This is a multi-languages Windows application which will download and copy the latest _USB Loader GX_ release on your SD Card or USB device.
+ To install _USB Loader GX_ on your SD or USB, you can use the [http://usbloader-gui.googlecode.com/files/USBLoaderGX_Installer_v1.8.exe USB Loader GX Installer v1.8]. This is a multi-language Windows application which will download and copy the latest _USB Loader GX_ release on your SD Card or USB device.
 
  The installer has the following additional options:<br>
- - Allows you to pre-install language files (but you can do it easily in the loader), <br> - Download the latest *Full Channel* of USB Loader GX (you need a Wad manager to install in on the Wii), <br> - Delete existing game covers
+ - Allows you to pre-install language files (note: you can still do this easily in the loader), <br> - Download the latest *Full Channel* of USB Loader GX (note: you will need a WAD manager to be able to install on your Wii), <br> - Delete existing game covers
 
 
-*Note*: The Automatic Installer v1.0 does not install the *Forwarder Channel*.
+*Note*: The Automatic Installer does not install the *Forwarder Channel*.
 
 <br>
 == Manual Installation ==
  
 The installation can also be done manually and gives you more options, like different IOS versions and installation of the Forwarder Channel.
 
- #. Download the full package from the left menu on the [http://code.google.com/p/usbloader-gui/ main page]. Select the *USBLoader_GX_Vx_x_!AllinOnePackage_IOS249.zip*, download and save it on your computer.
+ #. Download the full package from the left menu on the [http://code.google.com/p/usbloader-gui/ main page]. Select the *__USBLoader_GX_Vx_x_ !AllinOnePackage_IOS249.zip*, download and save it on your computer.
  #. Open the downloaded package using winrar or 7zip. <br>The package contains two folders: *apps* and *wad*.
  #. Extract and copy the apps and wad folder on your SD or USB. Your device should looks like this: 
   `\apps\usbloader_gx\boot.dol`<br>
@@ -81,23 +82,23 @@ The installation can also be done manually and gives you more options, like diff
  #. Installing the *Full Channel* or the *Forwarder Channel*:
  You can stop here or delete the wad folder if you don't want any channel on your Wii System Menu. _USB Loader GX_ will work as a Homebrew Application and can be launched from the Homebrew Channel.
 
- If you want to install a channel, you need another homebrew application: A Wad Manager. <br>
- - Download a Wad Manager (for example [http://filetrip.net/f11391-WAD-Manager-1-7.html Wad Manager 1.7], or [http://filetrip.net/f9959-WAD-Manager-GUI-1-5v2.html Wad Manager GUI 1.5v2], or any other). <br>- Extract and place the wad manager's *boot.dol* on your SD Card like for the USBLoader: 
+ If you want to install a channel, you need another homebrew application: A WAD Manager. <br>
+ - Download a WAD Manager (for example [http://filetrip.net/f11391-WAD-Manager-1-7.html Wad Manager 1.7], or [http://filetrip.net/f9959-WAD-Manager-GUI-1-5v2.html WAD Manager GUI 1.5v2], or any other). <br>- Extract and place the WAD manager's *boot.dol* on your SD Card like for the USBLoader: 
   `\apps\wad manager\boot.dol` <br>
   `\apps\wad manager\icon.png` (optional) <br>
   `\apps\wad manager\meta.xml` (optional) <br>
  - Insert the SD or USB in your Wii <br>
  - Launch the Homebrew Channel <br>
- - Select and Launch the Wad Manager. <br>
+ - Select and Launch the WAD Manager. <br>
  - If you are not already in the correct folder, browse the folders present on your storage device to \wad\
  
  If you want the *Full Channel*: Select and install the _UNLR_Channel_AHBPROT.wad_ file.<br>
  If you want the *Forwarder Channel* (Recommended!): Select and install the _UNEO_Forwarder_4_0_AHBPROT.wad_ file.
 
- - Exit the Wad Manager and return to the Wii System Menu to see the channel you just installed. You can now launch _USB Loader GX_ from this channel.
+ - Exit the WAD Manager and return to the Wii System Menu to see the channel you just installed. You can now launch _USB Loader GX_ from this channel.
  
 
-*Note*:If you selected the Forwarder Channel, remember that you NEED to keep the _\apps\USBLoader_gx\boot.dol_ file on your SD or USB.
+*Note*: If you selected the Forwarder Channel, remember that you NEED to keep the _\apps\USBLoader_gx\boot.dol_ file on your SD or USB.
 
 <br>
 == What is the difference between file's version IOS222, IOS249 and IOS250? ==
@@ -109,8 +110,6 @@ Just *use the file with IOS249* if you don't know which version to choose.
 <br>
 *Note*: This IOS number is not the one used to specify which feature you will have access, it's only the one used at the launch of the application in order to find the setting files.
 _USB Loader GX_ will later allow you to specify a different IOS slot if you want to use different features (they will be detailed in other pages of this guides). The default IOS defined in the User's Settings is 249.
-
-
 <br/>
 If you want more explanations, read this:
 
@@ -129,7 +128,7 @@ If you want more explanations, read this:
  If you don't understand what it means, do not worry as they are ALL working the same way.
 
 <br>
- *Advanced users*: This option can be bypassed by editing the meta.xml arguments and specifying which IOS slot you want to load the first time. Specify the same IOS slot number than the one defined in your User's Settings to prevent any IOS reloading.
+ *Advanced users*: This option can be bypassed by editing the meta.xml arguments and specifying which IOS slot you want to load the first time. Specify the same IOS slot number than the one defined in your User's Settings to prevent any IOS reloading.
 
 
 
@@ -169,8 +168,6 @@ If you don't have Internet access or want to update _USB Loader GX_ manually:
 
 
   - If you are using the *Full Channel* mode: Download the latest package, extract the _UNLR_Channel_AHBPROT.wad_ file and place it into your _\wad\_ folder. Use a Wad Manager to install the new version. It will overwrite the previous version.
-
-
 <br/>
 
 = Choosing a Hard Disk Drive =
@@ -193,14 +190,10 @@ USB Loader GX supports a lot of partition format: WBFS, FAT32, NTFS, Ext 2/3/4
  * *NTFS*: No size limit. Not supported by a lot of Wii Homebrew.
 
  * *Ext2/3/4*: No size limit. Not compatible with other Wii Homebrew.
-
 <br/>
+The Wii Homebrew Applications (such as The Homebrew Channel, Emulators, Games, Media players, etc.) and _USB Loader GX_'s NAND emulation feature require a FAT32 partition format. You can use a FAT32 SD/SDHC card for that purpose and set your USB hard drive as NTFS or Ext partition format.
 
-The recommended format is FAT32 if you want to use it with other Wii Homebrew Applications (such as Emulators, Games, Media players, etc.). FAT32 is also required for the NAND emulation feature but you can use a FAT32 SD/SDHC Card if you don't want to use FAT32 for your USB device.
-
-NTFS is also a preferred format for stability and multi-purpose. You can use it as computer's external device too and store files bigger than 4GB, like HD movies, ISOs, etc.
-
-You can of course create different partitions format on your HDD if you want to use separate partitions for Wii Homebrew, Wii games or your computer's data.
+You can of course create multiple partitions format on your HDD if you want to separate partitions for Wii Homebrew, Wii games or your computer's data.
 
 USB Loader GX supports up to 8 partitions.
 
