@@ -128,7 +128,7 @@ If you want more explanations, read this:
  If you don't understand what it means, do not worry as they are ALL working the same way.
 
 <br>
- *Advanced users*: This option can be bypassed by editing the meta.xml arguments and specifying which IOS slot you want to load the first time. Specify the same IOS slot number than the one defined in your User's Settings to prevent any IOS reloading.
+*Advanced users*: This option can be bypassed by editing the meta.xml arguments and specifying which IOS slot you want to load the first time. Specify the same IOS slot number than the one defined in your User's Settings to prevent any IOS reloading.
 
 
 
