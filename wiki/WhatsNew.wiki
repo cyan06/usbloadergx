@@ -10,6 +10,3 @@ Google decided to disable the Updates/Activity tab so here is a temporarily repl
 
 Thanks to http://code.google.com/p/bullet/wiki/Updates for this page.
 
-<br/>
-----
-Guide for USB Loader GX, Copyright © 2012. Created by Shano56 and Cyan. All rights reserved.

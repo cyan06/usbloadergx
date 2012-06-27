@@ -104,7 +104,7 @@ We are sorry for the inconvenience.
  * Supports Dios Mios Lite (DML) v1.2+
  * Uses of a custom banner for !GameCube games which loads the game's internal opening.bnr informations (big thanks to diddy from the wiithemeteam for creating the brlyt/brlan for the banner).
  * DML settings editable from the loader (global and per game settings).
- * Supported formats for !GameCubes are ISO/GCM and GCRegEx.
+ * Supported formats for !GameCubes are ISO/GCM and GCReEx.
  * Custom game paths. The following paths are accepted:
   # configpath/ID6/
   # configpath/ID6_Title/

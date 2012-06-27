@@ -191,7 +191,7 @@ USB Loader GX supports a lot of partition format: WBFS, FAT32, NTFS, Ext 2/3/4
 
  * *Ext2/3/4*: No size limit. Not compatible with other Wii Homebrew.
 <br/>
-The Wii Homebrew Applications (such as The Homebrew Channel, Emulators, Games, Media players, etc.) and _USB Loader GX_'s NAND emulation feature require a FAT32 partition format. You can use a FAT32 SD/SDHC card for that purpose and set your USB hard drive as NTFS or Ext partition format.
+The Wii Homebrew Applications (such as The Homebrew Channel, Emulators, Games, Media players, etc.), _USB Loader GX_'s NAND emulation feature and DIOS MIOS (Lite) require a FAT32 partition format. You can use a FAT32 SD/SDHC card for that purpose and set your USB hard drive as NTFS or Ext partition format.
 
 You can of course create multiple partitions format on your HDD if you want to separate partitions for Wii Homebrew, Wii games or your computer's data.
 
